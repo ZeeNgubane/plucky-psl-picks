@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import Header from '@/components/Header';
 import MyTeam from '@/components/MyTeam';
@@ -86,7 +87,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-700 via-gray-600 to-gray-800">
       <Header activeTab={activeTab} onTabChange={setActiveTab} />
       
       <main className="container mx-auto px-4 py-8">
