@@ -1,4 +1,5 @@
 
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Player } from '@/data/teams';
@@ -203,6 +204,59 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
               </svg>
             </div>
 
+            {/* Chalk scribblings overlay */}
+            <div className="absolute inset-0 opacity-30">
+              <svg className="w-full h-full" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+                {/* Tactical arrows and movement lines */}
+                <defs>
+                  <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                   refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="rgba(255,255,255,0.7)" />
+                  </marker>
+                </defs>
+                
+                {/* Attacking movement arrows */}
+                <path d="M 300 600 Q 400 500 500 400" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="3" strokeDasharray="8,4" markerEnd="url(#arrowhead)"/>
+                <path d="M 700 600 Q 800 500 900 400" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="3" strokeDasharray="8,4" markerEnd="url(#arrowhead)"/>
+                
+                {/* Passing lanes */}
+                <path d="M 200 500 Q 300 450 400 500" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="5,5"/>
+                <path d="M 800 500 Q 900 450 1000 500" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="5,5"/>
+                
+                {/* Wing play arrows */}
+                <path d="M 150 300 Q 250 200 350 300" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" strokeDasharray="6,3" markerEnd="url(#arrowhead)"/>
+                <path d="M 1050 300 Q 950 200 850 300" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" strokeDasharray="6,3" markerEnd="url(#arrowhead)"/>
+                
+                {/* Central attacking routes */}
+                <path d="M 600 500 L 600 350" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="3" strokeDasharray="4,4" markerEnd="url(#arrowhead)"/>
+                <path d="M 500 450 Q 550 350 600 300" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="3,3"/>
+                <path d="M 700 450 Q 650 350 600 300" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="3,3"/>
+                
+                {/* Defensive pressing lines */}
+                <line x1="200" y1="400" x2="1000" y2="400" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeDasharray="10,5"/>
+                <line x1="150" y1="550" x2="1050" y2="550" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeDasharray="10,5"/>
+                
+                {/* Crossing arrows */}
+                <path d="M 100 250 Q 200 150 300 250" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="4,4" markerEnd="url(#arrowhead)"/>
+                <path d="M 1100 250 Q 1000 150 900 250" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="4,4" markerEnd="url(#arrowhead)"/>
+                
+                {/* Quick counter-attack route */}
+                <path d="M 600 650 Q 700 500 800 350 Q 850 300 900 250" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="3" strokeDasharray="8,6" markerEnd="url(#arrowhead)"/>
+                
+                {/* Overlapping runs */}
+                <path d="M 250 550 Q 180 400 250 250" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeDasharray="3,6"/>
+                <path d="M 950 550 Q 1020 400 950 250" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeDasharray="3,6"/>
+                
+                {/* Set piece markings */}
+                <circle cx="300" cy="200" r="15" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="3,3"/>
+                <circle cx="900" cy="200" r="15" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="3,3"/>
+                
+                {/* Pressing triggers */}
+                <path d="M 400 350 L 450 300 L 400 250 L 350 300 Z" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2"/>
+                <path d="M 800 350 L 850 300 L 800 250 L 750 300 Z" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2"/>
+              </svg>
+            </div>
+
             {/* Player positions overlay */}
             <div className="absolute inset-0 flex flex-col justify-between p-8">
               <div className="text-center text-white font-bold text-lg mb-4">Your Formation</div>
@@ -271,3 +325,4 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
 };
 
 export default MyTeam;
+
