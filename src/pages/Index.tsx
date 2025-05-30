@@ -87,11 +87,15 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-700 via-gray-600 to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 relative">
+      {/* High sheen overlay */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-white/20 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-bl from-gray-200/30 via-transparent to-gray-600/30 pointer-events-none"></div>
+      
       <Header activeTab={activeTab} onTabChange={setActiveTab} />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
+      <main className="container mx-auto px-4 py-8 relative z-10">
+        <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-6">
           {renderContent()}
         </div>
       </main>
