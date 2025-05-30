@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Player } from '@/data/teams';
@@ -37,9 +38,9 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-bronze-600">
-              ${totalValue.toFixed(1)}M
+              R{(totalValue * 18).toFixed(1)}M
             </div>
-            <p className="text-sm text-gray-600">Budget: ${budget.toFixed(1)}M</p>
+            <p className="text-sm text-gray-600">Budget: R{(budget * 18).toFixed(1)}M</p>
           </CardContent>
         </Card>
 
@@ -84,7 +85,7 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
                       <p className="text-sm text-gray-600">{player.team}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">${player.price}M</p>
+                      <p className="font-semibold">R{(player.price * 18).toFixed(1)}M</p>
                       <p className="text-sm text-green-600">{player.points} pts</p>
                     </div>
                   </div>
@@ -106,7 +107,7 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
                       <p className="text-sm text-gray-600">{player.team}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">${player.price}M</p>
+                      <p className="font-semibold">R{(player.price * 18).toFixed(1)}M</p>
                       <p className="text-sm text-green-600">{player.points} pts</p>
                     </div>
                   </div>
@@ -128,7 +129,7 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
                       <p className="text-sm text-gray-600">{player.team}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">${player.price}M</p>
+                      <p className="font-semibold">R{(player.price * 18).toFixed(1)}M</p>
                       <p className="text-sm text-green-600">{player.points} pts</p>
                     </div>
                   </div>
@@ -150,7 +151,7 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
                       <p className="text-sm text-gray-600">{player.team}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">${player.price}M</p>
+                      <p className="font-semibold">R{(player.price * 18).toFixed(1)}M</p>
                       <p className="text-sm text-green-600">{player.points} pts</p>
                     </div>
                   </div>

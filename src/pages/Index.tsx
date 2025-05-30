@@ -17,7 +17,7 @@ const Index = () => {
     if (budget < player.price) {
       toast({
         title: "Insufficient Budget",
-        description: `You need $${player.price}M but only have $${budget.toFixed(1)}M available.`,
+        description: `You need R${(player.price * 18).toFixed(1)}M but only have R${(budget * 18).toFixed(1)}M available.`,
         variant: "destructive",
       });
       return;

@@ -132,7 +132,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
             </Select>
 
             <div className="text-sm text-gray-600 flex items-center">
-              Budget: <span className="font-semibold text-bronze-600 ml-1">${budget.toFixed(1)}M</span>
+              Budget: <span className="font-semibold text-bronze-600 ml-1">R{(budget * 18).toFixed(1)}M</span>
             </div>
           </div>
         </CardContent>
@@ -161,7 +161,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                       </div>
                       <p className="text-sm text-gray-600">{player.team}</p>
                       <div className="flex items-center space-x-4 mt-1">
-                        <span className="text-sm font-medium text-bronze-600">${player.price}M</span>
+                        <span className="text-sm font-medium text-bronze-600">R{(player.price * 18).toFixed(1)}M</span>
                         <span className="text-sm font-medium text-green-600">{player.points} points</span>
                         <div className="flex space-x-1">
                           {player.form.map((score, index) => (
