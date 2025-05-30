@@ -1,4 +1,3 @@
-
 import { Trophy, Users, Star, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -14,7 +13,11 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <Trophy className="h-10 w-10 text-bronze-400 drop-shadow-lg" />
+              <img 
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL0JZOmbEBlLE_lP0SKjIaxOfpF4DvC3bZoQ&s" 
+                alt="PSL Logo" 
+                className="h-12 w-12 object-contain drop-shadow-lg"
+              />
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full animate-pulse"></div>
             </div>
             <div>
