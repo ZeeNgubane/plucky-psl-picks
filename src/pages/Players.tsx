@@ -88,7 +88,7 @@ const Players = () => {
                     <SelectValue placeholder="Position" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Positions</SelectItem>
+                    <SelectItem value="all">All Positions</SelectItem>
                     <SelectItem value="GK">Goalkeeper</SelectItem>
                     <SelectItem value="DEF">Defender</SelectItem>
                     <SelectItem value="MID">Midfielder</SelectItem>
@@ -101,7 +101,7 @@ const Players = () => {
                     <SelectValue placeholder="Team" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Teams</SelectItem>
+                    <SelectItem value="all">All Teams</SelectItem>
                     {teams.map(team => (
                       <SelectItem key={team.id} value={team.name}>
                         {team.logo} {team.name}
