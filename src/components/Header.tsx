@@ -1,5 +1,7 @@
-import { Trophy, Users, Star, Menu } from 'lucide-react';
+
+import { Trophy, Users, Star, Menu, Table } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link, useLocation } from 'react-router-dom';
 
 interface HeaderProps {
   activeTab: string;
@@ -7,6 +9,9 @@ interface HeaderProps {
 }
 
 const Header = ({ activeTab, onTabChange }: HeaderProps) => {
+  const location = useLocation();
+  const isPlayersPage = location.pathname === '/players';
+
   return (
     <header className="relative bg-black text-white shadow-lg">
       <div className="relative z-10 container mx-auto px-4 py-6">
@@ -30,7 +35,7 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
             <button
               onClick={() => onTabChange('team')}
               className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-all duration-300 font-medium shadow-lg ${
-                activeTab === 'team' 
+                activeTab === 'team' && !isPlayersPage
                   ? 'bg-red-600 text-white shadow-red-600/30 transform scale-105' 
                   : 'text-gray-300 hover:text-white hover:bg-gray-800/50 backdrop-blur-sm'
               }`}
@@ -42,7 +47,7 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
             <button
               onClick={() => onTabChange('transfers')}
               className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-all duration-300 font-medium shadow-lg ${
-                activeTab === 'transfers' 
+                activeTab === 'transfers' && !isPlayersPage
                   ? 'bg-red-600 text-white shadow-red-600/30 transform scale-105' 
                   : 'text-gray-300 hover:text-white hover:bg-gray-800/50 backdrop-blur-sm'
               }`}
@@ -50,11 +55,23 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
               <Star className="h-5 w-5" />
               <span>Transfers</span>
             </button>
+
+            <Link
+              to="/players"
+              className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-all duration-300 font-medium shadow-lg ${
+                isPlayersPage
+                  ? 'bg-red-600 text-white shadow-red-600/30 transform scale-105' 
+                  : 'text-gray-300 hover:text-white hover:bg-gray-800/50 backdrop-blur-sm'
+              }`}
+            >
+              <Table className="h-5 w-5" />
+              <span>Players</span>
+            </Link>
             
             <button
               onClick={() => onTabChange('league')}
               className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-all duration-300 font-medium shadow-lg ${
-                activeTab === 'league' 
+                activeTab === 'league' && !isPlayersPage
                   ? 'bg-red-600 text-white shadow-red-600/30 transform scale-105' 
                   : 'text-gray-300 hover:text-white hover:bg-gray-800/50 backdrop-blur-sm'
               }`}
