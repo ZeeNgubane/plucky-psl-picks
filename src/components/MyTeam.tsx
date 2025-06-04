@@ -1,5 +1,3 @@
-
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Player } from '@/data/teams';
@@ -41,7 +39,7 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
             <div className="text-2xl font-bold text-bronze-600">
               R{(totalValue * 18).toFixed(1)}M
             </div>
-            <p className="text-sm text-gray-600">Budget: R{(budget * 18).toFixed(1)}M</p>
+            <p className="text-sm text-gray-600">Budget: R100M</p>
           </CardContent>
         </Card>
 
@@ -325,4 +323,3 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
 };
 
 export default MyTeam;
-
