@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -26,7 +25,7 @@ const Players = () => {
 
   const getTeamLogo = (teamName: string) => {
     const team = teams.find(t => t.name === teamName);
-    return team?.logo || '⚽';
+    return team?.logo || 'https://www.psl.co.za/media/11041/kaizer-chiefs.png';
   };
 
   const getFormTrend = (form: number[]) => {
@@ -104,7 +103,17 @@ const Players = () => {
                     <SelectItem value="all" className="text-white hover:bg-gray-700">All Teams</SelectItem>
                     {teams.map(team => (
                       <SelectItem key={team.id} value={team.name} className="text-white hover:bg-gray-700">
-                        {team.logo} {team.name}
+                        <div className="flex items-center space-x-2">
+                          <img 
+                            src={getTeamLogo(team.name)} 
+                            alt={team.name} 
+                            className="w-6 h-6 object-contain"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://www.psl.co.za/media/11041/kaizer-chiefs.png';
+                            }}
+                          />
+                          <span>{team.name}</span>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -156,7 +165,14 @@ const Players = () => {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
-                            <span className="text-lg">{getTeamLogo(player.team)}</span>
+                            <img 
+                              src={getTeamLogo(player.team)} 
+                              alt={player.team} 
+                              className="w-6 h-6 object-contain"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = 'https://www.psl.co.za/media/11041/kaizer-chiefs.png';
+                              }}
+                            />
                             <span className="text-gray-200">{player.team}</span>
                           </div>
                         </TableCell>

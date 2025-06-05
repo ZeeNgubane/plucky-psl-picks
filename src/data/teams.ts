@@ -1,4 +1,3 @@
-
 export interface Team {
   id: string;
   name: string;
@@ -17,22 +16,22 @@ export interface Player {
 }
 
 export const teams: Team[] = [
-  { id: '1', name: 'Kaizer Chiefs', logo: '🏆', city: 'Johannesburg' },
-  { id: '2', name: 'Orlando Pirates', logo: '🏴‍☠️', city: 'Johannesburg' },
-  { id: '3', name: 'Mamelodi Sundowns', logo: '☀️', city: 'Pretoria' },
-  { id: '4', name: 'Supersport United', logo: '⚡', city: 'Pretoria' },
-  { id: '5', name: 'Cape Town City', logo: '🏙️', city: 'Cape Town' },
-  { id: '6', name: 'Stellenbosch FC', logo: '⭐', city: 'Stellenbosch' },
-  { id: '7', name: 'AmaZulu FC', logo: '🦓', city: 'Durban' },
-  { id: '8', name: 'Sekhukhune United', logo: '🔥', city: 'Limpopo' },
-  { id: '9', name: 'Golden Arrows', logo: '🏹', city: 'Durban' },
-  { id: '10', name: 'Royal AM', logo: '👑', city: 'Durban' },
-  { id: '11', name: 'Chippa United', logo: '🔵', city: 'Port Elizabeth' },
-  { id: '12', name: 'TS Galaxy', logo: '🌌', city: 'Mpumalanga' },
-  { id: '13', name: 'Polokwane City', logo: '🌟', city: 'Polokwane' },
-  { id: '14', name: 'Baroka FC', logo: '⚽', city: 'Limpopo' },
-  { id: '15', name: 'Maritzburg United', logo: '🔴', city: 'Pietermaritzburg' },
-  { id: '16', name: 'Swallows FC', logo: '🐦', city: 'Johannesburg' }
+  { id: '1', name: 'Kaizer Chiefs', logo: 'https://www.psl.co.za/media/11041/kaizer-chiefs.png', city: 'Johannesburg' },
+  { id: '2', name: 'Orlando Pirates', logo: 'https://www.psl.co.za/media/11031/orlando-pirates.png', city: 'Johannesburg' },
+  { id: '3', name: 'Mamelodi Sundowns', logo: 'https://www.psl.co.za/media/11028/mamelodi-sundowns.png', city: 'Pretoria' },
+  { id: '4', name: 'Supersport United', logo: 'https://www.psl.co.za/media/11036/supersport-united.png', city: 'Pretoria' },
+  { id: '5', name: 'Cape Town City', logo: 'https://www.psl.co.za/media/11024/cape-town-city-fc.png', city: 'Cape Town' },
+  { id: '6', name: 'Stellenbosch FC', logo: 'https://www.psl.co.za/media/11035/stellenbosch-fc.png', city: 'Stellenbosch' },
+  { id: '7', name: 'AmaZulu FC', logo: 'https://www.psl.co.za/media/11020/amazulu.png', city: 'Durban' },
+  { id: '8', name: 'Sekhukhune United', logo: 'https://www.psl.co.za/media/11033/sekhukhune-united.png', city: 'Limpopo' },
+  { id: '9', name: 'Golden Arrows', logo: 'https://www.psl.co.za/media/11026/golden-arrows.png', city: 'Durban' },
+  { id: '10', name: 'Royal AM', logo: 'https://www.psl.co.za/media/11032/royal-am.png', city: 'Durban' },
+  { id: '11', name: 'Chippa United', logo: 'https://www.psl.co.za/media/11025/chippa-united.png', city: 'Port Elizabeth' },
+  { id: '12', name: 'TS Galaxy', logo: 'https://www.psl.co.za/media/11037/ts-galaxy.png', city: 'Mpumalanga' },
+  { id: '13', name: 'Polokwane City', logo: 'https://www.psl.co.za/media/11030/polokwane-city.png', city: 'Polokwane' },
+  { id: '14', name: 'Baroka FC', logo: 'https://www.psl.co.za/media/11022/baroka-fc.png', city: 'Limpopo' },
+  { id: '15', name: 'Maritzburg United', logo: 'https://www.psl.co.za/media/11029/maritzburg-united.png', city: 'Pietermaritzburg' },
+  { id: '16', name: 'Swallows FC', logo: 'https://www.psl.co.za/media/11038/swallows-fc.png', city: 'Johannesburg' }
 ];
 
 export const players: Player[] = [
