@@ -16,22 +16,22 @@ export interface Player {
 }
 
 export const teams: Team[] = [
-  { id: '1', name: 'Kaizer Chiefs', logo: 'https://www.psl.co.za/media/11041/kaizer-chiefs.png', city: 'Johannesburg' },
-  { id: '2', name: 'Orlando Pirates', logo: 'https://www.psl.co.za/media/11031/orlando-pirates.png', city: 'Johannesburg' },
-  { id: '3', name: 'Mamelodi Sundowns', logo: 'https://www.psl.co.za/media/11028/mamelodi-sundowns.png', city: 'Pretoria' },
-  { id: '4', name: 'Supersport United', logo: 'https://www.psl.co.za/media/11036/supersport-united.png', city: 'Pretoria' },
-  { id: '5', name: 'Cape Town City', logo: 'https://www.psl.co.za/media/11024/cape-town-city-fc.png', city: 'Cape Town' },
-  { id: '6', name: 'Stellenbosch FC', logo: 'https://www.psl.co.za/media/11035/stellenbosch-fc.png', city: 'Stellenbosch' },
-  { id: '7', name: 'AmaZulu FC', logo: 'https://www.psl.co.za/media/11020/amazulu.png', city: 'Durban' },
-  { id: '8', name: 'Sekhukhune United', logo: 'https://www.psl.co.za/media/11033/sekhukhune-united.png', city: 'Limpopo' },
-  { id: '9', name: 'Golden Arrows', logo: 'https://www.psl.co.za/media/11026/golden-arrows.png', city: 'Durban' },
-  { id: '10', name: 'Royal AM', logo: 'https://www.psl.co.za/media/11032/royal-am.png', city: 'Durban' },
-  { id: '11', name: 'Chippa United', logo: 'https://www.psl.co.za/media/11025/chippa-united.png', city: 'Port Elizabeth' },
-  { id: '12', name: 'TS Galaxy', logo: 'https://www.psl.co.za/media/11037/ts-galaxy.png', city: 'Mpumalanga' },
-  { id: '13', name: 'Polokwane City', logo: 'https://www.psl.co.za/media/11030/polokwane-city.png', city: 'Polokwane' },
-  { id: '14', name: 'Baroka FC', logo: 'https://www.psl.co.za/media/11022/baroka-fc.png', city: 'Limpopo' },
-  { id: '15', name: 'Maritzburg United', logo: 'https://www.psl.co.za/media/11029/maritzburg-united.png', city: 'Pietermaritzburg' },
-  { id: '16', name: 'Swallows FC', logo: 'https://www.psl.co.za/media/11038/swallows-fc.png', city: 'Johannesburg' }
+  { id: '1', name: 'Kaizer Chiefs', logo: 'https://logos-world.net/wp-content/uploads/2020/06/Kaizer-Chiefs-Logo.png', city: 'Johannesburg' },
+  { id: '2', name: 'Orlando Pirates', logo: 'https://logos-world.net/wp-content/uploads/2020/06/Orlando-Pirates-Logo.png', city: 'Johannesburg' },
+  { id: '3', name: 'Mamelodi Sundowns', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/6/6a/Mamelodi_Sundowns_FC.svg/200px-Mamelodi_Sundowns_FC.svg.png', city: 'Pretoria' },
+  { id: '4', name: 'Supersport United', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/3/3a/SuperSport_United_FC.svg/200px-SuperSport_United_FC.svg.png', city: 'Pretoria' },
+  { id: '5', name: 'Cape Town City', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/e/e5/Cape_Town_City_FC.svg/200px-Cape_Town_City_FC.svg.png', city: 'Cape Town' },
+  { id: '6', name: 'Stellenbosch FC', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Stellenbosch_FC.svg/200px-Stellenbosch_FC.svg.png', city: 'Stellenbosch' },
+  { id: '7', name: 'AmaZulu FC', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9c/AmaZulu_FC.svg/200px-AmaZulu_FC.svg.png', city: 'Durban' },
+  { id: '8', name: 'Sekhukhune United', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/1/1f/Sekhukhune_United_FC.svg/200px-Sekhukhune_United_FC.svg.png', city: 'Limpopo' },
+  { id: '9', name: 'Golden Arrows', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f4/Golden_Arrows_FC.svg/200px-Golden_Arrows_FC.svg.png', city: 'Durban' },
+  { id: '10', name: 'Royal AM', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Royal_AM_FC.svg/200px-Royal_AM_FC.svg.png', city: 'Durban' },
+  { id: '11', name: 'Chippa United', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/8/8e/Chippa_United_FC.svg/200px-Chippa_United_FC.svg.png', city: 'Port Elizabeth' },
+  { id: '12', name: 'TS Galaxy', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d5/TS_Galaxy_FC.svg/200px-TS_Galaxy_FC.svg.png', city: 'Mpumalanga' },
+  { id: '13', name: 'Polokwane City', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/b/b2/Polokwane_City_FC.svg/200px-Polokwane_City_FC.svg.png', city: 'Polokwane' },
+  { id: '14', name: 'Baroka FC', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/7/79/Baroka_FC.svg/200px-Baroka_FC.svg.png', city: 'Limpopo' },
+  { id: '15', name: 'Maritzburg United', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/1/1e/Maritzburg_United_FC.svg/200px-Maritzburg_United_FC.svg.png', city: 'Pietermaritzburg' },
+  { id: '16', name: 'Swallows FC', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/5/5e/Swallows_FC.svg/200px-Swallows_FC.svg.png', city: 'Johannesburg' }
 ];
 
 export const players: Player[] = [
