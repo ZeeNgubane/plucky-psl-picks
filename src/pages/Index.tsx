@@ -134,8 +134,13 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* PSL Header Section */}
-      <div className="bg-red-600 text-white">
-        <div className="container mx-auto px-4 py-6">
+      <div className="bg-red-600 text-white relative">
+        <img 
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8Qyp3Lwe6asV9LvYM13nUAosA3woAqW4YsQ&s" 
+          alt="Banner Background"
+          className="absolute inset-0 w-full h-full object-cover opacity-20"
+        />
+        <div className="container mx-auto px-4 py-6 relative z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <img 
@@ -446,7 +451,7 @@ const Index = () => {
                                 <SelectValue placeholder="All Positions" />
                               </SelectTrigger>
                               <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                                <SelectItem value="all">All Positions</SelectItem>
+                                <SelectItem value="all-positions">All Positions</SelectItem>
                                 <SelectItem value="GK">Goalkeeper</SelectItem>
                                 <SelectItem value="DEF">Defender</SelectItem>
                                 <SelectItem value="MID">Midfielder</SelectItem>
@@ -459,7 +464,7 @@ const Index = () => {
                                 <SelectValue placeholder="All Teams" />
                               </SelectTrigger>
                               <SelectContent className="bg-white border border-gray-200 shadow-lg max-h-40">
-                                <SelectItem value="all">All Teams</SelectItem>
+                                <SelectItem value="all-teams">All Teams</SelectItem>
                                 {teams.map(team => (
                                   <SelectItem key={team.id} value={team.name}>
                                     {team.name}
@@ -594,3 +599,5 @@ const Index = () => {
 };
 
 export default Index;
+
+</edits_to_apply>
