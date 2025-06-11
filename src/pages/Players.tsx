@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -41,8 +40,8 @@ const Players = () => {
     .filter(player => {
       const matchesSearch = player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            player.team.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesPosition = !positionFilter || player.position === positionFilter;
-      const matchesTeam = !teamFilter || player.team === teamFilter;
+      const matchesPosition = positionFilter === 'all' || !positionFilter || player.position === positionFilter;
+      const matchesTeam = teamFilter === 'all' || !teamFilter || player.team === teamFilter;
       return matchesSearch && matchesPosition && matchesTeam;
     })
     .sort((a, b) => {
@@ -152,7 +151,7 @@ const Players = () => {
                   <SelectValue placeholder="All Positions" />
                 </SelectTrigger>
                 <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                  <SelectItem value="">All Positions</SelectItem>
+                  <SelectItem value="all">All Positions</SelectItem>
                   <SelectItem value="GK">Goalkeeper</SelectItem>
                   <SelectItem value="DEF">Defender</SelectItem>
                   <SelectItem value="MID">Midfielder</SelectItem>
@@ -165,7 +164,7 @@ const Players = () => {
                   <SelectValue placeholder="All Teams" />
                 </SelectTrigger>
                 <SelectContent className="bg-white border border-gray-200 shadow-lg max-h-60">
-                  <SelectItem value="">All Teams</SelectItem>
+                  <SelectItem value="all">All Teams</SelectItem>
                   {teams.map(team => (
                     <SelectItem key={team.id} value={team.name}>
                       <div className="flex items-center space-x-2">
