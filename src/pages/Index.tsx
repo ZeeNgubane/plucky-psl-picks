@@ -1,9 +1,8 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Trophy, Users, Star, Calendar, TrendingUp, Award, Target, Clock } from 'lucide-react';
+import { Trophy, Users, Star, Calendar, TrendingUp, Award, Target, Clock, Plus, ArrowUpDown, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Player, teams } from '@/data/teams';
 import { useToast } from '@/hooks/use-toast';
@@ -12,7 +11,7 @@ import Transfers from '@/components/Transfers';
 import League from '@/components/League';
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('home');
   const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);
   const [budget, setBudget] = useState(100.0);
   const { toast } = useToast();
@@ -90,36 +89,46 @@ const Index = () => {
     }
   };
 
+  const getPositionIcon = (position: string) => {
+    const icons = {
+      GK: '🥅',
+      DEF: '🛡️', 
+      MID: '⚽',
+      FWD: '⚽'
+    };
+    return icons[position] || '⚽';
+  };
+
+  const formation = {
+    GK: selectedPlayers.filter(p => p.position === 'GK'),
+    DEF: selectedPlayers.filter(p => p.position === 'DEF'),
+    MID: selectedPlayers.filter(p => p.position === 'MID'),
+    FWD: selectedPlayers.filter(p => p.position === 'FWD')
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* PSL Header Section */}
       <div className="bg-red-600 text-white">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-4">
               <img 
                 src="https://www.psl.co.za/media/10983/psl-logo-gold.png" 
                 alt="PSL Logo" 
-                className="h-20 w-auto"
+                className="h-16 w-auto"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL0JZOmbEBlLE_lP0SKjIaxOfpF4DvC3bZoQ&s';
                 }}
               />
               <div>
-                <h1 className="text-4xl font-bold">SA Fantasy Football</h1>
-                <p className="text-xl text-red-100 mt-1">Betway Premiership 2024/25</p>
-                <div className="flex items-center space-x-4 mt-3">
-                  <Badge className="bg-yellow-500 text-black font-semibold">LIVE SEASON</Badge>
-                  <div className="flex items-center space-x-1 text-red-100">
-                    <Calendar className="h-4 w-4" />
-                    <span className="text-sm">Round 14</span>
-                  </div>
-                </div>
+                <h1 className="text-3xl font-bold">SA Fantasy Football</h1>
+                <p className="text-red-100">Betway Premiership 2024/25</p>
               </div>
             </div>
             <div className="text-right">
               <div className="text-sm text-red-100">Current Gameweek</div>
-              <div className="font-bold text-3xl">14</div>
+              <div className="font-bold text-2xl">14</div>
               <div className="text-sm text-red-100">of 30</div>
             </div>
           </div>
@@ -127,7 +136,7 @@ const Index = () => {
       </div>
 
       {/* Navigation Breadcrumb */}
-      <div className="bg-gray-50 border-b">
+      <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center space-x-2 text-sm text-gray-600">
             <span>Home</span>
@@ -146,16 +155,16 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex space-x-8">
             <button
-              onClick={() => setActiveTab('overview')}
+              onClick={() => setActiveTab('home')}
               className={`py-4 px-2 border-b-2 transition-colors duration-200 font-medium ${
-                activeTab === 'overview'
+                activeTab === 'home'
                   ? 'border-red-600 text-red-600'
                   : 'border-transparent text-gray-600 hover:text-red-600'
               }`}
             >
               <div className="flex items-center space-x-2">
                 <Trophy className="h-4 w-4" />
-                <span>Overview</span>
+                <span>Home</span>
               </div>
             </button>
 
@@ -204,169 +213,305 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        {activeTab === 'overview' ? (
-          <>
-            {/* Hero Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <Card className="border-l-4 border-l-red-600">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-3xl font-bold text-gray-900">{teams.length}</div>
-                      <div className="text-sm text-gray-600">Teams</div>
-                    </div>
-                    <Users className="h-8 w-8 text-red-600" />
+      <div className="container mx-auto px-4 py-6">
+        {activeTab === 'home' ? (
+          <div className="space-y-6">
+            {/* Team Summary Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card className="bg-white">
+                <CardContent className="p-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-gray-900">{selectedPlayers.length}</div>
+                    <div className="text-sm text-gray-600">Squad Size</div>
+                    <div className="text-xs text-gray-500">15 max</div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white">
+                <CardContent className="p-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-600">R{(budget * 18).toFixed(1)}M</div>
+                    <div className="text-sm text-gray-600">Budget Left</div>
+                    <div className="text-xs text-gray-500">R100M total</div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-l-4 border-l-blue-600">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-3xl font-bold text-gray-900">R{(budget * 18).toFixed(1)}M</div>
-                      <div className="text-sm text-gray-600">Remaining Budget</div>
-                    </div>
-                    <Target className="h-8 w-8 text-blue-600" />
+              <Card className="bg-white">
+                <CardContent className="p-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-600">{selectedPlayers.reduce((sum, p) => sum + p.points, 0)}</div>
+                    <div className="text-sm text-gray-600">Total Points</div>
+                    <div className="text-xs text-gray-500">This season</div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-l-4 border-l-green-600">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-3xl font-bold text-gray-900">{selectedPlayers.length}</div>
-                      <div className="text-sm text-gray-600">Players Selected</div>
-                    </div>
-                    <Trophy className="h-8 w-8 text-green-600" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-yellow-600">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-3xl font-bold text-gray-900">14</div>
-                      <div className="text-sm text-gray-600">Current Gameweek</div>
-                    </div>
-                    <Clock className="h-8 w-8 text-yellow-600" />
+              <Card className="bg-white">
+                <CardContent className="p-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-purple-600">14</div>
+                    <div className="text-sm text-gray-600">Gameweek</div>
+                    <div className="text-xs text-gray-500">Round 14</div>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Quick Actions */}
-            <Card className="mb-8 shadow-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-gray-900">
-                  <TrendingUp className="h-5 w-5" />
-                  <span>Quick Actions</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Button
-                    onClick={() => setActiveTab('team')}
-                    className="h-20 bg-red-600 hover:bg-red-700 text-white flex-col space-y-2"
-                  >
-                    <Users className="h-6 w-6" />
-                    <span>View My Team</span>
-                  </Button>
-
-                  <Button
-                    onClick={() => setActiveTab('transfers')}
-                    className="h-20 bg-blue-600 hover:bg-blue-700 text-white flex-col space-y-2"
-                  >
-                    <Star className="h-6 w-6" />
-                    <span>Make Transfers</span>
-                  </Button>
-
-                  <Link to="/players" className="block">
-                    <Button className="w-full h-20 bg-green-600 hover:bg-green-700 text-white flex-col space-y-2">
-                      <Trophy className="h-6 w-6" />
-                      <span>Browse Players</span>
+            {/* My Team Section - Premier League Fantasy Style */}
+            <Card className="bg-white">
+              <CardHeader className="border-b bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl font-bold text-gray-900">My Team</CardTitle>
+                  <div className="flex items-center space-x-3">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setActiveTab('transfers')}
+                      className="border-red-600 text-red-600 hover:bg-red-50"
+                    >
+                      <ArrowUpDown className="h-4 w-4 mr-1" />
+                      Transfers
                     </Button>
-                  </Link>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setActiveTab('team')}
+                      className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                    >
+                      <Users className="h-4 w-4 mr-1" />
+                      View Team
+                    </Button>
+                  </div>
                 </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                {selectedPlayers.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="text-gray-400 mb-4">
+                      <Users className="h-16 w-16 mx-auto mb-4" />
+                      <h3 className="text-xl font-semibold text-gray-600 mb-2">Your squad is empty</h3>
+                      <p className="text-gray-500 mb-6">Start building your dream team by selecting players</p>
+                    </div>
+                    <Button 
+                      onClick={() => setActiveTab('transfers')}
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Players
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-8">
+                    {/* Squad Overview */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      <div className="lg:col-span-2">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Squad Overview</h3>
+                        <div className="space-y-4">
+                          {/* Goalkeepers */}
+                          <div className="border rounded-lg p-4 bg-yellow-50 border-yellow-200">
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-medium text-gray-900 flex items-center">
+                                <span className="text-yellow-600 mr-2">🥅</span>
+                                Goalkeepers ({formation.GK.length}/2)
+                              </h4>
+                              {formation.GK.length < 2 && (
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => setActiveTab('transfers')}
+                                  className="text-xs"
+                                >
+                                  <Plus className="h-3 w-3 mr-1" />
+                                  Add
+                                </Button>
+                              )}
+                            </div>
+                            <div className="space-y-2">
+                              {formation.GK.map(player => (
+                                <div key={player.id} className="flex items-center justify-between bg-white p-3 rounded border">
+                                  <div>
+                                    <p className="font-medium text-gray-900">{player.name}</p>
+                                    <p className="text-sm text-gray-500">{player.team}</p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="font-semibold text-green-600">R{(player.price * 18).toFixed(1)}M</p>
+                                    <p className="text-sm text-blue-600">{player.points} pts</p>
+                                  </div>
+                                </div>
+                              ))}
+                              {formation.GK.length === 0 && (
+                                <div className="text-center py-4 text-gray-500 border-2 border-dashed border-yellow-300 rounded">
+                                  <p className="text-sm">No goalkeepers selected</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Defenders */}
+                          <div className="border rounded-lg p-4 bg-blue-50 border-blue-200">
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-medium text-gray-900 flex items-center">
+                                <span className="text-blue-600 mr-2">🛡️</span>
+                                Defenders ({formation.DEF.length}/5)
+                              </h4>
+                              {formation.DEF.length < 5 && (
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => setActiveTab('transfers')}
+                                  className="text-xs"
+                                >
+                                  <Plus className="h-3 w-3 mr-1" />
+                                  Add
+                                </Button>
+                              )}
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                              {formation.DEF.map(player => (
+                                <div key={player.id} className="flex items-center justify-between bg-white p-3 rounded border">
+                                  <div>
+                                    <p className="font-medium text-gray-900">{player.name}</p>
+                                    <p className="text-sm text-gray-500">{player.team}</p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="font-semibold text-green-600">R{(player.price * 18).toFixed(1)}M</p>
+                                    <p className="text-sm text-blue-600">{player.points} pts</p>
+                                  </div>
+                                </div>
+                              ))}
+                              {formation.DEF.length === 0 && (
+                                <div className="md:col-span-2 text-center py-4 text-gray-500 border-2 border-dashed border-blue-300 rounded">
+                                  <p className="text-sm">No defenders selected</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Midfielders */}
+                          <div className="border rounded-lg p-4 bg-green-50 border-green-200">
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-medium text-gray-900 flex items-center">
+                                <span className="text-green-600 mr-2">⚽</span>
+                                Midfielders ({formation.MID.length}/5)
+                              </h4>
+                              {formation.MID.length < 5 && (
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => setActiveTab('transfers')}
+                                  className="text-xs"
+                                >
+                                  <Plus className="h-3 w-3 mr-1" />
+                                  Add
+                                </Button>
+                              )}
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                              {formation.MID.map(player => (
+                                <div key={player.id} className="flex items-center justify-between bg-white p-3 rounded border">
+                                  <div>
+                                    <p className="font-medium text-gray-900">{player.name}</p>
+                                    <p className="text-sm text-gray-500">{player.team}</p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="font-semibold text-green-600">R{(player.price * 18).toFixed(1)}M</p>
+                                    <p className="text-sm text-blue-600">{player.points} pts</p>
+                                  </div>
+                                </div>
+                              ))}
+                              {formation.MID.length === 0 && (
+                                <div className="md:col-span-2 text-center py-4 text-gray-500 border-2 border-dashed border-green-300 rounded">
+                                  <p className="text-sm">No midfielders selected</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Forwards */}
+                          <div className="border rounded-lg p-4 bg-red-50 border-red-200">
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-medium text-gray-900 flex items-center">
+                                <span className="text-red-600 mr-2">⚡</span>
+                                Forwards ({formation.FWD.length}/3)
+                              </h4>
+                              {formation.FWD.length < 3 && (
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => setActiveTab('transfers')}
+                                  className="text-xs"
+                                >
+                                  <Plus className="h-3 w-3 mr-1" />
+                                  Add
+                                </Button>
+                              )}
+                            </div>
+                            <div className="space-y-2">
+                              {formation.FWD.map(player => (
+                                <div key={player.id} className="flex items-center justify-between bg-white p-3 rounded border">
+                                  <div>
+                                    <p className="font-medium text-gray-900">{player.name}</p>
+                                    <p className="text-sm text-gray-500">{player.team}</p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="font-semibold text-green-600">R{(player.price * 18).toFixed(1)}M</p>
+                                    <p className="text-sm text-blue-600">{player.points} pts</p>
+                                  </div>
+                                </div>
+                              ))}
+                              {formation.FWD.length === 0 && (
+                                <div className="text-center py-4 text-gray-500 border-2 border-dashed border-red-300 rounded">
+                                  <p className="text-sm">No forwards selected</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Sidebar Info */}
+                      <div className="space-y-4">
+                        <Card className="bg-gray-50">
+                          <CardHeader className="pb-3">
+                            <CardTitle className="text-sm font-medium text-gray-700 flex items-center">
+                              <Info className="h-4 w-4 mr-2" />
+                              Squad Status
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Players:</span>
+                              <span className="font-medium">{selectedPlayers.length}/15</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Budget:</span>
+                              <span className="font-medium text-green-600">R{(budget * 18).toFixed(1)}M</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Team Value:</span>
+                              <span className="font-medium">R{((100 - budget) * 18).toFixed(1)}M</span>
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="bg-blue-50">
+                          <CardHeader className="pb-3">
+                            <CardTitle className="text-sm font-medium text-blue-700">Next Deadline</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-sm text-blue-600 font-medium">15 Feb 2025</p>
+                            <p className="text-xs text-blue-500">3 days remaining</p>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
-
-            {/* Tournament Information */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card className="shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-gray-900">Tournament Details</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex justify-between items-center py-3 border-b">
-                    <span className="text-gray-600">Competition</span>
-                    <span className="font-semibold text-gray-900">Betway Premiership</span>
-                  </div>
-                  <div className="flex justify-between items-center py-3 border-b">
-                    <span className="text-gray-600">Season</span>
-                    <span className="font-semibold text-gray-900">2024/25</span>
-                  </div>
-                  <div className="flex justify-between items-center py-3 border-b">
-                    <span className="text-gray-600">Teams</span>
-                    <span className="font-semibold text-gray-900">{teams.length}</span>
-                  </div>
-                  <div className="flex justify-between items-center py-3 border-b">
-                    <span className="text-gray-600">Current Round</span>
-                    <Badge className="bg-red-100 text-red-800">Round 14</Badge>
-                  </div>
-                  <div className="flex justify-between items-center py-3">
-                    <span className="text-gray-600">Fantasy Budget</span>
-                    <span className="font-semibold text-green-600">R100.0M</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-gray-900">How to Play</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">Select Your Squad</h4>
-                      <p className="text-sm text-gray-600">Pick 15 players within your R100M budget</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">Set Your Formation</h4>
-                      <p className="text-sm text-gray-600">Choose 11 starting players for each gameweek</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">Score Points</h4>
-                      <p className="text-sm text-gray-600">Earn points based on real player performances</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">Compete</h4>
-                      <p className="text-sm text-gray-600">Climb the leaderboards and win prizes</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Footer */}
-            <div className="mt-12 text-center text-sm text-gray-500">
-              <p>Official SA Fantasy Football | Betway Premiership 2024/25 Season</p>
-              <p className="mt-2">Powered by Premier Soccer League</p>
-            </div>
-          </>
+          </div>
         ) : (
           <div className="bg-white rounded-lg shadow-sm p-6">
             {renderTabContent()}
