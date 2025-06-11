@@ -8,6 +8,10 @@ import { Search, TrendingUp, TrendingDown } from 'lucide-react';
 import { players, teams, Player } from '@/data/teams';
 
 const Players = () => {
+  console.log('Players component is rendering');
+  console.log('Players data:', players.length, 'players found');
+  console.log('Teams data:', teams.length, 'teams found');
+
   const [searchTerm, setSearchTerm] = useState('');
   const [positionFilter, setPositionFilter] = useState('');
   const [teamFilter, setTeamFilter] = useState('');
@@ -170,7 +174,8 @@ const Players = () => {
                               alt={player.team} 
                               className="w-6 h-6 object-contain"
                               onError={(e) => {
-                                (e.target as HTMLImageElement).src = 'https://www.psl.co.za/media/11041/kaizer-chiefs.png';
+                                console.log('Logo error for team:', player.team);
+                                (e.target as HTMLImageElement).src = 'https://logos-world.net/wp-content/uploads/2020/06/Kaizer-Chiefs-Logo.png';
                               }}
                             />
                             <span className="text-gray-200">{player.team}</span>
