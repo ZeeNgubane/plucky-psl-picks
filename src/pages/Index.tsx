@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -138,7 +139,7 @@ const Index = () => {
         <img 
           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8Qyp3Lwe6asV9LvYM13nUAosA3woAqW4YsQ&s" 
           alt="Banner Background"
-          className="absolute inset-0 w-full h-full object-cover opacity-20"
+          className="absolute top-4 right-4 w-32 h-20 object-cover opacity-60 rounded-lg"
         />
         <div className="container mx-auto px-4 py-6 relative z-10">
           <div className="flex items-center justify-between">
