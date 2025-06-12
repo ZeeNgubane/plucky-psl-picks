@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -134,11 +133,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* PSL Header Section - Premier League Style */}
-      <div className="relative bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white overflow-hidden">
+      {/* PSL Header Section - Transparent Banner */}
+      <div className="relative bg-transparent text-white overflow-hidden">
         {/* Background Image Overlay */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60"
           style={{
             backgroundImage: 'url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8Qyp3Lwe6asV9LvYM13nUAosA3woAqW4YsQ&s)',
             backgroundPosition: 'right center'
@@ -159,21 +158,21 @@ const Index = () => {
                   }}
                 />
                 <div>
-                  <h1 className="text-4xl md:text-5xl font-bold mb-2">Fantasy Football</h1>
+                  <h1 className="text-4xl md:text-5xl font-bold mb-2 text-shadow">Fantasy Football</h1>
                   <div className="flex items-center space-x-2">
-                    <span className="text-lg text-red-100">Betway Premiership</span>
-                    <span className="text-red-200">•</span>
-                    <span className="text-lg text-red-100">2024/25</span>
+                    <span className="text-lg text-white/90">Betway Premiership</span>
+                    <span className="text-white/70">•</span>
+                    <span className="text-lg text-white/90">2024/25</span>
                   </div>
                 </div>
               </div>
               
               {/* Gameweek Info */}
               <div className="text-right">
-                <div className="bg-red-500/30 backdrop-blur-sm rounded-lg px-6 py-4 border border-red-400/30">
-                  <div className="text-sm text-red-100 mb-1">Gameweek</div>
+                <div className="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-4 border border-white/30">
+                  <div className="text-sm text-white/90 mb-1">Gameweek</div>
                   <div className="text-3xl font-bold mb-1">14</div>
-                  <div className="text-sm text-red-200">3 days, 2 hrs</div>
+                  <div className="text-sm text-white/80">3 days, 2 hrs</div>
                 </div>
               </div>
             </div>
