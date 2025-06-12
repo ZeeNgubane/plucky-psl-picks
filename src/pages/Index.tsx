@@ -138,7 +138,7 @@ const Index = () => {
         <img 
           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8Qyp3Lwe6asV9LvYM13nUAosA3woAqW4YsQ&s" 
           alt="Banner Background"
-          className="absolute top-2 right-4 w-48 h-16 object-cover opacity-80 rounded-lg shadow-lg"
+          className="absolute top-2 right-4 w-80 h-20 object-cover rounded-lg shadow-lg z-20 border-2 border-white"
         />
         <div className="container mx-auto px-4 py-6 relative z-10">
           <div className="flex items-center justify-between">
@@ -156,11 +156,16 @@ const Index = () => {
                 <p className="text-red-100">Betway Premiership 2024/25</p>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-sm text-red-100">Current Gameweek</div>
-              <div className="font-bold text-2xl">14</div>
-              <div className="text-sm text-red-100">of 30</div>
-            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Gameweek Section */}
+      <div className="bg-red-500 text-white">
+        <div className="container mx-auto px-4 py-3">
+          <div className="text-center">
+            <div className="text-sm text-red-100">Current Gameweek</div>
+            <div className="font-bold text-xl">14 of 30</div>
           </div>
         </div>
       </div>
