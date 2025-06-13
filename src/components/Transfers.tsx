@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,8 +18,8 @@ interface TransfersProps {
 
 const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: TransfersProps) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [positionFilter, setPositionFilter] = useState('');
-  const [teamFilter, setTeamFilter] = useState('');
+  const [positionFilter, setPositionFilter] = useState('all');
+  const [teamFilter, setTeamFilter] = useState('all');
   const [sortBy, setSortBy] = useState('points');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
 
@@ -43,8 +42,8 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
     .filter(player => {
       const matchesSearch = player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            player.team.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesPosition = !positionFilter || player.position === positionFilter;
-      const matchesTeam = !teamFilter || player.team === teamFilter;
+      const matchesPosition = positionFilter === 'all' || player.position === positionFilter;
+      const matchesTeam = teamFilter === 'all' || player.team === teamFilter;
       return matchesSearch && matchesPosition && matchesTeam;
     })
     .sort((a, b) => {
@@ -78,13 +77,20 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
     return 'stable';
   };
 
-  const validTeams = teams.filter(team => team.name && team.name.trim() !== '');
+  // Properly filter teams to ensure no empty names or invalid data
+  const validTeams = teams.filter(team => 
+    team && 
+    team.name && 
+    typeof team.name === 'string' && 
+    team.name.trim() !== '' &&
+    team.id
+  );
 
   const renderStatsCards = () => (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
       <Card className="border-l-4 border-l-red-600">
         <CardContent className="p-4">
-          <div className="text-2xl font-bold text-gray-900">{teams.length}</div>
+          <div className="text-2xl font-bold text-gray-900">{validTeams.length}</div>
           <div className="text-sm text-gray-600">Teams</div>
         </CardContent>
       </Card>
@@ -156,7 +162,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
               <SelectValue placeholder="Position" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Positions</SelectItem>
+              <SelectItem value="all">All Positions</SelectItem>
               <SelectItem value="GK">Goalkeeper</SelectItem>
               <SelectItem value="DEF">Defender</SelectItem>
               <SelectItem value="MID">Midfielder</SelectItem>
@@ -169,7 +175,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
               <SelectValue placeholder="Team" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Teams</SelectItem>
+              <SelectItem value="all">All Teams</SelectItem>
               {validTeams.map(team => (
                 <SelectItem key={team.id} value={team.name}>
                   {team.logo} {team.name}
