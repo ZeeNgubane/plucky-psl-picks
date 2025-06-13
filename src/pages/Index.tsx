@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -130,6 +131,9 @@ const Index = () => {
     MID: selectedPlayers.filter(p => p.position === 'MID'),
     FWD: selectedPlayers.filter(p => p.position === 'FWD')
   };
+
+  // Filter out any teams with empty names to prevent SelectItem errors
+  const validTeams = teams.filter(team => team.name && team.name.trim() !== '');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -480,7 +484,7 @@ const Index = () => {
                               </SelectTrigger>
                               <SelectContent className="bg-white border border-gray-200 shadow-lg max-h-40">
                                 <SelectItem value="all">All Teams</SelectItem>
-                                {teams.map(team => (
+                                {validTeams.map(team => (
                                   <SelectItem key={team.id} value={team.name}>
                                     {team.name}
                                   </SelectItem>
