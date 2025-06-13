@@ -466,7 +466,7 @@ const Index = () => {
                                 <SelectValue placeholder="All Positions" />
                               </SelectTrigger>
                               <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                                <SelectItem value="all-positions">All Positions</SelectItem>
+                                <SelectItem value="all">All Positions</SelectItem>
                                 <SelectItem value="GK">Goalkeeper</SelectItem>
                                 <SelectItem value="DEF">Defender</SelectItem>
                                 <SelectItem value="MID">Midfielder</SelectItem>
@@ -479,7 +479,7 @@ const Index = () => {
                                 <SelectValue placeholder="All Teams" />
                               </SelectTrigger>
                               <SelectContent className="bg-white border border-gray-200 shadow-lg max-h-40">
-                                <SelectItem value="all-teams">All Teams</SelectItem>
+                                <SelectItem value="all">All Teams</SelectItem>
                                 {teams.map(team => (
                                   <SelectItem key={team.id} value={team.name}>
                                     {team.name}
