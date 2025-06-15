@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import MyTeamSummary from "./MyTeamSummary";
 import PlayerLineupList from "./PlayerLineupList";
 import FormationPitch from "./FormationPitch";
@@ -55,16 +55,25 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
     FWD: selectedPlayers.filter(p => p.position === 'FWD')
   };
 
+  const squadIdsString = useMemo(() => 
+    JSON.stringify(selectedPlayers.map(p => p.id).sort()),
+    [selectedPlayers]
+  );
+
   useEffect(() => {
+    if (selectedPlayers.length === 0) {
+      setStarters([]);
+      setSubs([]);
+      return;
+    }
+    
     const savedStarterIdsStr = localStorage.getItem('fantasy-starter-ids');
     const savedSquadIdsStr = localStorage.getItem('fantasy-squad-ids');
-    const currentSquadIds = selectedPlayers.map(p => p.id).sort();
 
     let loadedFromSave = false;
     if (savedStarterIdsStr && savedSquadIdsStr) {
       try {
-        const savedSquadIds = JSON.parse(savedSquadIdsStr);
-        if (JSON.stringify(currentSquadIds) === JSON.stringify(savedSquadIds)) {
+        if (squadIdsString === savedSquadIdsStr) {
             const savedStarterIds = new Set(JSON.parse(savedStarterIdsStr));
             setStarters(selectedPlayers.filter(p => savedStarterIds.has(p.id)));
             setSubs(selectedPlayers.filter(p => !savedStarterIds.has(p.id)));
@@ -101,7 +110,7 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
 
     setStarters(selectedPlayers.filter(p => startingPlayerIds.has(p.id)));
     setSubs(selectedPlayers.filter(p => !startingPlayerIds.has(p.id)));
-  }, [selectedPlayers]);
+  }, [selectedPlayers, squadIdsString]);
   
   const handlePlayerClick = (clickedPlayer: Player) => {
     if (!playerToSwap) {
