@@ -18,9 +18,9 @@ export interface Player {
 }
 
 export const teams: Team[] = [
-  { id: '1', name: 'Kaizer Chiefs', logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Kaizer%20Chiefs.jpg', city: 'Johannesburg', kitImage: 'https://cdn.footballkitarchive.com/2023/07/28/4s5i7atfL1FUXc2.jpg' },
-  { id: '2', name: 'Orlando Pirates', logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Orlando%20Pirates.jpg', city: 'Johannesburg', kitImage: 'https://cdn.footballkitarchive.com/2023/07/28/BwF10M5dK2pSgM1.jpg' },
-  { id: '3', name: 'Mamelodi Sundowns', logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Mamelodi%20Sundowns.jpg', city: 'Pretoria', kitImage: 'https://cdn.footballkitarchive.com/2023/07/28/R6Hk7p59gO1XFqW.jpg' },
+  { id: '1', name: 'Kaizer Chiefs', logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Kaizer%20Chiefs.jpg', city: 'Johannesburg', kitImage: 'https://www.sollymsports.com/wp-content/uploads/2024/08/photo-output_3.jpeg' },
+  { id: '2', name: 'Orlando Pirates', logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Orlando%20Pirates.jpg', city: 'Johannesburg', kitImage: 'https://www.piratesshop.co.za/wp-content/uploads/2024/07/JJ2287_FL-1-copy.png' },
+  { id: '3', name: 'Mamelodi Sundowns', logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Mamelodi%20Sundowns.jpg', city: 'Pretoria', kitImage: 'https://images.puma.com/image/upload/f_auto,q_auto,w_600,b_rgb:FAFAFA/global/images/782742/22/fnd/ZAF/fmt/png' },
   { id: '4', name: 'Supersport United', logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/SuperSport%20United.jpg', city: 'Pretoria', kitImage: 'https://cdn.footballkitarchive.com/2023/08/04/l7zX9J6m5b4yDso.jpg' },
   { id: '5', name: 'Cape Town City', logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Cape%20Town%20City%20FC.jpg', city: 'Cape Town', kitImage: 'https://cdn.footballkitarchive.com/2023/07/29/7g1U3P6S0wK8xVq.jpg' },
   { id: '6', name: 'Stellenbosch FC', logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Stellenbosch%20FC.jpg', city: 'Stellenbosch', kitImage: 'https://cdn.footballkitarchive.com/2023/07/28/f3tL2M1sV9jR8cQ.jpg' },
