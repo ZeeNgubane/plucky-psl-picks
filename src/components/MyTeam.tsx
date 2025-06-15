@@ -2,22 +2,115 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Player } from '@/data/teams';
 
+// --- Formation maps and utility ---
+const FORMATIONS = [
+  {
+    name: "4-4-2",
+    def: 4,
+    mid: 4,
+    fwd: 2,
+    layout: [
+      { label: 'FWD', count: 2 },
+      { label: 'MID', count: 4 },
+      { label: 'DEF', count: 4 },
+      { label: 'GK', count: 1 },
+    ]
+  },
+  {
+    name: "4-3-3",
+    def: 4,
+    mid: 3,
+    fwd: 3,
+    layout: [
+      { label: 'FWD', count: 3 },
+      { label: 'MID', count: 3 },
+      { label: 'DEF', count: 4 },
+      { label: 'GK', count: 1 },
+    ]
+  },
+  {
+    name: "3-5-2",
+    def: 3,
+    mid: 5,
+    fwd: 2,
+    layout: [
+      { label: 'FWD', count: 2 },
+      { label: 'MID', count: 5 },
+      { label: 'DEF', count: 3 },
+      { label: 'GK', count: 1 },
+    ]
+  },
+  {
+    name: "3-4-3",
+    def: 3,
+    mid: 4,
+    fwd: 3,
+    layout: [
+      { label: 'FWD', count: 3 },
+      { label: 'MID', count: 4 },
+      { label: 'DEF', count: 3 },
+      { label: 'GK', count: 1 },
+    ]
+  },
+  {
+    name: "4-2-3-1",
+    def: 4,
+    mid: 5,
+    fwd: 1,
+    layout: [
+      { label: 'FWD', count: 1 },
+      { label: 'MID', count: 3 },
+      { label: 'MID', count: 2 },
+      { label: 'DEF', count: 4 },
+      { label: 'GK', count: 1 },
+    ], // Split mid into attacking/defensive for better classic visualization, we layout 3+2
+  },
+  {
+    name: "5-3-2",
+    def: 5,
+    mid: 3,
+    fwd: 2,
+    layout: [
+      { label: 'FWD', count: 2 },
+      { label: 'MID', count: 3 },
+      { label: 'DEF', count: 5 },
+      { label: 'GK', count: 1 },
+    ]
+  },
+  // add more if you like
+];
+
+// Try to find the closest suitable formation given selected players
+function pickFormation(def, mid, fwd) {
+  // Perfect match first (full lines)
+  const perfect = FORMATIONS.find(f =>
+    f.def === def && f.mid === mid && f.fwd === fwd
+  );
+  if (perfect) return perfect;
+
+  // Otherwise, pick one with less or equal by line (fill from back/front)
+  let best = FORMATIONS[0];
+  let bestScore = -1;
+  FORMATIONS.forEach(f => {
+    // Score by how much of each line is filled
+    let score = 0;
+    score += Math.min(def, f.def) / f.def;
+    score += Math.min(mid, f.mid) / f.mid;
+    score += Math.min(fwd, f.fwd) / (f.fwd||1);
+    if (score > bestScore) {
+      best = f;
+      bestScore = score;
+    }
+  });
+  return best;
+}
+
 interface MyTeamProps {
   selectedPlayers: Player[];
   budget: number;
 }
 
 const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
-  const formation = {
-    GK: selectedPlayers.filter(p => p.position === 'GK'),
-    DEF: selectedPlayers.filter(p => p.position === 'DEF'),
-    MID: selectedPlayers.filter(p => p.position === 'MID'),
-    FWD: selectedPlayers.filter(p => p.position === 'FWD')
-  };
-
-  const totalValue = selectedPlayers.reduce((sum, player) => sum + player.price, 0);
-  const totalPoints = selectedPlayers.reduce((sum, player) => sum + player.points, 0);
-
   const getPositionColor = (position: string) => {
     switch (position) {
       case 'GK': return 'bg-yellow-500';
@@ -27,6 +120,36 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
       default: return 'bg-gray-500';
     }
   };
+
+  const totalValue = selectedPlayers.reduce((sum, player) => sum + player.price, 0);
+  const totalPoints = selectedPlayers.reduce((sum, player) => sum + player.points, 0);
+
+  // Organize by position
+  const formationGroups = {
+    GK: selectedPlayers.filter(p => p.position === 'GK'),
+    DEF: selectedPlayers.filter(p => p.position === 'DEF'),
+    MID: selectedPlayers.filter(p => p.position === 'MID'),
+    FWD: selectedPlayers.filter(p => p.position === 'FWD')
+  };
+
+  // Detect best formation
+  const bestFormation = pickFormation(
+    formationGroups.DEF.length,
+    formationGroups.MID.length,
+    formationGroups.FWD.length
+  );
+  // Used for pitch display: assign specific players to each line in the layout
+  const playerLines: { players: Player[], label: string }[] = [];
+  let indexer = { FWD: 0, MID: 0, DEF: 0, GK: 0 };
+  bestFormation.layout.forEach(row => {
+    const arr = [];
+    for (let i = 0; i < row.count; i++) {
+      const player = formationGroups[row.label]?.[indexer[row.label]] || null;
+      arr.push(player);
+      indexer[row.label]++;
+    }
+    playerLines.push({ players: arr, label: row.label });
+  });
 
   return (
     <div className="space-y-6">
@@ -66,7 +189,7 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
 
       <Card className="border-bronze-200">
         <CardHeader>
-          <CardTitle>Formation</CardTitle>
+          <CardTitle>Formation <span className="ml-2 text-sm text-gray-500">{bestFormation.name}</span></CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
@@ -74,10 +197,10 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
             <div>
               <h3 className="font-semibold mb-3 flex items-center">
                 <span className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>
-                Goalkeepers ({formation.GK.length}/2)
+                Goalkeepers ({formationGroups.GK.length}/2)
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {formation.GK.map(player => (
+                {formationGroups.GK.map(player => (
                   <div key={player.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div>
                       <p className="font-medium">{player.name}</p>
@@ -96,10 +219,10 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
             <div>
               <h3 className="font-semibold mb-3 flex items-center">
                 <span className="w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
-                Defenders ({formation.DEF.length}/5)
+                Defenders ({formationGroups.DEF.length}/5)
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {formation.DEF.map(player => (
+                {formationGroups.DEF.map(player => (
                   <div key={player.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div>
                       <p className="font-medium">{player.name}</p>
@@ -118,10 +241,10 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
             <div>
               <h3 className="font-semibold mb-3 flex items-center">
                 <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                Midfielders ({formation.MID.length}/5)
+                Midfielders ({formationGroups.MID.length}/5)
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {formation.MID.map(player => (
+                {formationGroups.MID.map(player => (
                   <div key={player.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div>
                       <p className="font-medium">{player.name}</p>
@@ -140,10 +263,10 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
             <div>
               <h3 className="font-semibold mb-3 flex items-center">
                 <span className="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
-                Forwards ({formation.FWD.length}/3)
+                Forwards ({formationGroups.FWD.length}/3)
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {formation.FWD.map(player => (
+                {formationGroups.FWD.map(player => (
                   <div key={player.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div>
                       <p className="font-medium">{player.name}</p>
@@ -159,13 +282,12 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
             </div>
           </div>
 
-          {/* Realistic Football Pitch View - Half Vertical Pitch */}
+          {/* Football Pitch View with Standard Formation */}
           <div className="mt-8 relative min-h-[600px] max-w-md mx-auto overflow-hidden rounded-lg">
             {/* Football pitch background with realistic lines */}
             <div className="absolute inset-0 bg-gradient-to-b from-green-600 via-green-500 to-green-600">
               <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.12)_1px,transparent_1px)] bg-[length:20px_20px]"></div>
             </div>
-            {/* Realistic football pitch lines */}
             <div className="absolute inset-0 opacity-50 pointer-events-none">
               <svg className="w-full h-full" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
                 {/* Outer boundary - Half pitch */}
@@ -191,7 +313,7 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
                 <rect x="175" y="42" width="50" height="8" fill="white"/>
               </svg>
             </div>
-            {/* Tactical arrows overlay - keep as before */}
+            {/* Tactical arrows overlay (unchanged) */}
             <div className="absolute inset-0 opacity-30 pointer-events-none">
               <svg className="w-full h-full" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
                 <defs>
@@ -218,65 +340,67 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
               </svg>
             </div>
 
-            {/* Player positions overlay - Vertical formation */}
+            {/* Player positions overlay - Standard Formation Lanes */}
             <div className="absolute inset-0 flex flex-col justify-between p-8">
-              <div className="text-center text-white font-bold text-lg mb-4">Your Formation</div>
-              
-              {/* Forward line - at top near goal */}
-              <div className="flex justify-center space-x-8 mt-8">
-                {formation.FWD.map((player, index) => (
-                  <div key={player.id} className="text-center">
-                    <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-sm mb-1">
-                      {player.name.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <div className="text-xs text-white bg-black/50 px-2 py-1 rounded">
-                      {player.name.split(' ')[0]}
-                    </div>
-                  </div>
-                ))}
+              <div className="text-center text-white font-bold text-lg mb-4">
+                Your Formation: <span className="ml-1">{bestFormation.name}</span>
               </div>
-
-              {/* Midfield line */}
-              <div className="flex justify-center space-x-6">
-                {formation.MID.map((player, index) => (
-                  <div key={player.id} className="text-center">
-                    <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center text-white font-bold text-sm mb-1">
-                      {player.name.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <div className="text-xs text-white bg-black/50 px-2 py-1 rounded">
-                      {player.name.split(' ')[0]}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Defense line */}
-              <div className="flex justify-center space-x-4">
-                {formation.DEF.map((player, index) => (
-                  <div key={player.id} className="text-center">
-                    <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm mb-1">
-                      {player.name.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <div className="text-xs text-white bg-black/50 px-2 py-1 rounded">
-                      {player.name.split(' ')[0]}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Goalkeeper - at bottom */}
-              <div className="flex justify-center mb-8">
-                {formation.GK.slice(0, 1).map((player, index) => (
-                  <div key={player.id} className="text-center">
-                    <div className="w-12 h-12 bg-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-sm mb-1">
-                      {player.name.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <div className="text-xs text-white bg-black/50 px-2 py-1 rounded">
-                      {player.name.split(' ')[0]}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {playerLines.map((line, i) => (
+                <div
+                  key={i}
+                  className={`flex justify-center space-x-4`}
+                  style={{
+                    minHeight: 0,
+                    marginTop: i === 0 ? '1.5rem' : undefined,
+                    marginBottom: i === playerLines.length - 1 ? '1.5rem' : undefined,
+                  }}
+                >
+                  {line.players.map((player, idx) => (
+                    player ? (
+                      <div key={player?.id || idx} className="text-center">
+                        <div
+                          className={`
+                            w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm mb-1
+                            ${
+                              line.label === 'GK' ? 'bg-yellow-600 text-white'
+                              : line.label === 'DEF' ? 'bg-blue-600 text-white'
+                              : line.label === 'MID' ? 'bg-green-600 text-white'
+                              : line.label === 'FWD' ? 'bg-red-600 text-white'
+                              : 'bg-gray-600 text-white'
+                            }
+                          `}
+                        >
+                          {player.name.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div className="text-xs text-white bg-black/50 px-2 py-1 rounded">
+                          {player.name.split(' ')[0]}
+                        </div>
+                      </div>
+                    ) : (
+                      // If slot is empty, show faded slot for better visual
+                      <div key={idx} className="text-center opacity-40">
+                        <div
+                          className={`
+                            w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm mb-1
+                            ${
+                              line.label === 'GK' ? 'bg-yellow-800'
+                              : line.label === 'DEF' ? 'bg-blue-800'
+                              : line.label === 'MID' ? 'bg-green-800'
+                              : line.label === 'FWD' ? 'bg-red-800'
+                              : 'bg-gray-700'
+                            }
+                          `}
+                        >
+                          ...
+                        </div>
+                        <div className="text-xs text-white bg-black/40 px-2 py-1 rounded">
+                          {line.label}
+                        </div>
+                      </div>
+                    )
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
         </CardContent>
