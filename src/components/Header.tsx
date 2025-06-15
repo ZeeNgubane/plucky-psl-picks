@@ -1,5 +1,5 @@
 
-import { Trophy, Users, Star, Menu, Table } from 'lucide-react';
+import { Trophy, Users, FileText, Menu, Table } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -52,7 +52,7 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                   : 'text-gray-300 hover:text-white hover:bg-gray-800/50 backdrop-blur-sm'
               }`}
             >
-              <Star className="h-5 w-5" />
+              <FileText className="h-5 w-5" />
               <span>Transfers</span>
             </button>
 

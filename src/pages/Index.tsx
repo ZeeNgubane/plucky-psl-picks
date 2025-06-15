@@ -1,7 +1,8 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { House, Users, Star, Award } from 'lucide-react';
+import { House, Users, FileText, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Player, teams, players } from '@/data/teams';
 import { useToast } from '@/hooks/use-toast';
@@ -227,7 +228,7 @@ const Index = () => {
               }`}
             >
               <div className="flex items-center space-x-2">
-                <Star className="h-4 w-4" />
+                <FileText className="h-4 w-4" />
                 <span>Transfers</span>
               </div>
             </button>
