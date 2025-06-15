@@ -1,4 +1,5 @@
 import { Player } from "@/data/teams";
+import { User } from "lucide-react";
 
 // --- Formation mapping and utility ---
 const FORMATIONS = [
@@ -261,51 +262,70 @@ const FormationPitch = ({ selectedPlayers }: FormationPitchProps) => {
             : Array.from({length: n}, (_, i) =>
                 minX + ((maxX - minX) * i) / (n - 1)
               );
-          return line.players.map((player, i) => (
-            <g key={player?.id || `empty-${i}-${line.label}`}>
-              <circle
-                cx={xs[i]}
-                cy={y}
-                r={28}
-                fill={
-                  line.label === "GK" ? "#facc15" :
-                  line.label === "DEF" ? "#3b82f6" :
-                  line.label === "MID" ? "#22c55e" :
-                  line.label === "FWD" ? "#ef4444" :
-                  "#888"
-                }
-                opacity={player ? "1" : "0.5"}
-                stroke="#fff"
-                strokeWidth="3"
-              />
-              <text
-                x={xs[i]}
-                y={y-4}
-                textAnchor="middle"
-                fontWeight="bold"
-                fontSize="20"
-                fill="#fff"
-              >
-                {player
-                  ? player.name.split(' ').map(n=>n[0]).join('')
-                  : '...'
-                }
-              </text>
-              <text
-                x={xs[i]}
-                y={y+16}
-                textAnchor="middle"
-                fontSize="13"
-                fill="#fff"
-                opacity="0.85"
-              >
-                {player
-                  ? player.name.split(' ')[0]
-                  : line.label
-                }
-              </text>
-            </g>
-          ));
+          return line.players.map((player, i) => {
+            // Determine background color per position
+            const bg =
+              line.label === "GK" ? "#facc15"
+              : line.label === "DEF" ? "#3b82f6"
+              : line.label === "MID" ? "#22c55e"
+              : line.label === "FWD" ? "#ef4444"
+              : "#888";
+            return (
+              <g key={player?.id || `empty-${i}-${line.label}`}>
+                {/* Draw background circle as before, but faded if empty */}
+                <circle
+                  cx={xs[i]}
+                  cy={y}
+                  r={28}
+                  fill={bg}
+                  opacity={player ? "1" : "0.5"}
+                  stroke="#fff"
+                  strokeWidth="3"
+                />
+                {/* Human face icon in place of text/initials */}
+                <g
+                  transform={`translate(${xs[i] - 18}, ${y - 18})`}
+                >
+                  <User
+                    size={36}
+                    color="#fff"
+                    strokeWidth={2.2}
+                    style={{ opacity: player ? 1 : 0.6 }}
+                  />
+                </g>
+                {/* Player initials over the icon (placeholder, keep as before) */}
+                <text
+                  x={xs[i]}
+                  y={y + 24}
+                  textAnchor="middle"
+                  fontWeight="bold"
+                  fontSize="14"
+                  fill="#fff"
+                  opacity={player ? "0.95" : "0.65"}
+                  style={{ textShadow: "0 1px 3px #0007" }}
+                >
+                  {player
+                    ? player.name.split(' ').map(n=>n[0]).join('')
+                    : ''
+                  }
+                </text>
+                {/* Player first name or position */}
+                <text
+                  x={xs[i]}
+                  y={y + 38}
+                  textAnchor="middle"
+                  fontSize="13"
+                  fill="#fff"
+                  opacity="0.85"
+                >
+                  {player
+                    ? player.name.split(' ')[0]
+                    : line.label
+                  }
+                </text>
+              </g>
+            );
+          });
         })}
       </svg>
     </div>
