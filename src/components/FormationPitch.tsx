@@ -105,22 +105,52 @@ interface FormationPitchProps {
 
 // Updated: function to map each row label to Y%
 function getRowYPositions(lineLabels: string[]) {
-  // Since SVG pitch is 600 (y: 0=top, 600=bottom), let's assign:
-  // GK: penalty box center, DEF/MID: between, FWD: halfway line
-  // We'll work in percent and calculate Y accordingly.
-  const PENALTY_BOX_Y = 140; // Y center for penalty area (box spans 50-170)
-  const HALFWAY_LINE_Y = 550; // Halfway line at y=550
+  // SVG pitch: 0 (top) to 600 (bottom)
+  const PENALTY_BOX_Y = 140;    // Goalkeeper line
+  const HALF_WAY_Y = 550;       // Forwards line
+  const DEFENDERS_EXTRA_UP = 60; // How far "up" from GK we put defenders
 
   const n = lineLabels.length;
-  // Map lines: 0=forwards, last=GK.
+
+  // If we have only two lines (GK/FWD), just do penalty box and halfway
+  if (n <= 2) {
+    return lineLabels.map((label) =>
+      label === "GK" ? PENALTY_BOX_Y
+      : label === "FWD" ? HALF_WAY_Y
+      : (PENALTY_BOX_Y + HALF_WAY_Y) / 2
+    );
+  }
+
+  // Find indexes for each line
+  const idxGK = lineLabels.findIndex(l => l === "GK");
+  const idxDEF = lineLabels.findIndex(l => l === "DEF");
+  const idxMID = lineLabels.findIndex(l => l === "MID");
+  const idxFWD = lineLabels.findIndex(l => l === "FWD");
+
+  // We'll assign positions:
+  // GK: stays at penalty box
+  // DEF: farther from GK, but not too close (PENALTY_BOX_Y + DEFENDERS_EXTRA_UP)
+  // MID: between DEF and FWD
+  // FWD: halfway line
+
   return lineLabels.map((label, i) => {
     if (label === "GK") return PENALTY_BOX_Y;
-    if (label === "FWD") return HALFWAY_LINE_Y;
-    // Intermediate rows placed evenly between penalty and halfway
-    // total intermediate = n - 2, index: (i-1)
-    if (n <= 2) return (PENALTY_BOX_Y + HALFWAY_LINE_Y) / 2;
-    const t = (i - 1) / (n - 2);
-    return PENALTY_BOX_Y + t * (HALFWAY_LINE_Y - PENALTY_BOX_Y);
+    if (label === "FWD") return HALF_WAY_Y;
+    if (label === "DEF") {
+      // Fixed offset up from GK toward MID/FWD
+      // Place defenders well above the GK line (toward midfield)
+      return PENALTY_BOX_Y + DEFENDERS_EXTRA_UP;
+    }
+    if (label === "MID") {
+      // Position midfielders proportionally between DEF and FWD
+      const yDEF = PENALTY_BOX_Y + DEFENDERS_EXTRA_UP;
+      return yDEF + (HALF_WAY_Y - yDEF) * 0.5;
+    }
+    // If any other line, distribute linearly in-between
+    const y0 = PENALTY_BOX_Y + DEFENDERS_EXTRA_UP;
+    const y1 = HALF_WAY_Y;
+    const t = (i - 2) / (n - 3); // For any additional lines
+    return y0 + (y1 - y0) * t;
   });
 }
 
