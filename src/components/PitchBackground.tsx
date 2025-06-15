@@ -2,8 +2,19 @@
 import React from "react";
 
 const PitchBackground = () => (
-  <div className="absolute inset-0 bg-gradient-to-b from-green-600 via-green-500 to-green-600">
-    <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.12)_1px,transparent_1px)] bg-[length:20px_20px]"></div>
+  <div className="absolute inset-0 bg-gradient-to-b from-green-800 via-green-700 to-green-800">
+    <div
+      className="absolute inset-0 opacity-20"
+      style={{
+        backgroundImage: `repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 50px,
+          rgba(255, 255, 255, 0.05) 50px,
+          rgba(255, 255, 255, 0.05) 100px
+        )`,
+      }}
+    />
     <div className="absolute inset-0 opacity-50 pointer-events-none">
       <svg className="w-full h-full" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
         {/* Outer boundary - Half pitch */}
