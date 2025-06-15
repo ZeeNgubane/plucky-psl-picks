@@ -27,24 +27,6 @@ const PlayerIcon: React.FC<PlayerIconProps> = ({ player, x, y, label }) => {
     // Render player with kit image
     return (
       <g>
-        <defs>
-          <pattern
-            id={`kit-${player.id}`}
-            patternUnits="objectBoundingBox"
-            width="1"
-            height="1"
-          >
-            <image
-              href={kitImage}
-              x="0"
-              y="0"
-              width="1"
-              height="1"
-              preserveAspectRatio="xMidYMid slice"
-            />
-          </pattern>
-        </defs>
-
         {/* Player Circle with Kit Image */}
         <circle
           cx={x}
