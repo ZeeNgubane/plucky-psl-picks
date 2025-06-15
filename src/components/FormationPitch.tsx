@@ -103,6 +103,27 @@ interface FormationPitchProps {
   selectedPlayers: Player[];
 }
 
+// Updated: function to map each row label to Y%
+function getRowYPositions(lineLabels: string[]) {
+  // Since SVG pitch is 600 (y: 0=top, 600=bottom), let's assign:
+  // GK: penalty box center, DEF/MID: between, FWD: halfway line
+  // We'll work in percent and calculate Y accordingly.
+  const PENALTY_BOX_Y = 140; // Y center for penalty area (box spans 50-170)
+  const HALFWAY_LINE_Y = 550; // Halfway line at y=550
+
+  const n = lineLabels.length;
+  // Map lines: 0=forwards, last=GK.
+  return lineLabels.map((label, i) => {
+    if (label === "GK") return PENALTY_BOX_Y;
+    if (label === "FWD") return HALFWAY_LINE_Y;
+    // Intermediate rows placed evenly between penalty and halfway
+    // total intermediate = n - 2, index: (i-1)
+    if (n <= 2) return (PENALTY_BOX_Y + HALFWAY_LINE_Y) / 2;
+    const t = (i - 1) / (n - 2);
+    return PENALTY_BOX_Y + t * (HALFWAY_LINE_Y - PENALTY_BOX_Y);
+  });
+}
+
 const FormationPitch = ({ selectedPlayers }: FormationPitchProps) => {
   const byPos = {
     GK: selectedPlayers.filter(p => p.position === 'GK'),
@@ -128,6 +149,10 @@ const FormationPitch = ({ selectedPlayers }: FormationPitchProps) => {
     }
     playerLines.push({ players: arr, label: row.label });
   });
+
+  // Find each line's vertical position on the SVG pitch
+  const yPositions = getRowYPositions(playerLines.map(l => l.label));
+  const minX = 70, maxX = 330; // For horizontal placement inside the pitch
 
   return (
     <div className="mt-8 relative min-h-[600px] max-w-md mx-auto overflow-hidden rounded-lg">
@@ -187,67 +212,69 @@ const FormationPitch = ({ selectedPlayers }: FormationPitchProps) => {
           <line x1="80" y1="450" x2="320" y2="450" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeDasharray="10,5"/>
         </svg>
       </div>
-      {/* Player positions overlay - Standard Formation Lanes */}
-      <div className="absolute inset-0 flex flex-col justify-between p-8">
-        <div className="text-center text-white font-bold text-lg mb-4">
-          Your Formation: <span className="ml-1">{bestFormation.name}</span>
-        </div>
-        {playerLines.map((line, i) => (
-          <div
-            key={i}
-            className={`flex justify-center space-x-4`}
-            style={{
-              minHeight: 0,
-              marginTop: i === 0 ? '1.5rem' : undefined,
-              marginBottom: i === playerLines.length - 1 ? '1.5rem' : undefined,
-            }}
-          >
-            {line.players.map((player, idx) => (
-              player ? (
-                <div key={player?.id || idx} className="text-center">
-                  <div
-                    className={`
-                      w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm mb-1
-                      ${
-                        line.label === 'GK' ? 'bg-yellow-600 text-white'
-                        : line.label === 'DEF' ? 'bg-blue-600 text-white'
-                        : line.label === 'MID' ? 'bg-green-600 text-white'
-                        : line.label === 'FWD' ? 'bg-red-600 text-white'
-                        : 'bg-gray-600 text-white'
-                      }
-                    `}
-                  >
-                    {player.name.split(' ').map(n => n[0]).join('')}
-                  </div>
-                  <div className="text-xs text-white bg-black/50 px-2 py-1 rounded">
-                    {player.name.split(' ')[0]}
-                  </div>
-                </div>
-              ) : (
-                <div key={idx} className="text-center opacity-40">
-                  <div
-                    className={`
-                      w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm mb-1
-                      ${
-                        line.label === 'GK' ? 'bg-yellow-800'
-                        : line.label === 'DEF' ? 'bg-blue-800'
-                        : line.label === 'MID' ? 'bg-green-800'
-                        : line.label === 'FWD' ? 'bg-red-800'
-                        : 'bg-gray-700'
-                      }
-                    `}
-                  >
-                    ...
-                  </div>
-                  <div className="text-xs text-white bg-black/40 px-2 py-1 rounded">
-                    {line.label}
-                  </div>
-                </div>
-              )
-            ))}
-          </div>
-        ))}
-      </div>
+      {/* Player positions overlay, now positioned with SVG coordinates */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 600">
+        {/* Formation name */}
+        <text x="200" y="25" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="bold" style={{ textShadow: "0 1px 6px #082" }}>
+          Your Formation: {bestFormation.name}
+        </text>
+        {/* Players in formation */}
+        {playerLines.map((line, rowIdx) => {
+          const y = yPositions[rowIdx];
+          const n = line.players.length;
+          // Horizontal spacing for n players
+          const xs = n === 1
+            ? [200]
+            : Array.from({length: n}, (_, i) =>
+                minX + ((maxX - minX) * i) / (n - 1)
+              );
+          return line.players.map((player, i) => (
+            <g key={player?.id || `empty-${i}-${line.label}`}>
+              <circle
+                cx={xs[i]}
+                cy={y}
+                r={28}
+                fill={
+                  line.label === "GK" ? "#facc15" :
+                  line.label === "DEF" ? "#3b82f6" :
+                  line.label === "MID" ? "#22c55e" :
+                  line.label === "FWD" ? "#ef4444" :
+                  "#888"
+                }
+                opacity={player ? "1" : "0.5"}
+                stroke="#fff"
+                strokeWidth="3"
+              />
+              <text
+                x={xs[i]}
+                y={y-4}
+                textAnchor="middle"
+                fontWeight="bold"
+                fontSize="20"
+                fill="#fff"
+              >
+                {player
+                  ? player.name.split(' ').map(n=>n[0]).join('')
+                  : '...'
+                }
+              </text>
+              <text
+                x={xs[i]}
+                y={y+16}
+                textAnchor="middle"
+                fontSize="13"
+                fill="#fff"
+                opacity="0.85"
+              >
+                {player
+                  ? player.name.split(' ')[0]
+                  : line.label
+                }
+              </text>
+            </g>
+          ));
+        })}
+      </svg>
     </div>
   );
 };
