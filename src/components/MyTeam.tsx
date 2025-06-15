@@ -159,46 +159,40 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
             </div>
           </div>
 
-          {/* Football Pitch View - Vertical Half Pitch */}
+          {/* Realistic Football Pitch View - Half Vertical Pitch */}
           <div className="mt-8 relative min-h-[600px] max-w-md mx-auto overflow-hidden rounded-lg">
-            {/* Football pitch background */}
+            {/* Football pitch background with realistic lines */}
             <div className="absolute inset-0 bg-gradient-to-b from-green-600 via-green-500 to-green-600">
-              {/* Grass texture overlay */}
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.1)_1px,transparent_1px)] bg-[length:20px_20px]"></div>
+              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.12)_1px,transparent_1px)] bg-[length:20px_20px]"></div>
             </div>
-            
-            {/* Pitch lines overlay - Half pitch vertical */}
-            <div className="absolute inset-0 opacity-40">
+            {/* Realistic football pitch lines */}
+            <div className="absolute inset-0 opacity-50 pointer-events-none">
               <svg className="w-full h-full" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
                 {/* Outer boundary - Half pitch */}
                 <rect x="50" y="50" width="300" height="500" fill="none" stroke="white" strokeWidth="4"/>
-                
-                {/* Center circle - Half visible */}
-                <circle cx="200" cy="550" r="80" fill="none" stroke="white" strokeWidth="4"/>
-                <circle cx="200" cy="550" r="8" fill="white"/>
-                
-                {/* Center line */}
-                <line x1="50" y1="550" x2="350" y2="550" stroke="white" strokeWidth="4"/>
-                
-                {/* Goal area at top */}
-                <rect x="150" y="50" width="100" height="60" fill="none" stroke="white" strokeWidth="4"/>
-                <rect x="100" y="50" width="200" height="120" fill="none" stroke="white" strokeWidth="4"/>
-                <path d="M 100 170 A 80 80 0 0 0 300 170" fill="none" stroke="white" strokeWidth="4"/>
-                
-                {/* Corner arcs */}
-                <path d="M 50 50 Q 50 80 80 80" fill="none" stroke="white" strokeWidth="4"/>
-                <path d="M 350 50 Q 350 80 320 80" fill="none" stroke="white" strokeWidth="4"/>
-                
-                {/* Goal posts */}
-                <rect x="175" y="45" width="50" height="10" fill="white"/>
-                
+                {/* Center circle (half only) */}
+                <path d="M200 550 m-80,0 a80,80 0 0,1 160,0" fill="none" stroke="white" strokeWidth="4"/>
+                {/* Center spot */}
+                <circle cx="200" cy="550" r="6" fill="white"/>
+                {/* Halfway line */}
+                <line x1="50" y1="550" x2="350" y2="550" stroke="white" strokeWidth="3"/>
+                {/* Penalty area (18-yard box) */}
+                <rect x="100" y="50" width="200" height="120" fill="none" stroke="white" strokeWidth="3"/>
+                {/* 6-yard box */}
+                <rect x="150" y="50" width="100" height="60" fill="none" stroke="white" strokeWidth="3"/>
                 {/* Penalty spot */}
-                <circle cx="200" cy="140" r="3" fill="white"/>
+                <circle cx="200" cy="140" r="4" fill="white"/>
+                {/* Penalty arc */}
+                <path d="M170 170 A30 30 0 0 1 230 170" fill="none" stroke="white" strokeWidth="3"/>
+                {/* Corner arcs */}
+                <path d="M50 50 A30 30 0 0 1 80 80" fill="none" stroke="white" strokeWidth="3"/>
+                <path d="M350 50 A30 30 0 0 0 320 80" fill="none" stroke="white" strokeWidth="3"/>
+                {/* Goal (top middle) */}
+                <rect x="175" y="42" width="50" height="8" fill="white"/>
               </svg>
             </div>
-
-            {/* Tactical arrows overlay - Simplified for half pitch */}
-            <div className="absolute inset-0 opacity-30">
+            {/* Tactical arrows overlay - keep as before */}
+            <div className="absolute inset-0 opacity-30 pointer-events-none">
               <svg className="w-full h-full" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
                 <defs>
                   <marker id="arrowhead" markerWidth="10" markerHeight="7" 
