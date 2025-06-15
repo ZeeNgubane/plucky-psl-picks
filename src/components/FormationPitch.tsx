@@ -104,6 +104,8 @@ function pickFormation(def: number, mid: number, fwd: number) {
 
 interface FormationPitchProps {
   selectedPlayers: Player[];
+  onPlayerClick: (player: Player) => void;
+  playerToSwap: Player | null;
 }
 
 // Updated: function to map each row label to Y%
@@ -157,7 +159,7 @@ function getRowYPositions(lineLabels: string[]) {
   });
 }
 
-const FormationPitch = ({ selectedPlayers }: FormationPitchProps) => {
+const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap }: FormationPitchProps) => {
   const byPos = {
     GK: selectedPlayers.filter(p => p.position === 'GK'),
     DEF: selectedPlayers.filter(p => p.position === 'DEF'),
@@ -195,7 +197,7 @@ const FormationPitch = ({ selectedPlayers }: FormationPitchProps) => {
       <PitchBackground />
       <PitchArrows />
       {/* Player positions overlay, now positioned with SVG coordinates */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 600">
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 600">
         {/* Formation name */}
         <text x="200" y="25" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="bold" style={{ textShadow: "0 1px 6px #082" }}>
           Your Formation: {bestFormation.name}
@@ -210,15 +212,29 @@ const FormationPitch = ({ selectedPlayers }: FormationPitchProps) => {
             : Array.from({length: n}, (_, i) =>
                 minX + ((maxX - minX) * i) / (n - 1)
               );
-          return line.players.map((player, i) => (
-            <PlayerIcon
-              key={player?.id || `empty-${i}-${line.label}`}
-              player={player}
-              x={xs[i]}
-              y={y}
-              label={line.label}
-            />
-          ));
+          return line.players.map((player, i) => {
+            const isSelected = player && playerToSwap && player.id === playerToSwap.id;
+            return (
+              <g
+                key={player?.id || `empty-${i}-${line.label}`}
+                onClick={() => player && onPlayerClick(player)}
+                className="cursor-pointer"
+                style={{ outline: "none" }}
+              >
+                {isSelected && (
+                   <circle cx={xs[i]} cy={y} r="25" fill="none" stroke="hsl(var(--primary))" strokeWidth="3" strokeDasharray="4" >
+                     <animate attributeName="stroke-dashoffset" from="0" to="20" dur="1s" repeatCount="indefinite"/>
+                   </circle>
+                )}
+                <PlayerIcon
+                  player={player}
+                  x={xs[i]}
+                  y={y}
+                  label={line.label}
+                />
+              </g>
+            );
+          });
         })}
       </svg>
     </div>

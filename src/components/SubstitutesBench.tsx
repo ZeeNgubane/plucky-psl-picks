@@ -1,10 +1,12 @@
-
 import { Player } from "@/data/teams";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserMinus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface SubstitutesBenchProps {
   substitutes: Player[];
+  onPlayerClick: (player: Player) => void;
+  playerToSwap: Player | null;
 }
 
 const positionOrder: { [key: string]: number } = {
@@ -14,7 +16,7 @@ const positionOrder: { [key: string]: number } = {
   FWD: 4,
 };
 
-const SubstitutesBench = ({ substitutes }: SubstitutesBenchProps) => {
+const SubstitutesBench = ({ substitutes, onPlayerClick, playerToSwap }: SubstitutesBenchProps) => {
   const sortedSubstitutes = [...substitutes].sort((a, b) => {
     return positionOrder[a.position] - positionOrder[b.position];
   });
@@ -28,7 +30,14 @@ const SubstitutesBench = ({ substitutes }: SubstitutesBenchProps) => {
         {sortedSubstitutes.length > 0 ? (
           <div className="space-y-3">
             {sortedSubstitutes.map((player) => (
-              <div key={player.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+              <div 
+                key={player.id} 
+                className={cn(
+                  "flex items-center justify-between p-2 bg-gray-50 rounded-lg cursor-pointer transition-all",
+                  playerToSwap?.id === player.id ? 'ring-2 ring-primary ring-offset-2' : 'hover:bg-gray-100'
+                )}
+                onClick={() => onPlayerClick(player)}
+              >
                 <div>
                   <p className="font-medium">{player.name}</p>
                   <p className="text-sm text-gray-600">{player.team} - {player.position}</p>

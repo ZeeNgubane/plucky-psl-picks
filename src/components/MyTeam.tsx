@@ -1,9 +1,12 @@
-
+import { useState, useEffect } from "react";
 import MyTeamSummary from "./MyTeamSummary";
 import PlayerLineupList from "./PlayerLineupList";
 import FormationPitch from "./FormationPitch";
 import { Player } from "@/data/teams";
 import SubstitutesBench from "./SubstitutesBench";
+import { Button } from "./ui/button";
+import { toast } from "./ui/sonner";
+import { Save } from "lucide-react";
 
 interface MyTeamProps {
   selectedPlayers: Player[];
@@ -40,6 +43,10 @@ function pickFormation(def: number, mid: number, fwd: number) {
 
 
 const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
+  const [starters, setStarters] = useState<Player[]>([]);
+  const [subs, setSubs] = useState<Player[]>([]);
+  const [playerToSwap, setPlayerToSwap] = useState<Player | null>(null);
+
   // Organize players by position for the Squad List (unchanged logic)
   const formationGroups = {
     GK: selectedPlayers.filter(p => p.position === 'GK'),
@@ -48,39 +55,105 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
     FWD: selectedPlayers.filter(p => p.position === 'FWD')
   };
 
-  const bestFormation = pickFormation(
-    formationGroups.DEF.length,
-    formationGroups.MID.length,
-    formationGroups.FWD.length
-  );
+  useEffect(() => {
+    const bestFormation = pickFormation(
+      formationGroups.DEF.length,
+      formationGroups.MID.length,
+      formationGroups.FWD.length
+    );
 
-  const startingPlayerIds = new Set<string>();
-  const indexer = { FWD: 0, MID: 0, DEF: 0, GK: 0 };
+    const startingPlayerIds = new Set<string>();
+    const indexer = { FWD: 0, MID: 0, DEF: 0, GK: 0 };
 
-  bestFormation.layout.forEach(row => {
-      const position = row.label as keyof typeof indexer;
-      for (let i = 0; i < row.count; i++) {
-          const player = formationGroups[position]?.[indexer[position]];
-          if (player) {
-              startingPlayerIds.add(player.id);
-          }
-          indexer[position]++;
-      }
-  });
+    bestFormation.layout.forEach(row => {
+        const position = row.label as keyof typeof indexer;
+        for (let i = 0; i < row.count; i++) {
+            const player = formationGroups[position]?.[indexer[position]];
+            if (player) {
+                startingPlayerIds.add(player.id);
+            }
+            indexer[position]++;
+        }
+    });
 
-  const startingPlayers = selectedPlayers.filter(p => startingPlayerIds.has(p.id));
-  const substitutePlayers = selectedPlayers.filter(p => !startingPlayerIds.has(p.id));
+    setStarters(selectedPlayers.filter(p => startingPlayerIds.has(p.id)));
+    setSubs(selectedPlayers.filter(p => !startingPlayerIds.has(p.id)));
+  }, [selectedPlayers, formationGroups.DEF.length, formationGroups.MID.length, formationGroups.FWD.length]);
+  
+  const handlePlayerClick = (clickedPlayer: Player) => {
+    if (!playerToSwap) {
+      setPlayerToSwap(clickedPlayer);
+      toast("Player selected", {
+        description: `Select another player to swap with ${clickedPlayer.name}.`,
+      });
+      return;
+    }
+
+    if (playerToSwap.id === clickedPlayer.id) {
+      setPlayerToSwap(null);
+      toast("Swap cancelled.");
+      return;
+    }
+
+    if (playerToSwap.position !== clickedPlayer.position) {
+      toast.error("Invalid Swap", {
+        description: "Players must have the same position.",
+      });
+      setPlayerToSwap(null);
+      return;
+    }
+
+    const isFirstPlayerStarter = starters.some(p => p.id === playerToSwap.id);
+    const isSecondPlayerStarter = starters.some(p => p.id === clickedPlayer.id);
+
+    if (isFirstPlayerStarter === isSecondPlayerStarter) {
+      toast.error("Invalid Swap", {
+        description: "Select one player from the pitch and one from the bench.",
+      });
+      setPlayerToSwap(null);
+      return;
+    }
+
+    const newStarters = isFirstPlayerStarter
+      ? starters.filter(p => p.id !== playerToSwap.id).concat(clickedPlayer)
+      : starters.filter(p => p.id !== clickedPlayer.id).concat(playerToSwap);
+
+    const newSubs = isFirstPlayerStarter
+      ? subs.filter(p => p.id !== clickedPlayer.id).concat(playerToSwap)
+      : subs.filter(p => p.id !== playerToSwap.id).concat(clickedPlayer);
+
+    setStarters(newStarters);
+    setSubs(newSubs);
+    setPlayerToSwap(null);
+    toast.success("Swap Successful!", {
+      description: `${playerToSwap.name} and ${clickedPlayer.name} have been swapped.`,
+    });
+  };
 
   return (
     <div className="space-y-6">
-      <MyTeamSummary selectedPlayers={selectedPlayers} />
+      <div className="flex justify-between items-center">
+        <MyTeamSummary selectedPlayers={selectedPlayers} />
+        <Button onClick={() => toast.success("Team Saved!", { description: "Your squad has been saved successfully." })}>
+          <Save className="mr-2 h-4 w-4" />
+          Save Team
+        </Button>
+      </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         <div className="lg:col-span-1">
-          <SubstitutesBench substitutes={substitutePlayers} />
+          <SubstitutesBench 
+            substitutes={subs} 
+            onPlayerClick={handlePlayerClick}
+            playerToSwap={playerToSwap}
+          />
         </div>
         <div className="lg:col-span-2">
-          <FormationPitch selectedPlayers={startingPlayers} />
+          <FormationPitch 
+            selectedPlayers={starters} 
+            onPlayerClick={handlePlayerClick}
+            playerToSwap={playerToSwap}
+          />
         </div>
       </div>
       
