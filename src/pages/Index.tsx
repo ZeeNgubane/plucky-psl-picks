@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { House, Users, FileText, Award } from 'lucide-react';
@@ -22,6 +23,29 @@ const Index = () => {
   const [teamFilter, setTeamFilter] = useState('all');
   const [sortBy, setSortBy] = useState('points');
   const { toast } = useToast();
+
+  useEffect(() => {
+    try {
+      const savedSquadIdsJSON = localStorage.getItem('fantasy-squad-ids');
+      if (savedSquadIdsJSON) {
+        const savedSquadIds = JSON.parse(savedSquadIdsJSON);
+        if (Array.isArray(savedSquadIds) && savedSquadIds.length > 0) {
+          const allPlayersMap = new Map(players.map(p => [p.id, p]));
+          const loadedPlayers = savedSquadIds
+            .map((id: string) => allPlayersMap.get(id))
+            .filter((p): p is Player => p !== undefined);
+
+          if (loadedPlayers.length > 0) {
+            setSelectedPlayers(loadedPlayers);
+            const totalValue = loadedPlayers.reduce((sum, player) => sum + player.price, 0);
+            setBudget(100.0 - totalValue);
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load squad from localStorage", e);
+    }
+  }, []);
 
   const handlePlayerAdd = (player: Player) => {
     if (budget < player.price) {
