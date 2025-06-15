@@ -56,6 +56,29 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
   };
 
   useEffect(() => {
+    const savedStarterIdsStr = localStorage.getItem('fantasy-starter-ids');
+    const savedSquadIdsStr = localStorage.getItem('fantasy-squad-ids');
+    const currentSquadIds = selectedPlayers.map(p => p.id).sort();
+
+    let loadedFromSave = false;
+    if (savedStarterIdsStr && savedSquadIdsStr) {
+      try {
+        const savedSquadIds = JSON.parse(savedSquadIdsStr);
+        if (JSON.stringify(currentSquadIds) === JSON.stringify(savedSquadIds)) {
+            const savedStarterIds = new Set(JSON.parse(savedStarterIdsStr));
+            setStarters(selectedPlayers.filter(p => savedStarterIds.has(p.id)));
+            setSubs(selectedPlayers.filter(p => !savedStarterIds.has(p.id)));
+            loadedFromSave = true;
+        }
+      } catch (e) {
+        console.error("Failed to parse saved team data", e);
+        localStorage.removeItem('fantasy-starter-ids');
+        localStorage.removeItem('fantasy-squad-ids');
+      }
+    }
+
+    if (loadedFromSave) return;
+
     const bestFormation = pickFormation(
       formationGroups.DEF.length,
       formationGroups.MID.length,
@@ -78,7 +101,7 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
 
     setStarters(selectedPlayers.filter(p => startingPlayerIds.has(p.id)));
     setSubs(selectedPlayers.filter(p => !startingPlayerIds.has(p.id)));
-  }, [selectedPlayers, formationGroups.DEF.length, formationGroups.MID.length, formationGroups.FWD.length]);
+  }, [selectedPlayers]);
   
   const handlePlayerClick = (clickedPlayer: Player) => {
     if (!playerToSwap) {
@@ -130,11 +153,23 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
     });
   };
 
+  const handleSaveTeam = () => {
+    try {
+      const squadIds = selectedPlayers.map(p => p.id).sort();
+      localStorage.setItem('fantasy-squad-ids', JSON.stringify(squadIds));
+      localStorage.setItem('fantasy-starter-ids', JSON.stringify(starters.map(p => p.id)));
+      toast.success("Team Saved!", { description: "Your squad lineup has been saved." });
+    } catch (error) {
+      console.error("Failed to save team:", error);
+      toast.error("Could not save team lineup.");
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <MyTeamSummary selectedPlayers={selectedPlayers} />
-        <Button onClick={() => toast.success("Team Saved!", { description: "Your squad has been saved successfully." })}>
+        <Button onClick={handleSaveTeam}>
           <Save className="mr-2 h-4 w-4" />
           Save Team
         </Button>
