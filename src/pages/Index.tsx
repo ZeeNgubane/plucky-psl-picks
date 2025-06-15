@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Trophy, Users, Star, Calendar, TrendingUp, Award, Target, Clock, Plus, ArrowUpDown, Info, Filter, Search, Shield } from 'lucide-react';
+import { Trophy, Users, Star, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Player, teams, players } from '@/data/teams';
 import { useToast } from '@/hooks/use-toast';
@@ -11,7 +9,10 @@ import MyTeam from '@/components/MyTeam';
 import Transfers from '@/components/Transfers';
 import League from '@/components/League';
 import FormationPitch from '@/components/FormationPitch';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import Fixtures from '@/components/home/Fixtures';
+import LatestNews from '@/components/home/LatestNews';
+import LeagueTable from '@/components/home/LeagueTable';
+import TopPerformers from '@/components/home/TopPerformers';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -95,21 +96,6 @@ const Index = () => {
     }
   };
 
-  const getPositionColor = (position: string) => {
-    switch (position) {
-      case 'GK': return 'bg-red-100 text-red-800 border-red-200';
-      case 'DEF': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'MID': return 'bg-green-100 text-green-800 border-green-200';
-      case 'FWD': return 'bg-orange-100 text-orange-800 border-orange-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getTeamLogo = (teamName: string) => {
-    const team = teams.find(t => t.name === teamName);
-    return team?.logo || 'https://logos-world.net/wp-content/uploads/2020/06/Kaizer-Chiefs-Logo.png';
-  };
-
   const filteredPlayers = players
     .filter(player => {
       const matchesPosition = positionFilter === 'all' || player.position === positionFilter;
@@ -135,31 +121,6 @@ const Index = () => {
 
   // Filter out any teams with empty names to prevent SelectItem errors
   const validTeams = teams.filter(team => team.name && team.name.trim() !== '');
-
-  // Placeholder data for new home page sections
-  const fixtures = [
-    { teamA: 'Kaizer Chiefs', teamB: 'Orlando Pirates', date: 'Sat, 15 Feb', time: '15:30' },
-    { teamA: 'Mamelodi Sundowns', teamB: 'SuperSport United', date: 'Sat, 15 Feb', time: '18:00' },
-    { teamA: 'Cape Town City FC', teamB: 'Stellenbosch FC', date: 'Sun, 16 Feb', time: '17:30' },
-  ];
-
-  const articles = [
-    { title: 'PSL title race heats up after dramatic weekend', excerpt: 'A look at the contenders and pretenders as the season enters its final stretch.', image: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=800&auto=format&fit=crop' },
-    { title: 'Fantasy Hot or Not: Who to pick for Gameweek 15?', excerpt: 'Our experts analyze the form guide and suggest top transfer targets.', image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop' },
-     { title: 'Team of the Week: Gameweek 14 standouts', excerpt: 'See which players made the cut in this week\'s dream team.', image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&auto=format&fit=crop' },
-  ];
-
-  const leagueTable = teams.slice(0, 6).map((team, i) => ({
-      pos: i + 1,
-      logo: team.logo,
-      name: team.name,
-      p: 14,
-      gd: Math.floor(Math.random() * 10) + 2,
-      pts: Math.floor(Math.random() * 15) + 20,
-  })).sort((a,b) => b.pts - a.pts).map((team, i) => ({...team, pos: i+1}));
-
-  const topPerformers = players.sort((a,b) => b.points - a.points).slice(0,4);
-
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -293,113 +254,14 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Fixtures */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Fixtures & Results</span>
-                    <Badge variant="outline">Gameweek 15</Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {fixtures.map((fixture, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
-                        <div className="flex items-center space-x-4">
-                          <img src={getTeamLogo(fixture.teamA)} alt={fixture.teamA} className="h-6 w-6"/>
-                          <span className="font-medium">{fixture.teamA}</span>
-                        </div>
-                        <div className="text-center">
-                          <div className="font-bold text-sm bg-gray-100 rounded-md px-2 py-1">{fixture.time}</div>
-                          <div className="text-xs text-muted-foreground mt-1">{fixture.date}</div>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                          <span className="font-medium text-right">{fixture.teamB}</span>
-                           <img src={getTeamLogo(fixture.teamB)} alt={fixture.teamB} className="h-6 w-6"/>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Latest News */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Latest News</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {articles.map((article, index) => (
-                    <div key={index} className="flex items-start space-x-4 group">
-                       <img src={article.image} alt={article.title} className="h-20 w-28 object-cover rounded-md"/>
-                       <div>
-                         <h3 className="font-semibold group-hover:text-red-600 transition-colors">{article.title}</h3>
-                         <p className="text-sm text-muted-foreground">{article.excerpt}</p>
-                       </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
+              <Fixtures />
+              <LatestNews />
             </div>
 
             {/* Sidebar */}
             <div className="lg:col-span-1 space-y-6">
-              {/* PSL Log */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base flex justify-between items-center">
-                    <span>PSL Log</span>
-                    <Button variant="ghost" size="sm">View All</Button>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[20px]">#</TableHead>
-                        <TableHead>Team</TableHead>
-                        <TableHead className="text-right">Pts</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {leagueTable.map((team) => (
-                        <TableRow key={team.pos}>
-                          <TableCell className="font-medium">{team.pos}</TableCell>
-                          <TableCell className="flex items-center space-x-2">
-                             <img src={team.logo} alt={team.name} className="h-5 w-5"/>
-                             <span>{team.name}</span>
-                          </TableCell>
-                          <TableCell className="text-right font-bold">{team.pts}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-              
-              {/* Top Performers */}
-               <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Top Performers</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                    {topPerformers.map(player => (
-                       <div key={player.id} className="flex items-center justify-between text-sm">
-                         <div className="flex items-center space-x-3">
-                           <img src={getTeamLogo(player.team)} alt={player.team} className="h-6 w-6"/>
-                           <div>
-                              <p className="font-medium">{player.name}</p>
-                              <p className="text-xs text-muted-foreground">{player.team}</p>
-                           </div>
-                         </div>
-                         <div className="text-right">
-                           <p className="font-bold">{player.points} pts</p>
-                           <p className="text-xs text-muted-foreground">R{(player.price * 18).toFixed(1)}M</p>
-                         </div>
-                       </div>
-                    ))}
-                </CardContent>
-              </Card>
+              <LeagueTable />
+              <TopPerformers />
             </div>
           </div>
         ) : (
