@@ -159,53 +159,47 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
             </div>
           </div>
 
-          {/* Football Pitch View */}
-          <div className="mt-8 relative min-h-[400px] overflow-hidden rounded-lg">
+          {/* Football Pitch View - Vertical Half Pitch */}
+          <div className="mt-8 relative min-h-[600px] max-w-md mx-auto overflow-hidden rounded-lg">
             {/* Football pitch background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-green-600 via-green-500 to-green-600">
+            <div className="absolute inset-0 bg-gradient-to-b from-green-600 via-green-500 to-green-600">
               {/* Grass texture overlay */}
               <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.1)_1px,transparent_1px)] bg-[length:20px_20px]"></div>
             </div>
             
-            {/* Pitch lines overlay */}
+            {/* Pitch lines overlay - Half pitch vertical */}
             <div className="absolute inset-0 opacity-40">
-              <svg className="w-full h-full" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
-                {/* Outer boundary */}
-                <rect x="50" y="50" width="1100" height="700" fill="none" stroke="white" strokeWidth="4"/>
+              <svg className="w-full h-full" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
+                {/* Outer boundary - Half pitch */}
+                <rect x="50" y="50" width="300" height="500" fill="none" stroke="white" strokeWidth="4"/>
                 
-                {/* Center circle */}
-                <circle cx="600" cy="400" r="120" fill="none" stroke="white" strokeWidth="4"/>
-                <circle cx="600" cy="400" r="8" fill="white"/>
+                {/* Center circle - Half visible */}
+                <circle cx="200" cy="550" r="80" fill="none" stroke="white" strokeWidth="4"/>
+                <circle cx="200" cy="550" r="8" fill="white"/>
                 
                 {/* Center line */}
-                <line x1="600" y1="50" x2="600" y2="750" stroke="white" strokeWidth="4"/>
+                <line x1="50" y1="550" x2="350" y2="550" stroke="white" strokeWidth="4"/>
                 
-                {/* Left goal area */}
-                <rect x="50" y="300" width="80" height="200" fill="none" stroke="white" strokeWidth="4"/>
-                <rect x="50" y="250" width="200" height="300" fill="none" stroke="white" strokeWidth="4"/>
-                <path d="M 250 350 A 120 120 0 0 1 250 450" fill="none" stroke="white" strokeWidth="4"/>
-                
-                {/* Right goal area */}
-                <rect x="1070" y="300" width="80" height="200" fill="none" stroke="white" strokeWidth="4"/>
-                <rect x="950" y="250" width="200" height="300" fill="none" stroke="white" strokeWidth="4"/>
-                <path d="M 950 350 A 120 120 0 0 0 950 450" fill="none" stroke="white" strokeWidth="4"/>
+                {/* Goal area at top */}
+                <rect x="150" y="50" width="100" height="60" fill="none" stroke="white" strokeWidth="4"/>
+                <rect x="100" y="50" width="200" height="120" fill="none" stroke="white" strokeWidth="4"/>
+                <path d="M 100 170 A 80 80 0 0 0 300 170" fill="none" stroke="white" strokeWidth="4"/>
                 
                 {/* Corner arcs */}
-                <path d="M 50 50 Q 80 50 80 80" fill="none" stroke="white" strokeWidth="4"/>
-                <path d="M 1150 50 Q 1120 50 1120 80" fill="none" stroke="white" strokeWidth="4"/>
-                <path d="M 50 750 Q 80 750 80 720" fill="none" stroke="white" strokeWidth="4"/>
-                <path d="M 1150 750 Q 1120 750 1120 720" fill="none" stroke="white" strokeWidth="4"/>
+                <path d="M 50 50 Q 50 80 80 80" fill="none" stroke="white" strokeWidth="4"/>
+                <path d="M 350 50 Q 350 80 320 80" fill="none" stroke="white" strokeWidth="4"/>
                 
                 {/* Goal posts */}
-                <rect x="45" y="350" width="10" height="100" fill="white"/>
-                <rect x="1145" y="350" width="10" height="100" fill="white"/>
+                <rect x="175" y="45" width="50" height="10" fill="white"/>
+                
+                {/* Penalty spot */}
+                <circle cx="200" cy="140" r="3" fill="white"/>
               </svg>
             </div>
 
-            {/* Chalk scribblings overlay */}
+            {/* Tactical arrows overlay - Simplified for half pitch */}
             <div className="absolute inset-0 opacity-30">
-              <svg className="w-full h-full" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
-                {/* Tactical arrows and movement lines */}
+              <svg className="w-full h-full" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
                 <defs>
                   <marker id="arrowhead" markerWidth="10" markerHeight="7" 
                    refX="10" refY="3.5" orient="auto">
@@ -214,53 +208,28 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
                 </defs>
                 
                 {/* Attacking movement arrows */}
-                <path d="M 300 600 Q 400 500 500 400" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="3" strokeDasharray="8,4" markerEnd="url(#arrowhead)"/>
-                <path d="M 700 600 Q 800 500 900 400" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="3" strokeDasharray="8,4" markerEnd="url(#arrowhead)"/>
-                
-                {/* Passing lanes */}
-                <path d="M 200 500 Q 300 450 400 500" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="5,5"/>
-                <path d="M 800 500 Q 900 450 1000 500" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="5,5"/>
+                <path d="M 150 450 Q 200 350 250 250" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="3" strokeDasharray="8,4" markerEnd="url(#arrowhead)"/>
+                <path d="M 250 450 Q 200 350 150 250" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="3" strokeDasharray="8,4" markerEnd="url(#arrowhead)"/>
                 
                 {/* Wing play arrows */}
-                <path d="M 150 300 Q 250 200 350 300" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" strokeDasharray="6,3" markerEnd="url(#arrowhead)"/>
-                <path d="M 1050 300 Q 950 200 850 300" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" strokeDasharray="6,3" markerEnd="url(#arrowhead)"/>
+                <path d="M 80 400 Q 120 300 160 200" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" strokeDasharray="6,3" markerEnd="url(#arrowhead)"/>
+                <path d="M 320 400 Q 280 300 240 200" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" strokeDasharray="6,3" markerEnd="url(#arrowhead)"/>
                 
-                {/* Central attacking routes */}
-                <path d="M 600 500 L 600 350" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="3" strokeDasharray="4,4" markerEnd="url(#arrowhead)"/>
-                <path d="M 500 450 Q 550 350 600 300" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="3,3"/>
-                <path d="M 700 450 Q 650 350 600 300" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="3,3"/>
+                {/* Central attacking route */}
+                <path d="M 200 400 L 200 200" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="3" strokeDasharray="4,4" markerEnd="url(#arrowhead)"/>
                 
-                {/* Defensive pressing lines */}
-                <line x1="200" y1="400" x2="1000" y2="400" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeDasharray="10,5"/>
-                <line x1="150" y1="550" x2="1050" y2="550" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeDasharray="10,5"/>
-                
-                {/* Crossing arrows */}
-                <path d="M 100 250 Q 200 150 300 250" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="4,4" markerEnd="url(#arrowhead)"/>
-                <path d="M 1100 250 Q 1000 150 900 250" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="4,4" markerEnd="url(#arrowhead)"/>
-                
-                {/* Quick counter-attack route */}
-                <path d="M 600 650 Q 700 500 800 350 Q 850 300 900 250" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="3" strokeDasharray="8,6" markerEnd="url(#arrowhead)"/>
-                
-                {/* Overlapping runs */}
-                <path d="M 250 550 Q 180 400 250 250" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeDasharray="3,6"/>
-                <path d="M 950 550 Q 1020 400 950 250" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeDasharray="3,6"/>
-                
-                {/* Set piece markings */}
-                <circle cx="300" cy="200" r="15" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="3,3"/>
-                <circle cx="900" cy="200" r="15" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="3,3"/>
-                
-                {/* Pressing triggers */}
-                <path d="M 400 350 L 450 300 L 400 250 L 350 300 Z" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2"/>
-                <path d="M 800 350 L 850 300 L 800 250 L 750 300 Z" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2"/>
+                {/* Pressing lines */}
+                <line x1="80" y1="300" x2="320" y2="300" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeDasharray="10,5"/>
+                <line x1="80" y1="450" x2="320" y2="450" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeDasharray="10,5"/>
               </svg>
             </div>
 
-            {/* Player positions overlay */}
+            {/* Player positions overlay - Vertical formation */}
             <div className="absolute inset-0 flex flex-col justify-between p-8">
               <div className="text-center text-white font-bold text-lg mb-4">Your Formation</div>
               
-              {/* Forward line */}
-              <div className="flex justify-center space-x-8">
+              {/* Forward line - at top near goal */}
+              <div className="flex justify-center space-x-8 mt-8">
                 {formation.FWD.map((player, index) => (
                   <div key={player.id} className="text-center">
                     <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-sm mb-1">
@@ -301,8 +270,8 @@ const MyTeam = ({ selectedPlayers, budget }: MyTeamProps) => {
                 ))}
               </div>
 
-              {/* Goalkeeper */}
-              <div className="flex justify-center">
+              {/* Goalkeeper - at bottom */}
+              <div className="flex justify-center mb-8">
                 {formation.GK.slice(0, 1).map((player, index) => (
                   <div key={player.id} className="text-center">
                     <div className="w-12 h-12 bg-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-sm mb-1">
