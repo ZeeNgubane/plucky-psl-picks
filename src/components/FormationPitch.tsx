@@ -150,8 +150,11 @@ const FormationPitch = ({ selectedPlayers }: FormationPitchProps) => {
     playerLines.push({ players: arr, label: row.label });
   });
 
-  // Find each line's vertical position on the SVG pitch
-  const yPositions = getRowYPositions(playerLines.map(l => l.label));
+  // REVERSE the order here (so FWD is first, then MID, DEF, GK last)
+  const reversedPlayerLines = [...playerLines].reverse();
+
+  // Adjust all below references for playerLines to use reversedPlayerLines
+  const yPositions = getRowYPositions(reversedPlayerLines.map(l => l.label));
   const minX = 70, maxX = 330; // For horizontal placement inside the pitch
 
   return (
@@ -219,7 +222,7 @@ const FormationPitch = ({ selectedPlayers }: FormationPitchProps) => {
           Your Formation: {bestFormation.name}
         </text>
         {/* Players in formation */}
-        {playerLines.map((line, rowIdx) => {
+        {reversedPlayerLines.map((line, rowIdx) => {
           const y = yPositions[rowIdx];
           const n = line.players.length;
           // Horizontal spacing for n players
