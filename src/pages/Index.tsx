@@ -11,6 +11,7 @@ import MyTeam from '@/components/MyTeam';
 import Transfers from '@/components/Transfers';
 import League from '@/components/League';
 import FormationPitch from '@/components/FormationPitch';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -134,6 +135,31 @@ const Index = () => {
 
   // Filter out any teams with empty names to prevent SelectItem errors
   const validTeams = teams.filter(team => team.name && team.name.trim() !== '');
+
+  // Placeholder data for new home page sections
+  const fixtures = [
+    { teamA: 'Kaizer Chiefs', teamB: 'Orlando Pirates', date: 'Sat, 15 Feb', time: '15:30' },
+    { teamA: 'Mamelodi Sundowns', teamB: 'SuperSport United', date: 'Sat, 15 Feb', time: '18:00' },
+    { teamA: 'Cape Town City FC', teamB: 'Stellenbosch FC', date: 'Sun, 16 Feb', time: '17:30' },
+  ];
+
+  const articles = [
+    { title: 'PSL title race heats up after dramatic weekend', excerpt: 'A look at the contenders and pretenders as the season enters its final stretch.', image: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=800&auto=format&fit=crop' },
+    { title: 'Fantasy Hot or Not: Who to pick for Gameweek 15?', excerpt: 'Our experts analyze the form guide and suggest top transfer targets.', image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop' },
+     { title: 'Team of the Week: Gameweek 14 standouts', excerpt: 'See which players made the cut in this week\'s dream team.', image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&auto=format&fit=crop' },
+  ];
+
+  const leagueTable = teams.slice(0, 6).map((team, i) => ({
+      pos: i + 1,
+      logo: team.logo,
+      name: team.name,
+      p: 14,
+      gd: Math.floor(Math.random() * 10) + 2,
+      pts: Math.floor(Math.random() * 15) + 20,
+  })).sort((a,b) => b.pts - a.pts).map((team, i) => ({...team, pos: i+1}));
+
+  const topPerformers = players.sort((a,b) => b.points - a.points).slice(0,4);
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -267,130 +293,113 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Points Summary */}
+              {/* Fixtures */}
               <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-lg font-bold">My Team: The Champions</CardTitle>
-                  <Badge variant="outline">Gameweek 14</Badge>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>Fixtures & Results</span>
+                    <Badge variant="outline">Gameweek 15</Badge>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center py-4">
-                    <div>
-                      <p className="text-2xl font-bold">{selectedPlayers.reduce((sum, p) => sum + p.points, 0)}</p>
-                      <p className="text-xs text-muted-foreground">Total Points</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">1,234,567</p>
-                      <p className="text-xs text-muted-foreground">Overall Rank</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">68</p>
-                      <p className="text-xs text-muted-foreground">Gameweek Points</p>
-                    </div>
-                    <div>
-                       <p className="text-2xl font-bold text-green-600">R{(budget * 18).toFixed(1)}M</p>
-                       <p className="text-xs text-muted-foreground">In the bank</p>
-                    </div>
+                  <div className="space-y-4">
+                    {fixtures.map((fixture, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+                        <div className="flex items-center space-x-4">
+                          <img src={getTeamLogo(fixture.teamA)} alt={fixture.teamA} className="h-6 w-6"/>
+                          <span className="font-medium">{fixture.teamA}</span>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-bold text-sm bg-gray-100 rounded-md px-2 py-1">{fixture.time}</div>
+                          <div className="text-xs text-muted-foreground mt-1">{fixture.date}</div>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                          <span className="font-medium text-right">{fixture.teamB}</span>
+                           <img src={getTeamLogo(fixture.teamB)} alt={fixture.teamB} className="h-6 w-6"/>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Pitch View */}
+              {/* Latest News */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Starting XI</span>
-                    <Button variant="ghost" size="sm" onClick={() => setActiveTab('team')}>View Squad <Users className="h-4 w-4 ml-2" /></Button>
-                  </CardTitle>
+                  <CardTitle>Latest News</CardTitle>
                 </CardHeader>
-                <CardContent className="p-0">
-                  <FormationPitch selectedPlayers={selectedPlayers} />
+                <CardContent className="space-y-4">
+                  {articles.map((article, index) => (
+                    <div key={index} className="flex items-start space-x-4 group">
+                       <img src={article.image} alt={article.title} className="h-20 w-28 object-cover rounded-md"/>
+                       <div>
+                         <h3 className="font-semibold group-hover:text-red-600 transition-colors">{article.title}</h3>
+                         <p className="text-sm text-muted-foreground">{article.excerpt}</p>
+                       </div>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
             </div>
 
             {/* Sidebar */}
             <div className="lg:col-span-1 space-y-6">
+              {/* PSL Log */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Next Deadline</CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-2xl font-bold">Sat 15 Feb</p>
-                  <p className="text-sm text-muted-foreground">18:30</p>
-                  <p className="text-xs text-red-500 mt-1">3 days remaining</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Quick Links</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <Button className="w-full justify-start" variant="ghost" onClick={() => setActiveTab('transfers')}>
-                    <ArrowUpDown className="mr-2 h-4 w-4" /> Make Transfers
-                  </Button>
-                   <Button className="w-full justify-start" variant="ghost" onClick={() => setActiveTab('league')}>
-                    <Trophy className="mr-2 h-4 w-4" /> View Leagues
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">My Leagues</CardTitle>
+                  <CardTitle className="text-base flex justify-between items-center">
+                    <span>PSL Log</span>
+                    <Button variant="ghost" size="sm">View All</Button>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-3">
-                    <li className="flex items-center justify-between text-sm">
-                      <div className="flex items-center">
-                        <span className="font-bold text-gray-500 mr-2">1.</span>
-                        <span>Overall League</span>
-                      </div>
-                      <span className="font-semibold">1,234,567</span>
-                    </li>
-                    <li className="flex items-center justify-between text-sm">
-                      <div className="flex items-center">
-                         <span className="font-bold text-gray-500 mr-2">2.</span>
-                        <span>SA Head-to-Head</span>
-                      </div>
-                      <span className="font-semibold">5,432</span>
-                    </li>
-                     <li className="flex items-center justify-between text-sm">
-                      <div className="flex items-center">
-                         <span className="font-bold text-gray-500 mr-2">3.</span>
-                        <span>Joburg Coders</span>
-                      </div>
-                       <span className="font-semibold text-green-600">1st <TrendingUp className="inline h-4 w-4"/></span>
-                    </li>
-                  </ul>
-                  <Button variant="link" className="p-0 h-auto mt-3 text-sm">Create & join new leagues</Button>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[20px]">#</TableHead>
+                        <TableHead>Team</TableHead>
+                        <TableHead className="text-right">Pts</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {leagueTable.map((team) => (
+                        <TableRow key={team.pos}>
+                          <TableCell className="font-medium">{team.pos}</TableCell>
+                          <TableCell className="flex items-center space-x-2">
+                             <img src={team.logo} alt={team.name} className="h-5 w-5"/>
+                             <span>{team.name}</span>
+                          </TableCell>
+                          <TableCell className="text-right font-bold">{team.pts}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </CardContent>
               </Card>
-
+              
+              {/* Top Performers */}
                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base">Chips</CardTitle>
-                  </CardHeader>
-                  <CardContent className="grid grid-cols-2 gap-2 text-center">
-                      <Button variant="outline" size="sm" className="flex-col h-auto py-2">
-                        <Star className="h-5 w-5 mb-1"/>
-                        <span className="text-xs">Wildcard</span>
-                      </Button>
-                       <Button variant="outline" size="sm" className="flex-col h-auto py-2">
-                        <Users className="h-5 w-5 mb-1"/>
-                        <span className="text-xs">Bench Boost</span>
-                      </Button>
-                       <Button variant="outline" size="sm" className="flex-col h-auto py-2">
-                        <Shield className="h-5 w-5 mb-1"/>
-                        <span className="text-xs">Triple Captain</span>
-                      </Button>
-                       <Button variant="outline" size="sm" className="flex-col h-auto py-2">
-                        <Plus className="h-5 w-5 mb-1"/>
-                        <span className="text-xs">Free Hit</span>
-                      </Button>
-                  </CardContent>
-                </Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Top Performers</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                    {topPerformers.map(player => (
+                       <div key={player.id} className="flex items-center justify-between text-sm">
+                         <div className="flex items-center space-x-3">
+                           <img src={getTeamLogo(player.team)} alt={player.team} className="h-6 w-6"/>
+                           <div>
+                              <p className="font-medium">{player.name}</p>
+                              <p className="text-xs text-muted-foreground">{player.team}</p>
+                           </div>
+                         </div>
+                         <div className="text-right">
+                           <p className="font-bold">{player.points} pts</p>
+                           <p className="text-xs text-muted-foreground">R{(player.price * 18).toFixed(1)}M</p>
+                         </div>
+                       </div>
+                    ))}
+                </CardContent>
+              </Card>
             </div>
           </div>
         ) : (
