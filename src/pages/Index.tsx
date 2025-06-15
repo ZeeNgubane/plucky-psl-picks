@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -80,7 +79,7 @@ const Index = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'team':
-        return <MyTeam selectedPlayers={selectedPlayers} budget={budget} />;
+        return <MyTeam selectedPlayers={selectedPlayers} />;
       case 'transfers':
         return (
           <Transfers 
