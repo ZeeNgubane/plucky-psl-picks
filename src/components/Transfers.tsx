@@ -35,7 +35,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
 
   const getTeamLogo = (teamName: string) => {
     const team = teams.find(t => t.name === teamName);
-    return team?.logo || '⚽';
+    return team?.logo || 'https://logos-world.net/wp-content/uploads/2020/06/Kaizer-Chiefs-Logo.png';
   };
 
   const filteredPlayers = players
@@ -178,7 +178,17 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
               <SelectItem value="all">All Teams</SelectItem>
               {validTeams.map(team => (
                 <SelectItem key={team.id} value={team.name}>
-                  {team.logo} {team.name}
+                  <div className="flex items-center space-x-2">
+                    <img 
+                      src={team.logo} 
+                      alt={team.name} 
+                      className="w-4 h-4 object-contain"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://logos-world.net/wp-content/uploads/2020/06/Kaizer-Chiefs-Logo.png';
+                      }}
+                    />
+                    <span>{team.name}</span>
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -219,7 +229,14 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                  <div className="text-2xl">{getTeamLogo(player.team)}</div>
+                  <img 
+                    src={getTeamLogo(player.team)} 
+                    alt={player.team} 
+                    className="w-8 h-8 object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://logos-world.net/wp-content/uploads/2020/06/Kaizer-Chiefs-Logo.png';
+                    }}
+                  />
                   <div>
                     <div className="flex items-center space-x-2">
                       <h3 className="font-semibold">{player.name}</h3>
@@ -316,7 +333,14 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-3">
-                        <span className="text-xl">{getTeamLogo(player.team)}</span>
+                        <img 
+                          src={getTeamLogo(player.team)} 
+                          alt={player.team} 
+                          className="w-6 h-6 object-contain"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://logos-world.net/wp-content/uploads/2020/06/Kaizer-Chiefs-Logo.png';
+                          }}
+                        />
                         <span className="text-gray-900">{player.team}</span>
                       </div>
                     </TableCell>
