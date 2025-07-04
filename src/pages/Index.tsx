@@ -154,7 +154,7 @@ const Index = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
           style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1993&auto=format&fit=crop)',
+            backgroundImage: 'url(http://images.supersport.com/spotlight/Sundowns-crowned-BBP1200.JPG)',
             backgroundPosition: 'center center',
             filter: 'blur(0.5px)'
           }}
