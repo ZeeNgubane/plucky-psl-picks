@@ -170,11 +170,11 @@ const Index = () => {
               <div className="flex items-center space-x-6 mb-6 md:mb-0">
                 <div className="relative">
                   <img 
-                    src="https://upload.wikimedia.org/wikipedia/en/thumb/4/4a/Premier_Soccer_League.svg/1200px-Premier_Soccer_League.svg.png" 
+                    src="https://www.psl.co.za/media/10983/psl-logo-gold.png" 
                     alt="PSL Logo" 
                     className="h-20 w-auto drop-shadow-2xl"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://www.psl.co.za/media/10983/psl-logo-gold.png';
+                      (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/en/thumb/4/4a/Premier_Soccer_League.svg/1200px-Premier_Soccer_League.svg.png';
                     }}
                   />
                   <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full animate-pulse shadow-lg"></div>
