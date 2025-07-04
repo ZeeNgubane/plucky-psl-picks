@@ -148,46 +148,55 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* PSL Header Section - Transparent Banner */}
-      <div className="relative bg-transparent text-white overflow-hidden">
-        {/* Background Image Overlay */}
+      {/* PSL Header Section - Enhanced Quality */}
+      <div className="relative bg-gradient-to-br from-red-900 via-red-700 to-red-600 text-white overflow-hidden">
+        {/* Background Image Overlay - Higher Quality */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
           style={{
-            backgroundImage: 'url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8Qyp3Lwe6asV9LvYM13nUAosA3woAqW4YsQ&s)',
-            backgroundPosition: 'right center'
+            backgroundImage: 'url(https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1993&auto=format&fit=crop)',
+            backgroundPosition: 'center center',
+            filter: 'blur(0.5px)'
           }}
         />
         
+        {/* Gradient Overlay for better text visibility */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/40" />
+        
         {/* Header Content */}
         <div className="relative z-10">
-          <div className="container mx-auto px-4 py-8">
+          <div className="container mx-auto px-4 py-12">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
-              <div className="flex items-center space-x-4 mb-4 md:mb-0">
-                <img 
-                  src="https://www.psl.co.za/media/10983/psl-logo-gold.png" 
-                  alt="PSL Logo" 
-                  className="h-16 w-auto"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL0JZOmbEBlLE_lP0SKjIaxOfpF4DvC3bZoQ&s';
-                  }}
-                />
+              <div className="flex items-center space-x-6 mb-6 md:mb-0">
+                <div className="relative">
+                  <img 
+                    src="https://upload.wikimedia.org/wikipedia/en/thumb/4/4a/Premier_Soccer_League.svg/1200px-Premier_Soccer_League.svg.png" 
+                    alt="PSL Logo" 
+                    className="h-20 w-auto drop-shadow-2xl"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://www.psl.co.za/media/10983/psl-logo-gold.png';
+                    }}
+                  />
+                  <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full animate-pulse shadow-lg"></div>
+                </div>
                 <div>
-                  <h1 className="text-4xl md:text-5xl font-bold mb-2 text-shadow">Fantasy Football</h1>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-lg text-white/90">Betway Premiership</span>
-                    <span className="text-white/70">•</span>
-                    <span className="text-lg text-white/90">2024/25</span>
+                  <h1 className="text-5xl md:text-6xl font-bold mb-3 text-shadow-lg bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+                    Fantasy Football
+                  </h1>
+                  <div className="flex items-center space-x-3">
+                    <span className="text-xl text-white/95 font-medium">Betway Premiership</span>
+                    <span className="text-white/70 text-lg">•</span>
+                    <span className="text-xl text-white/95 font-medium">2024/25</span>
                   </div>
                 </div>
               </div>
               
-              {/* Gameweek Info */}
+              {/* Gameweek Info - Enhanced */}
               <div className="text-right">
-                <div className="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-4 border border-white/30">
-                  <div className="text-sm text-white/90 mb-1">Gameweek</div>
-                  <div className="text-3xl font-bold mb-1">14</div>
-                  <div className="text-sm text-white/80">3 days, 2 hrs</div>
+                <div className="bg-white/15 backdrop-blur-md rounded-xl px-8 py-6 border border-white/20 shadow-2xl">
+                  <div className="text-sm text-white/90 mb-2 font-medium uppercase tracking-wider">Gameweek</div>
+                  <div className="text-4xl font-bold mb-2 text-white drop-shadow-lg">14</div>
+                  <div className="text-sm text-white/85 font-medium">3 days, 2 hrs</div>
                 </div>
               </div>
             </div>
