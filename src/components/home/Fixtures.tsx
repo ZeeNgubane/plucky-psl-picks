@@ -8,8 +8,8 @@ const fixtures = [
     id: 1,
     homeTeam: 'Kaizer Chiefs',
     awayTeam: 'Orlando Pirates',
-    homeLogo: 'https://logos-world.net/wp-content/uploads/2020/06/Kaizer-Chiefs-Logo.png',
-    awayLogo: 'https://logos-world.net/wp-content/uploads/2020/06/Orlando-Pirates-Logo.png',
+    homeLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/6/6f/Kaizer_Chiefs_Logo.svg/1200px-Kaizer_Chiefs_Logo.svg.png',
+    awayLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Orlando_Pirates_FC_logo.svg/1200px-Orlando_Pirates_FC_logo.svg.png',
     date: '2024-12-15',
     time: '15:30',
     venue: 'FNB Stadium',
@@ -21,8 +21,8 @@ const fixtures = [
     id: 2,
     homeTeam: 'Mamelodi Sundowns',
     awayTeam: 'SuperSport United',
-    homeLogo: 'https://logos-world.net/wp-content/uploads/2020/06/Mamelodi-Sundowns-Logo.png',
-    awayLogo: 'https://logos-world.net/wp-content/uploads/2020/06/SuperSport-United-Logo.png',
+    homeLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c8/Mamelodi_Sundowns_FC_logo.svg/1200px-Mamelodi_Sundowns_FC_logo.svg.png',
+    awayLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/5/53/SuperSport_United_FC_logo.svg/1200px-SuperSport_United_FC_logo.svg.png',
     date: '2024-12-14',
     time: '19:30',
     venue: 'Loftus Versfeld',
@@ -34,8 +34,8 @@ const fixtures = [
     id: 3,
     homeTeam: 'Cape Town City',
     awayTeam: 'Stellenbosch FC',
-    homeLogo: 'https://upload.wikimedia.org/wikipedia/en/0/0c/Cape_Town_City_FC_logo.png',
-    awayLogo: 'https://upload.wikimedia.org/wikipedia/en/6/6c/Stellenbosch_FC_logo.png',
+    homeLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Cape_Town_City_FC_logo.png/1200px-Cape_Town_City_FC_logo.png',
+    awayLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/6/6c/Stellenbosch_FC_logo.png/1200px-Stellenbosch_FC_logo.png',
     date: '2024-12-13',
     time: '20:15',
     venue: 'DHL Stadium',
@@ -60,6 +60,11 @@ const Fixtures = () => {
       case 'completed': return 'FT';
       default: return 'vs';
     }
+  };
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const target = e.target as HTMLImageElement;
+    target.src = 'https://via.placeholder.com/40x40/f3f4f6/6b7280?text=FC';
   };
 
   return (
@@ -94,10 +99,9 @@ const Fixtures = () => {
                   <img 
                     src={fixture.homeLogo} 
                     alt={fixture.homeTeam}
-                    className="h-10 w-10 object-contain rounded-lg shadow-sm"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/40x40?text=FC';
-                    }}
+                    className="h-10 w-10 object-contain rounded-lg shadow-sm bg-white/50 p-1"
+                    onError={handleImageError}
+                    loading="lazy"
                   />
                   <div>
                     <p className="font-semibold text-gray-800 text-sm">{fixture.homeTeam}</p>
@@ -128,10 +132,9 @@ const Fixtures = () => {
                   <img 
                     src={fixture.awayLogo} 
                     alt={fixture.awayTeam}
-                    className="h-10 w-10 object-contain rounded-lg shadow-sm"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/40x40?text=FC';
-                    }}
+                    className="h-10 w-10 object-contain rounded-lg shadow-sm bg-white/50 p-1"
+                    onError={handleImageError}
+                    loading="lazy"
                   />
                 </div>
               </div>

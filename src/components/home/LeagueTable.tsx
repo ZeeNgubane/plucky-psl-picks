@@ -4,11 +4,46 @@ import { Badge } from '@/components/ui/badge';
 import { Trophy, Medal, Award, TrendingUp, Users } from 'lucide-react';
 
 const leagueData = [
-  { position: 1, team: 'Mamelodi Sundowns', played: 14, points: 35, form: ['W', 'W', 'W', 'D', 'W'], logo: 'https://logos-world.net/wp-content/uploads/2020/06/Mamelodi-Sundowns-Logo.png' },
-  { position: 2, team: 'Orlando Pirates', played: 14, points: 28, form: ['W', 'W', 'L', 'W', 'W'], logo: 'https://logos-world.net/wp-content/uploads/2020/06/Orlando-Pirates-Logo.png' },
-  { position: 3, team: 'Kaizer Chiefs', played: 14, points: 26, form: ['D', 'W', 'W', 'L', 'W'], logo: 'https://logos-world.net/wp-content/uploads/2020/06/Kaizer-Chiefs-Logo.png' },
-  { position: 4, team: 'SuperSport United', played: 14, points: 24, form: ['W', 'D', 'W', 'W', 'L'], logo: 'https://logos-world.net/wp-content/uploads/2020/06/SuperSport-United-Logo.png' },
-  { position: 5, team: 'Cape Town City', played: 14, points: 22, form: ['L', 'W', 'D', 'W', 'W'], logo: 'https://upload.wikimedia.org/wikipedia/en/0/0c/Cape_Town_City_FC_logo.png' }
+  { 
+    position: 1, 
+    team: 'Mamelodi Sundowns', 
+    played: 14, 
+    points: 35, 
+    form: ['W', 'W', 'W', 'D', 'W'], 
+    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c8/Mamelodi_Sundowns_FC_logo.svg/1200px-Mamelodi_Sundowns_FC_logo.svg.png' 
+  },
+  { 
+    position: 2, 
+    team: 'Orlando Pirates', 
+    played: 14, 
+    points: 28, 
+    form: ['W', 'W', 'L', 'W', 'W'], 
+    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Orlando_Pirates_FC_logo.svg/1200px-Orlando_Pirates_FC_logo.svg.png' 
+  },
+  { 
+    position: 3, 
+    team: 'Kaizer Chiefs', 
+    played: 14, 
+    points: 26, 
+    form: ['D', 'W', 'W', 'L', 'W'], 
+    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/6/6f/Kaizer_Chiefs_Logo.svg/1200px-Kaizer_Chiefs_Logo.svg.png' 
+  },
+  { 
+    position: 4, 
+    team: 'SuperSport United', 
+    played: 14, 
+    points: 24, 
+    form: ['W', 'D', 'W', 'W', 'L'], 
+    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/5/53/SuperSport_United_FC_logo.svg/1200px-SuperSport_United_FC_logo.svg.png' 
+  },
+  { 
+    position: 5, 
+    team: 'Cape Town City', 
+    played: 14, 
+    points: 22, 
+    form: ['L', 'W', 'D', 'W', 'W'], 
+    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Cape_Town_City_FC_logo.png/1200px-Cape_Town_City_FC_logo.png' 
+  }
 ];
 
 const LeagueTable = () => {
@@ -34,6 +69,11 @@ const LeagueTable = () => {
     if (position <= 3) return 'bg-gradient-to-r from-green-400 to-green-500 text-white';
     if (position <= 6) return 'bg-gradient-to-r from-blue-400 to-blue-500 text-white';
     return 'bg-gradient-to-r from-gray-400 to-gray-500 text-white';
+  };
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const target = e.target as HTMLImageElement;
+    target.src = 'https://via.placeholder.com/32x32/f3f4f6/6b7280?text=FC';
   };
 
   return (
@@ -65,10 +105,9 @@ const LeagueTable = () => {
               <img 
                 src={team.logo} 
                 alt={team.team}
-                className="h-8 w-8 object-contain rounded-lg shadow-sm"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/32x32?text=FC';
-                }}
+                className="h-8 w-8 object-contain rounded-lg shadow-sm bg-white/50 p-1"
+                onError={handleImageError}
+                loading="lazy"
               />
               <div className="flex-1">
                 <p className="font-semibold text-gray-800 group-hover:text-blue-700 transition-colors text-sm">
