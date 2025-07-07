@@ -148,43 +148,44 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      {/* Modern Hero Header */}
-      <div className="relative bg-gradient-to-br from-amber-500 via-amber-400 to-yellow-400 text-white overflow-hidden">
-        {/* Geometric Pattern Overlay */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+      {/* Modern Hero Header with Player Images Banner */}
+      <div className="relative overflow-hidden">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://www.telecomasia.net/upload/sprint.editor/174/174e85dbbca3e579889a522181c52f7d.png')`,
+          }}
+        >
+          {/* Dark overlay for better text readability */}
+          <div className="absolute inset-0 bg-black/50"></div>
         </div>
         
         {/* Header Content */}
         <div className="relative z-10">
-          <div className="container mx-auto px-4 py-8">
+          <div className="container mx-auto px-4 py-12">
             <div className="flex flex-col items-center text-center">
-              <div className="flex items-center space-x-4 mb-6">
+              <div className="flex items-center space-x-6 mb-8">
                 <div className="relative">
                   <img 
                     src="https://www.psl.co.za/media/10983/psl-logo-gold.png" 
                     alt="PSL Logo" 
-                    className="h-16 w-auto drop-shadow-xl"
+                    className="h-20 w-auto drop-shadow-2xl filter brightness-110"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/en/thumb/4/4a/Premier_Soccer_League.svg/1200px-Premier_Soccer_League.svg.png';
                     }}
                   />
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-lg"></div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <svg className="h-12 w-12 text-white drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                  </svg>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-pulse shadow-lg"></div>
                 </div>
               </div>
-              <div>
-                <h1 className="text-4xl md:text-5xl font-bold mb-2 drop-shadow-lg">
+              <div className="text-white">
+                <h1 className="text-5xl md:text-6xl font-bold mb-3 drop-shadow-2xl">
                   SA Fantasy Football
                 </h1>
-                <p className="text-lg text-white/90 font-medium mb-4">Betway Premiership 2024/25</p>
-                <div className="inline-flex items-center bg-white/15 backdrop-blur-md rounded-full px-6 py-2 border border-white/20">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium">Gameweek 14 • 3 days, 2 hrs</span>
+                <p className="text-xl text-white/95 font-medium mb-6 drop-shadow-lg">Betway Premiership 2024/25</p>
+                <div className="inline-flex items-center bg-white/20 backdrop-blur-md rounded-full px-8 py-3 border border-white/30 shadow-lg">
+                  <Calendar className="h-5 w-5 mr-3" />
+                  <span className="text-lg font-medium">Gameweek 14 • 3 days, 2 hrs</span>
                 </div>
               </div>
             </div>
