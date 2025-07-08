@@ -154,9 +154,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30">
-      {/* Modern Hero Header with player silhouettes only */}
+      {/* Modern Hero Header */}
       <div className="relative overflow-hidden bg-gradient-to-r from-emerald-900 via-blue-900 to-yellow-800">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1993&q=80')] bg-cover bg-bottom opacity-20"></div>
+        <div className="absolute inset-0 bg-[url('https://igamingafrika.com/wp-content/uploads/2024/11/PSL.jpg')] bg-cover bg-center opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60"></div>
         
         <div className="relative z-10 container mx-auto px-6 py-16">
@@ -214,7 +214,7 @@ const Index = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center space-x-3 px-6 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
                     activeTab === tab.id
-                      ? `bg-${tab.color}-500 text-white shadow-lg transform scale-105 shadow-${tab.color}-500/25`
+                      ? 'bg-emerald-500 text-white shadow-lg transform scale-105 shadow-emerald-500/25'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-white/70'
                   }`}
                 >
@@ -371,14 +371,14 @@ const Index = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex flex-col items-center space-y-1 p-3 rounded-2xl transition-all duration-300 ${
                 activeTab === tab.id
-                  ? `text-${tab.color}-600 bg-${tab.color}-50 shadow-lg transform scale-110`
+                  ? 'text-emerald-600 bg-emerald-50 shadow-lg transform scale-110'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               <tab.icon className="h-6 w-6" />
               <span className="text-xs font-semibold">{tab.label}</span>
               {activeTab === tab.id && (
-                <div className={`w-1 h-1 bg-${tab.color}-500 rounded-full`}></div>
+                <div className="w-1 h-1 bg-emerald-500 rounded-full"></div>
               )}
             </button>
           ))}
