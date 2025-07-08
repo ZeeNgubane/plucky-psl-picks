@@ -10,7 +10,7 @@ const leagueData = [
     played: 14, 
     points: 35, 
     form: ['W', 'W', 'W', 'D', 'W'], 
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c8/Mamelodi_Sundowns_FC_logo.svg/1200px-Mamelodi_Sundowns_FC_logo.svg.png' 
+    logo: 'https://logoeps.com/wp-content/uploads/2013/03/mamelodi-sundowns-vector-logo.png' 
   },
   { 
     position: 2, 
@@ -18,7 +18,7 @@ const leagueData = [
     played: 14, 
     points: 28, 
     form: ['W', 'W', 'L', 'W', 'W'], 
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Orlando_Pirates_FC_logo.svg/1200px-Orlando_Pirates_FC_logo.svg.png' 
+    logo: 'https://logoeps.com/wp-content/uploads/2013/03/orlando-pirates-vector-logo.png' 
   },
   { 
     position: 3, 
@@ -26,7 +26,7 @@ const leagueData = [
     played: 14, 
     points: 26, 
     form: ['D', 'W', 'W', 'L', 'W'], 
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/6/6f/Kaizer_Chiefs_Logo.svg/1200px-Kaizer_Chiefs_Logo.svg.png' 
+    logo: 'https://logoeps.com/wp-content/uploads/2013/03/kaizer-chiefs-vector-logo.png' 
   },
   { 
     position: 4, 
@@ -34,7 +34,7 @@ const leagueData = [
     played: 14, 
     points: 24, 
     form: ['W', 'D', 'W', 'W', 'L'], 
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/5/53/SuperSport_United_FC_logo.svg/1200px-SuperSport_United_FC_logo.svg.png' 
+    logo: 'https://logoeps.com/wp-content/uploads/2013/03/supersport-united-vector-logo.png' 
   },
   { 
     position: 5, 
@@ -42,7 +42,7 @@ const leagueData = [
     played: 14, 
     points: 22, 
     form: ['L', 'W', 'D', 'W', 'W'], 
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Cape_Town_City_FC_logo.png/1200px-Cape_Town_City_FC_logo.png' 
+    logo: 'https://logoeps.com/wp-content/uploads/2016/04/cape-town-city-fc-vector-logo.png' 
   }
 ];
 
@@ -71,9 +71,9 @@ const LeagueTable = () => {
     return 'bg-gradient-to-r from-gray-400 to-gray-500 text-white';
   };
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, teamName: string) => {
     const target = e.target as HTMLImageElement;
-    target.src = 'https://via.placeholder.com/32x32/f3f4f6/6b7280?text=FC';
+    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(teamName)}&background=f59e0b&color=fff&size=32`;
   };
 
   return (
@@ -102,13 +102,15 @@ const LeagueTable = () => {
               </div>
               
               {/* Team Logo and Name */}
-              <img 
-                src={team.logo} 
-                alt={team.team}
-                className="h-8 w-8 object-contain rounded-lg shadow-sm bg-white/50 p-1"
-                onError={handleImageError}
-                loading="lazy"
-              />
+              <div className="w-8 h-8 rounded-lg overflow-hidden bg-white shadow-sm flex items-center justify-center p-1">
+                <img 
+                  src={team.logo} 
+                  alt={team.team}
+                  className="w-full h-full object-contain"
+                  onError={(e) => handleImageError(e, team.team)}
+                  loading="lazy"
+                />
+              </div>
               <div className="flex-1">
                 <p className="font-semibold text-gray-800 group-hover:text-blue-700 transition-colors text-sm">
                   {team.team}

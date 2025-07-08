@@ -6,7 +6,7 @@ import { players, teams } from '@/data/teams';
 
 const getTeamLogo = (teamName: string) => {
   const team = teams.find(t => t.name === teamName);
-  return team?.logo || 'https://logos-world.net/wp-content/uploads/2020/06/Kaizer-Chiefs-Logo.png';
+  return team?.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(teamName)}&background=f59e0b&color=fff&size=32`;
 };
 
 const topPerformers = players.sort((a,b) => b.points - a.points).slice(0,5);
@@ -31,6 +31,11 @@ const TopPerformers = () => {
     }
   };
 
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, teamName: string) => {
+    const target = e.target as HTMLImageElement;
+    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(teamName)}&background=f59e0b&color=fff&size=32`;
+  };
+
   return (
     <Card className="border-0 rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
       <CardHeader className="pb-4">
@@ -53,14 +58,15 @@ const TopPerformers = () => {
               </div>
               
               {/* Team Logo */}
-              <img 
-                src={getTeamLogo(player.team)} 
-                alt={player.team} 
-                className="h-8 w-8 object-contain rounded-lg shadow-sm"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/32x32?text=FC';
-                }}
-              />
+              <div className="w-8 h-8 rounded-lg overflow-hidden bg-white shadow-sm flex items-center justify-center">
+                <img 
+                  src={getTeamLogo(player.team)} 
+                  alt={player.team} 
+                  className="w-full h-full object-contain"
+                  onError={(e) => handleImageError(e, player.team)}
+                  loading="lazy"
+                />
+              </div>
               
               {/* Player Info */}
               <div>

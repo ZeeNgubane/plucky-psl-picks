@@ -8,8 +8,8 @@ const fixtures = [
     id: 1,
     homeTeam: 'Kaizer Chiefs',
     awayTeam: 'Orlando Pirates',
-    homeLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/6/6f/Kaizer_Chiefs_Logo.svg/1200px-Kaizer_Chiefs_Logo.svg.png',
-    awayLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Orlando_Pirates_FC_logo.svg/1200px-Orlando_Pirates_FC_logo.svg.png',
+    homeLogo: 'https://logoeps.com/wp-content/uploads/2013/03/kaizer-chiefs-vector-logo.png',
+    awayLogo: 'https://logoeps.com/wp-content/uploads/2013/03/orlando-pirates-vector-logo.png',
     date: '2024-12-15',
     time: '15:30',
     venue: 'FNB Stadium',
@@ -21,8 +21,8 @@ const fixtures = [
     id: 2,
     homeTeam: 'Mamelodi Sundowns',
     awayTeam: 'SuperSport United',
-    homeLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c8/Mamelodi_Sundowns_FC_logo.svg/1200px-Mamelodi_Sundowns_FC_logo.svg.png',
-    awayLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/5/53/SuperSport_United_FC_logo.svg/1200px-SuperSport_United_FC_logo.svg.png',
+    homeLogo: 'https://logoeps.com/wp-content/uploads/2013/03/mamelodi-sundowns-vector-logo.png',
+    awayLogo: 'https://logoeps.com/wp-content/uploads/2013/03/supersport-united-vector-logo.png',
     date: '2024-12-14',
     time: '19:30',
     venue: 'Loftus Versfeld',
@@ -34,8 +34,8 @@ const fixtures = [
     id: 3,
     homeTeam: 'Cape Town City',
     awayTeam: 'Stellenbosch FC',
-    homeLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Cape_Town_City_FC_logo.png/1200px-Cape_Town_City_FC_logo.png',
-    awayLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/6/6c/Stellenbosch_FC_logo.png/1200px-Stellenbosch_FC_logo.png',
+    homeLogo: 'https://logoeps.com/wp-content/uploads/2016/04/cape-town-city-fc-vector-logo.png',
+    awayLogo: 'https://logoeps.com/wp-content/uploads/2018/08/stellenbosch-fc-vector-logo.png',
     date: '2024-12-13',
     time: '20:15',
     venue: 'DHL Stadium',
@@ -62,9 +62,9 @@ const Fixtures = () => {
     }
   };
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, teamName: string) => {
     const target = e.target as HTMLImageElement;
-    target.src = 'https://via.placeholder.com/40x40/f3f4f6/6b7280?text=FC';
+    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(teamName)}&background=f59e0b&color=fff&size=40`;
   };
 
   return (
@@ -96,13 +96,15 @@ const Fixtures = () => {
               <div className="flex items-center justify-between">
                 {/* Home Team */}
                 <div className="flex items-center space-x-3 flex-1">
-                  <img 
-                    src={fixture.homeLogo} 
-                    alt={fixture.homeTeam}
-                    className="h-10 w-10 object-contain rounded-lg shadow-sm bg-white/50 p-1"
-                    onError={handleImageError}
-                    loading="lazy"
-                  />
+                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-white shadow-sm flex items-center justify-center p-1">
+                    <img 
+                      src={fixture.homeLogo} 
+                      alt={fixture.homeTeam}
+                      className="w-full h-full object-contain"
+                      onError={(e) => handleImageError(e, fixture.homeTeam)}
+                      loading="lazy"
+                    />
+                  </div>
                   <div>
                     <p className="font-semibold text-gray-800 text-sm">{fixture.homeTeam}</p>
                   </div>
@@ -129,13 +131,15 @@ const Fixtures = () => {
                   <div className="text-right">
                     <p className="font-semibold text-gray-800 text-sm">{fixture.awayTeam}</p>
                   </div>
-                  <img 
-                    src={fixture.awayLogo} 
-                    alt={fixture.awayTeam}
-                    className="h-10 w-10 object-contain rounded-lg shadow-sm bg-white/50 p-1"
-                    onError={handleImageError}
-                    loading="lazy"
-                  />
+                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-white shadow-sm flex items-center justify-center p-1">
+                    <img 
+                      src={fixture.awayLogo} 
+                      alt={fixture.awayTeam}
+                      className="w-full h-full object-contain"
+                      onError={(e) => handleImageError(e, fixture.awayTeam)}
+                      loading="lazy"
+                    />
+                  </div>
                 </div>
               </div>
 
