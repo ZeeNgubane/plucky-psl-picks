@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, MapPin } from 'lucide-react';
@@ -8,8 +7,8 @@ const fixtures = [
     id: 1,
     homeTeam: 'Kaizer Chiefs',
     awayTeam: 'Orlando Pirates',
-    homeLogo: 'https://logoeps.com/wp-content/uploads/2013/03/kaizer-chiefs-vector-logo.png',
-    awayLogo: 'https://logoeps.com/wp-content/uploads/2013/03/orlando-pirates-vector-logo.png',
+    homeLogo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Kaizer%20Chiefs.jpg',
+    awayLogo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Orlando%20Pirates.jpg',
     date: '2024-12-15',
     time: '15:30',
     venue: 'FNB Stadium',
@@ -21,8 +20,8 @@ const fixtures = [
     id: 2,
     homeTeam: 'Mamelodi Sundowns',
     awayTeam: 'SuperSport United',
-    homeLogo: 'https://logoeps.com/wp-content/uploads/2013/03/mamelodi-sundowns-vector-logo.png',
-    awayLogo: 'https://logoeps.com/wp-content/uploads/2013/03/supersport-united-vector-logo.png',
+    homeLogo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Mamelodi%20Sundowns.jpg',
+    awayLogo: 'https://www.psl.co.za/newpsl/images/clublogos/large/SuperSport%20United.jpg',
     date: '2024-12-14',
     time: '19:30',
     venue: 'Loftus Versfeld',
@@ -34,8 +33,8 @@ const fixtures = [
     id: 3,
     homeTeam: 'Cape Town City',
     awayTeam: 'Stellenbosch FC',
-    homeLogo: 'https://logoeps.com/wp-content/uploads/2016/04/cape-town-city-fc-vector-logo.png',
-    awayLogo: 'https://logoeps.com/wp-content/uploads/2018/08/stellenbosch-fc-vector-logo.png',
+    homeLogo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Cape%20Town%20City%20FC.jpg',
+    awayLogo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Stellenbosch%20FC.jpg',
     date: '2024-12-13',
     time: '20:15',
     venue: 'DHL Stadium',

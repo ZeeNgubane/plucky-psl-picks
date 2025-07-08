@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, Medal, Award, TrendingUp, Users } from 'lucide-react';
@@ -10,7 +9,7 @@ const leagueData = [
     played: 14, 
     points: 35, 
     form: ['W', 'W', 'W', 'D', 'W'], 
-    logo: 'https://logoeps.com/wp-content/uploads/2013/03/mamelodi-sundowns-vector-logo.png' 
+    logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Mamelodi%20Sundowns.jpg' 
   },
   { 
     position: 2, 
@@ -18,7 +17,7 @@ const leagueData = [
     played: 14, 
     points: 28, 
     form: ['W', 'W', 'L', 'W', 'W'], 
-    logo: 'https://logoeps.com/wp-content/uploads/2013/03/orlando-pirates-vector-logo.png' 
+    logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Orlando%20Pirates.jpg' 
   },
   { 
     position: 3, 
@@ -26,7 +25,7 @@ const leagueData = [
     played: 14, 
     points: 26, 
     form: ['D', 'W', 'W', 'L', 'W'], 
-    logo: 'https://logoeps.com/wp-content/uploads/2013/03/kaizer-chiefs-vector-logo.png' 
+    logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Kaizer%20Chiefs.jpg' 
   },
   { 
     position: 4, 
@@ -34,7 +33,7 @@ const leagueData = [
     played: 14, 
     points: 24, 
     form: ['W', 'D', 'W', 'W', 'L'], 
-    logo: 'https://logoeps.com/wp-content/uploads/2013/03/supersport-united-vector-logo.png' 
+    logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/SuperSport%20United.jpg' 
   },
   { 
     position: 5, 
@@ -42,7 +41,7 @@ const leagueData = [
     played: 14, 
     points: 22, 
     form: ['L', 'W', 'D', 'W', 'W'], 
-    logo: 'https://logoeps.com/wp-content/uploads/2016/04/cape-town-city-fc-vector-logo.png' 
+    logo: 'https://www.psl.co.za/newpsl/images/clublogos/large/Cape%20Town%20City%20FC.jpg' 
   }
 ];
 

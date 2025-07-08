@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -153,9 +154,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30">
-      {/* Modern Hero Header */}
+      {/* Modern Hero Header with player silhouettes only */}
       <div className="relative overflow-hidden bg-gradient-to-r from-emerald-900 via-blue-900 to-yellow-800">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1993&q=80')] bg-cover bg-center opacity-20"></div>
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1993&q=80')] bg-cover bg-bottom opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60"></div>
         
         <div className="relative z-10 container mx-auto px-6 py-16">
@@ -324,7 +325,7 @@ const Index = () => {
                 
                 {/* Enhanced South African Motivational Card */}
                 <Card className="bg-gradient-to-br from-yellow-400 via-green-500 to-blue-600 text-white border-0 rounded-2xl shadow-xl overflow-hidden">
-                  <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+                  <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.1\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"4\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
                   <CardContent className="p-8 text-center relative z-10">
                     <div className="mb-6">
                       <div className="inline-flex items-center space-x-2 bg-white/20 rounded-full px-4 py-2">
