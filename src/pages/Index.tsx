@@ -150,15 +150,20 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       {/* Modern Hero Header with Player Images Banner */}
       <div className="relative overflow-hidden">
-        {/* Background Image */}
+        {/* Background Image - Cropped to show only players */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url('https://www.telecomasia.net/upload/sprint.editor/174/174e85dbbca3e579889a522181c52f7d.png')`,
+            backgroundPosition: 'center 20%', // Focus on the top portion where players are
+            backgroundSize: 'cover',
+            transform: 'scale(1.1)', // Slightly zoom to crop out text at bottom
           }}
         >
           {/* Dark overlay for better text readability */}
-          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="absolute inset-0 bg-black/60"></div>
+          {/* Additional gradient overlay to fade out text areas */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80"></div>
         </div>
         
         {/* Header Content */}
