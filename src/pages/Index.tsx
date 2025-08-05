@@ -14,6 +14,7 @@ import Fixtures from '@/components/home/Fixtures';
 import LatestNews from '@/components/home/LatestNews';
 import LeagueTable from '@/components/home/LeagueTable';
 import TopPerformers from '@/components/home/TopPerformers';
+import { PSLBot } from '@/components/PSLBot';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -321,6 +322,10 @@ const Index = () => {
                 </div>
                 <div className="transform transition-all duration-500 hover:scale-[1.01]">
                   <TopPerformers />
+                </div>
+                
+                <div className="transform transition-all duration-500 hover:scale-[1.01]">
+                  <PSLBot />
                 </div>
                 
                 {/* Enhanced South African Motivational Card */}
