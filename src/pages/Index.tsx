@@ -153,9 +153,9 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30">
+    <div className="min-h-screen bg-background">
       {/* Modern Hero Header */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-emerald-900 via-blue-900 to-yellow-800">
+      <div className="relative overflow-hidden bg-gradient-to-r from-background via-secondary to-primary">
         <div className="absolute inset-0 bg-[url('https://igamingafrika.com/wp-content/uploads/2024/11/PSL.jpg')] bg-cover bg-center opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60"></div>
         
@@ -199,10 +199,10 @@ const Index = () => {
       </div>
 
       {/* Enhanced Navigation */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-gray-200/80 shadow-sm">
+      <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm">
         <div className="container mx-auto px-6">
           <div className="flex justify-center py-4">
-            <div className="flex bg-gray-100/80 rounded-2xl p-1.5 shadow-lg border border-gray-200/50">
+            <div className="flex bg-secondary/20 rounded-2xl p-1.5 shadow-lg border border-border">
               {[
                 { id: 'home', label: 'Home', icon: House, color: 'emerald' },
                 { id: 'team', label: 'My Team', icon: Users, color: 'blue' },
@@ -214,8 +214,8 @@ const Index = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center space-x-3 px-6 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
                     activeTab === tab.id
-                      ? 'bg-emerald-500 text-white shadow-lg transform scale-105 shadow-emerald-500/25'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-white/70'
+                      ? 'bg-primary text-primary-foreground shadow-lg transform scale-105 shadow-primary/25'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-card/70'
                   }`}
                 >
                   <tab.icon className="h-4 w-4" />
@@ -231,71 +231,71 @@ const Index = () => {
       <div className="container mx-auto px-6 py-8">
         {activeTab === 'home' ? (
           <div className="space-y-8">
-            {/* Enhanced Stats Cards with PSL Colors */}
+            {/* Grit & Glory Stats Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="bg-gradient-to-br from-emerald-500 to-green-600 text-white border-0 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+              <Card className="bg-gradient-to-br from-primary to-accent text-primary-foreground border-0 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-2">
-                      <p className="text-emerald-100 text-sm font-medium">Your Rank</p>
+                      <p className="text-foreground/70 text-sm font-medium">Your Rank</p>
                       <div className="flex items-center space-x-2">
                         <p className="text-3xl font-black">#4</p>
                         <FormIndicator change={2} />
                       </div>
                     </div>
-                    <div className="bg-white/20 p-3 rounded-xl">
-                      <Medal className="h-8 w-8 text-white" />
+                    <div className="bg-secondary/20 p-3 rounded-xl">
+                      <Medal className="h-8 w-8 text-foreground" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white border-0 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+              <Card className="bg-gradient-to-br from-secondary to-muted text-secondary-foreground border-0 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-2">
-                      <p className="text-blue-100 text-sm font-medium">Total Points</p>
+                      <p className="text-foreground/70 text-sm font-medium">Total Points</p>
                       <div className="flex items-center space-x-2">
                         <p className="text-3xl font-black">1,089</p>
                         <FormIndicator change={45} />
                       </div>
                     </div>
-                    <div className="bg-white/20 p-3 rounded-xl">
-                      <Star className="h-8 w-8 text-white" />
+                    <div className="bg-primary/20 p-3 rounded-xl">
+                      <Star className="h-8 w-8 text-primary" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-amber-500 to-yellow-600 text-white border-0 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+              <Card className="bg-gradient-to-br from-accent to-primary text-accent-foreground border-0 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-2">
-                      <p className="text-amber-100 text-sm font-medium">Budget Left</p>
+                      <p className="text-foreground/70 text-sm font-medium">Budget Left</p>
                       <div className="flex items-center space-x-2">
                         <p className="text-2xl font-black">R{(budget * 18).toFixed(1)}M</p>
                         <FormIndicator change={0} />
                       </div>
                     </div>
-                    <div className="bg-white/20 p-3 rounded-xl">
-                      <TrendingUp className="h-8 w-8 text-white" />
+                    <div className="bg-secondary/20 p-3 rounded-xl">
+                      <TrendingUp className="h-8 w-8 text-foreground" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-purple-500 to-violet-600 text-white border-0 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+              <Card className="bg-gradient-to-br from-muted to-secondary text-muted-foreground border-0 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-2">
-                      <p className="text-purple-100 text-sm font-medium">Team Value</p>
+                      <p className="text-foreground/70 text-sm font-medium">Team Value</p>
                       <div className="flex items-center space-x-2">
                         <p className="text-2xl font-black">R{((100 - budget) * 18).toFixed(1)}M</p>
                         <FormIndicator change={1} />
                       </div>
                     </div>
-                    <div className="bg-white/20 p-3 rounded-xl">
-                      <Users className="h-8 w-8 text-white" />
+                    <div className="bg-primary/20 p-3 rounded-xl">
+                      <Users className="h-8 w-8 text-primary" />
                     </div>
                   </div>
                 </CardContent>
@@ -324,8 +324,7 @@ const Index = () => {
                 </div>
                 
                 {/* Enhanced South African Motivational Card */}
-                <Card className="bg-gradient-to-br from-yellow-400 via-green-500 to-blue-600 text-white border-0 rounded-2xl shadow-xl overflow-hidden">
-                  <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.1\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"4\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+                <Card className="bg-gradient-to-br from-primary via-secondary to-accent text-primary-foreground border-0 rounded-2xl shadow-xl overflow-hidden">
                   <CardContent className="p-8 text-center relative z-10">
                     <div className="mb-6">
                       <div className="inline-flex items-center space-x-2 bg-white/20 rounded-full px-4 py-2">
@@ -351,34 +350,34 @@ const Index = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100/50 p-8">
+          <div className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-xl border border-border p-8">
             {renderTabContent()}
           </div>
         )}
       </div>
 
       {/* Enhanced Mobile Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200/80 p-4 lg:hidden z-50 shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-xl border-t border-border p-4 lg:hidden z-50 shadow-2xl">
         <div className="flex justify-around">
           {[
-            { id: 'home', label: 'Home', icon: House, color: 'emerald' },
-            { id: 'team', label: 'Team', icon: Users, color: 'blue' },
-            { id: 'transfers', label: 'Transfers', icon: TrendingUp, color: 'amber' },
-            { id: 'league', label: 'League', icon: Trophy, color: 'purple' }
+            { id: 'home', label: 'Home', icon: House },
+            { id: 'team', label: 'Team', icon: Users },
+            { id: 'transfers', label: 'Transfers', icon: TrendingUp },
+            { id: 'league', label: 'League', icon: Trophy }
           ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex flex-col items-center space-y-1 p-3 rounded-2xl transition-all duration-300 ${
                 activeTab === tab.id
-                  ? 'text-emerald-600 bg-emerald-50 shadow-lg transform scale-110'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-primary bg-accent shadow-lg transform scale-110'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               <tab.icon className="h-6 w-6" />
               <span className="text-xs font-semibold">{tab.label}</span>
               {activeTab === tab.id && (
-                <div className="w-1 h-1 bg-emerald-500 rounded-full"></div>
+                <div className="w-1 h-1 bg-primary rounded-full"></div>
               )}
             </button>
           ))}
