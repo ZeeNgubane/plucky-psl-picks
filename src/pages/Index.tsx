@@ -175,7 +175,7 @@ const Index = () => {
             <div className="text-white space-y-4">
               <h1 className="text-5xl md:text-7xl font-black tracking-tight">
                 <span className="bg-gradient-to-r from-yellow-400 via-green-400 to-blue-400 bg-clip-text text-transparent">
-                  Mzansi Fantasy
+                  Pick a side Fantasy
                 </span>
               </h1>
               <div className="flex items-center justify-center space-x-3">
