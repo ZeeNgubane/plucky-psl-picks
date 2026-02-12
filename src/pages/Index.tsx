@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { House, Users, FileText, Award, Trophy, Medal, Star, TrendingUp, Calendar, ArrowUp, ArrowDown, Minus } from 'lucide-react';
-import pslPlayersImg from '@/assets/psl-players.png';
+import pslPlayersImg from '@/assets/psl-players-nobg.png';
 import { Link } from 'react-router-dom';
 import { Player, teams, players } from '@/data/teams';
 import { useToast } from '@/hooks/use-toast';
@@ -157,13 +157,22 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* PSL-Inspired Hero Header (NBA Fantasy style) */}
-      <div className="relative overflow-hidden bg-psl-dark">
+      <div className="relative overflow-hidden bg-psl-dark min-h-[200px]">
         {/* Diagonal gradient accent */}
         <div className="absolute inset-0 bg-gradient-to-br from-psl-blue/30 via-transparent to-psl-gold/10"></div>
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-psl-gold via-psl-blue to-psl-gold"></div>
         
+        {/* PSL Players Image - blended into header */}
+        <div className="hidden md:block absolute right-0 top-0 bottom-0 w-[50%] overflow-hidden pointer-events-none" style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 25%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 25%)' }}>
+          <img 
+            src={pslPlayersImg} 
+            alt="PSL Players" 
+            className="absolute right-4 bottom-0 h-[110%] w-auto object-contain object-right-bottom mix-blend-screen"
+          />
+        </div>
+        
         <div className="relative z-10 container mx-auto px-6 py-8">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center">
             {/* Left: PSL Logo + Title */}
             <div className="flex items-center space-x-5">
               <div className="shrink-0">
@@ -184,15 +193,6 @@ const Index = () => {
                   <div className="h-0.5 w-8 bg-psl-blue rounded-full"></div>
                 </div>
               </div>
-            </div>
-
-            {/* Right: PSL Players Image */}
-            <div className="hidden md:block relative h-36">
-              <img 
-                src={pslPlayersImg} 
-                alt="PSL Players" 
-                className="h-full w-auto object-contain object-bottom drop-shadow-[0_0_20px_rgba(0,0,0,0.5)]"
-              />
             </div>
           </div>
 
