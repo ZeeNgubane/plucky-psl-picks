@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { House, Users, FileText, Award, Trophy, Medal, Star, TrendingUp, Calendar, User, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { House, Users, FileText, Award, Trophy, Medal, Star, TrendingUp, Calendar, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import pslPlayersImg from '@/assets/psl-players.png';
 import { Link } from 'react-router-dom';
 import { Player, teams, players } from '@/data/teams';
 import { useToast } from '@/hooks/use-toast';
@@ -185,22 +186,13 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Right: 4 Player Image Placeholders */}
-            <div className="hidden md:flex items-end space-x-[-20px] relative h-32">
-              {[1, 2, 3, 4].map((i) => (
-                <div 
-                  key={i} 
-                  className="relative w-28 h-32 flex items-end justify-center"
-                  style={{ zIndex: i }}
-                >
-                  <div className="w-24 h-28 bg-gradient-to-t from-psl-blue/40 to-transparent rounded-t-xl border border-white/10 flex items-center justify-center overflow-hidden">
-                    <div className="text-center">
-                      <User className="h-10 w-10 text-white/30 mx-auto" />
-                      <p className="text-[10px] text-white/40 mt-1 font-semibold">Player {i}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            {/* Right: PSL Players Image */}
+            <div className="hidden md:block relative h-36">
+              <img 
+                src={pslPlayersImg} 
+                alt="PSL Players" 
+                className="h-full w-auto object-contain object-bottom drop-shadow-[0_0_20px_rgba(0,0,0,0.5)]"
+              />
             </div>
           </div>
 
