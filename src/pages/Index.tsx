@@ -155,44 +155,63 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Modern Hero Header */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-background via-secondary to-primary">
-        <div className="absolute inset-0 bg-[url('https://igamingafrika.com/wp-content/uploads/2024/11/PSL.jpg')] bg-cover bg-center opacity-20"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60"></div>
+      {/* PSL-Inspired Hero Header (NBA Fantasy style) */}
+      <div className="relative overflow-hidden bg-psl-dark">
+        {/* Diagonal gradient accent */}
+        <div className="absolute inset-0 bg-gradient-to-br from-psl-blue/30 via-transparent to-psl-gold/10"></div>
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-psl-gold via-psl-blue to-psl-gold"></div>
         
-        <div className="relative z-10 container mx-auto px-6 py-16">
-          <div className="flex flex-col items-center text-center space-y-8">
-            {/* PSL Logo */}
-            <div className="relative">
-              <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-2xl">
-                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-xl flex items-center justify-center">
-                  <Trophy className="h-7 w-7 text-white" />
+        <div className="relative z-10 container mx-auto px-6 py-8">
+          <div className="flex items-center justify-between">
+            {/* Left: PSL Logo + Title */}
+            <div className="flex items-center space-x-5">
+              <div className="shrink-0">
+                <img 
+                  src="https://www.psl.co.za/assets/images/logo-mobile.png" 
+                  alt="PSL Logo" 
+                  className="h-20 w-20 object-contain drop-shadow-[0_0_15px_rgba(0,153,204,0.4)]"
+                />
+              </div>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white leading-none">
+                  <span className="text-psl-gold">PICK A SIDE</span>
+                </h1>
+                <p className="text-xl md:text-2xl font-bold text-psl-blue tracking-widest uppercase mt-1">Fantasy</p>
+                <div className="flex items-center space-x-3 mt-2">
+                  <div className="h-0.5 w-8 bg-psl-gold rounded-full"></div>
+                  <p className="text-sm font-semibold text-white/70">Betway Premiership 2024/25</p>
+                  <div className="h-0.5 w-8 bg-psl-blue rounded-full"></div>
                 </div>
               </div>
-              <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full animate-pulse shadow-lg border-2 border-white"></div>
             </div>
 
-            {/* Title with PSL-inspired styling */}
-            <div className="text-white space-y-4">
-              <h1 className="text-5xl md:text-7xl font-black tracking-tight">
-                <span className="bg-gradient-to-r from-yellow-400 via-green-400 to-blue-400 bg-clip-text text-transparent">
-                  Pick a side Fantasy
-                </span>
-              </h1>
-              <div className="flex items-center justify-center space-x-3">
-                <div className="h-1 w-12 bg-yellow-400 rounded-full"></div>
-                <p className="text-xl font-semibold text-white/90">Betway Premiership 2024/25</p>
-                <div className="h-1 w-12 bg-green-400 rounded-full"></div>
-              </div>
+            {/* Right: 4 Player Image Placeholders */}
+            <div className="hidden md:flex items-end space-x-[-20px] relative h-32">
+              {[1, 2, 3, 4].map((i) => (
+                <div 
+                  key={i} 
+                  className="relative w-28 h-32 flex items-end justify-center"
+                  style={{ zIndex: i }}
+                >
+                  <div className="w-24 h-28 bg-gradient-to-t from-psl-blue/40 to-transparent rounded-t-xl border border-white/10 flex items-center justify-center overflow-hidden">
+                    <div className="text-center">
+                      <User className="h-10 w-10 text-white/30 mx-auto" />
+                      <p className="text-[10px] text-white/40 mt-1 font-semibold">Player {i}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
+          </div>
 
-            {/* Gameweek Counter */}
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl px-8 py-4 border border-white/20 shadow-xl">
-              <div className="flex items-center space-x-4 text-white">
-                <Calendar className="h-5 w-5 text-yellow-400" />
-                <span className="text-lg font-bold">Gameweek 14</span>
-                <div className="h-4 w-px bg-white/30"></div>
-                <span className="text-sm">Deadline in 3d 2h</span>
+          {/* Gameweek Counter */}
+          <div className="mt-4 flex items-center space-x-4">
+            <div className="bg-psl-blue/20 backdrop-blur-md rounded-xl px-6 py-2.5 border border-psl-blue/30">
+              <div className="flex items-center space-x-3 text-white">
+                <Calendar className="h-4 w-4 text-psl-gold" />
+                <span className="text-sm font-bold">Gameweek 14</span>
+                <div className="h-3 w-px bg-white/30"></div>
+                <span className="text-xs text-white/70">Deadline in 3d 2h</span>
               </div>
             </div>
           </div>
@@ -205,18 +224,18 @@ const Index = () => {
           <div className="flex justify-center py-4">
             <div className="flex bg-secondary/20 rounded-2xl p-1.5 shadow-lg border border-border">
               {[
-                { id: 'home', label: 'Home', icon: House, color: 'emerald' },
-                { id: 'team', label: 'My Team', icon: Users, color: 'blue' },
-                { id: 'transfers', label: 'Transfers', icon: TrendingUp, color: 'amber' },
-                { id: 'league', label: 'League', icon: Trophy, color: 'purple' }
+                { id: 'home', label: 'Home', icon: House },
+                { id: 'team', label: 'My Team', icon: Users },
+                { id: 'transfers', label: 'Transfers', icon: TrendingUp },
+                { id: 'league', label: 'League', icon: Trophy }
               ].map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center space-x-3 px-6 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
                     activeTab === tab.id
-                      ? 'bg-primary text-primary-foreground shadow-lg transform scale-105 shadow-primary/25'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-card/70'
+                      ? 'bg-primary text-primary-foreground shadow-lg transform scale-105'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
                   }`}
                 >
                   <tab.icon className="h-4 w-4" />
