@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, Plus, Minus, TrendingUp, TrendingDown, Filter, Grid, List } from 'lucide-react';
-import { Player, players, teams } from '@/data/teams';
+import { Player } from '@/data/teams';
+import { usePlayersFromDB, useTeamsFromDB } from '@/hooks/usePlayersFromDB';
 
 interface TransfersProps {
   selectedPlayers: Player[];
@@ -22,6 +23,8 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
   const [teamFilter, setTeamFilter] = useState('all');
   const [sortBy, setSortBy] = useState('points');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  const { data: players = [] } = usePlayersFromDB();
+  const { data: teams = [] } = useTeamsFromDB();
 
   const getPositionColor = (position: string) => {
     switch (position) {

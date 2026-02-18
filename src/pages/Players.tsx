@@ -5,13 +5,16 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, TrendingUp, TrendingDown, Filter } from 'lucide-react';
-import { players, teams, Player } from '@/data/teams';
+import { Player } from '@/data/teams';
+import { usePlayersFromDB, useTeamsFromDB } from '@/hooks/usePlayersFromDB';
 
 const Players = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [positionFilter, setPositionFilter] = useState('');
   const [teamFilter, setTeamFilter] = useState('');
   const [sortBy, setSortBy] = useState('points');
+  const { data: players = [] } = usePlayersFromDB();
+  const { data: teams = [] } = useTeamsFromDB();
 
   const getPositionColor = (position: string) => {
     switch (position) {
