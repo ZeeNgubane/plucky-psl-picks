@@ -14,7 +14,166 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      leaderboard: {
+        Row: {
+          gameweek_points: number
+          id: string
+          rank: number | null
+          total_points: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          gameweek_points?: number
+          id?: string
+          rank?: number | null
+          total_points?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          gameweek_points?: number
+          id?: string
+          rank?: number | null
+          total_points?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      players: {
+        Row: {
+          created_at: string
+          form: number
+          id: string
+          image_url: string | null
+          name: string
+          nationality: string | null
+          points: number
+          position: string
+          price: number
+          team_id: string
+        }
+        Insert: {
+          created_at?: string
+          form?: number
+          id?: string
+          image_url?: string | null
+          name: string
+          nationality?: string | null
+          points?: number
+          position: string
+          price?: number
+          team_id: string
+        }
+        Update: {
+          created_at?: string
+          form?: number
+          id?: string
+          image_url?: string | null
+          name?: string
+          nationality?: string | null
+          points?: number
+          position?: string
+          price?: number
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "players_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      teams: {
+        Row: {
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          short_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          short_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          short_name?: string | null
+        }
+        Relationships: []
+      }
+      user_team_selections: {
+        Row: {
+          id: string
+          is_captain: boolean
+          is_starter: boolean
+          player_id: string
+          selected_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          is_captain?: boolean
+          is_starter?: boolean
+          player_id: string
+          selected_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          is_captain?: boolean
+          is_starter?: boolean
+          player_id?: string
+          selected_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_team_selections_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
