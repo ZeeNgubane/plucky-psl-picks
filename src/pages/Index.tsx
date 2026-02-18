@@ -2,11 +2,13 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { House, Users, FileText, Award, Trophy, Medal, Star, TrendingUp, Calendar, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { House, Users, FileText, Award, Trophy, Medal, Star, TrendingUp, Calendar, ArrowUp, ArrowDown, Minus, LogOut } from 'lucide-react';
 import pslPlayersImg from '@/assets/psl-players-nobg.png';
 import { Link } from 'react-router-dom';
-import { Player, teams, players } from '@/data/teams';
+import { Player } from '@/data/teams';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { usePlayersFromDB, useTeamsFromDB } from '@/hooks/usePlayersFromDB';
 import MyTeam from '@/components/MyTeam';
 import Transfers from '@/components/Transfers';
 import League from '@/components/League';
@@ -16,6 +18,7 @@ import LatestNews from '@/components/home/LatestNews';
 import LeagueTable from '@/components/home/LeagueTable';
 import TopPerformers from '@/components/home/TopPerformers';
 import { PSLBot } from '@/components/PSLBot';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -25,8 +28,12 @@ const Index = () => {
   const [teamFilter, setTeamFilter] = useState('all');
   const [sortBy, setSortBy] = useState('points');
   const { toast } = useToast();
+  const { signOut } = useAuth();
+  const { data: players = [], isLoading: playersLoading } = usePlayersFromDB();
+  const { data: teams = [], isLoading: teamsLoading } = useTeamsFromDB();
 
   useEffect(() => {
+    if (players.length === 0) return;
     try {
       const savedSquadIdsJSON = localStorage.getItem('fantasy-squad-ids');
       if (savedSquadIdsJSON) {
@@ -47,7 +54,7 @@ const Index = () => {
     } catch (e) {
       console.error("Failed to load squad from localStorage", e);
     }
-  }, []);
+  }, [players]);
 
   const handlePlayerAdd = (player: Player) => {
     if (budget < player.price) {
@@ -172,7 +179,7 @@ const Index = () => {
         </div>
         
         <div className="relative z-10 container mx-auto px-6 py-8">
-          <div className="flex items-center">
+          <div className="flex items-center justify-between">
             {/* Left: PSL Logo + Title */}
             <div className="flex items-center space-x-5">
               <div className="shrink-0">
@@ -194,6 +201,10 @@ const Index = () => {
                 </div>
               </div>
             </div>
+            <Button variant="ghost" size="sm" onClick={signOut} className="text-white/70 hover:text-white hover:bg-white/10">
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
           </div>
 
           {/* Gameweek Counter */}
