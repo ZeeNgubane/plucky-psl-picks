@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, Plus, Minus, TrendingUp, TrendingDown, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Search, Plus, Minus, TrendingUp, TrendingDown, ChevronLeft, ChevronRight, Info } from 'lucide-react';
 import { Player, players, teams } from '@/data/teams';
 
 interface TransfersProps {
@@ -23,6 +24,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
   const [teamFilter, setTeamFilter] = useState('all');
   const [sortBy, setSortBy] = useState('points');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
   const getPositionColor = (position: string) => {
     switch (position) {
@@ -144,13 +146,11 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="font-semibold text-xs w-[200px]">Player</TableHead>
-                <TableHead className="font-semibold text-xs w-[50px]">Pos</TableHead>
-                <TableHead className="font-semibold text-xs">Team</TableHead>
-                <TableHead className="font-semibold text-xs text-right">Value</TableHead>
-                <TableHead className="font-semibold text-xs text-right">Pts</TableHead>
-                <TableHead className="font-semibold text-xs text-center">Form</TableHead>
-                <TableHead className="font-semibold text-xs w-[80px]"></TableHead>
+                <TableHead className="font-semibold text-[11px] pl-3">Player</TableHead>
+                <TableHead className="font-semibold text-[11px] text-right">Value</TableHead>
+                <TableHead className="font-semibold text-[11px] text-right">Pts</TableHead>
+                <TableHead className="font-semibold text-[11px] text-center">Form</TableHead>
+                <TableHead className="font-semibold text-[11px] w-[60px]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -158,33 +158,37 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                 const selected = isPlayerSelected(player.id);
                 const canAdd = canAddPlayer(player);
                 const formTrend = getFormTrend(player.form);
+                const teamLogo = getTeamLogo(player.team);
 
                 return (
-                  <TableRow key={player.id} className={`h-10 ${selected ? 'bg-bronze-50' : index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
-                    <TableCell className="py-1.5 font-medium text-sm">{player.name}</TableCell>
-                    <TableCell className="py-1.5">
-                      <Badge className={`${getPositionColor(player.position)} text-[10px] px-1.5 py-0`}>{player.position}</Badge>
-                    </TableCell>
-                    <TableCell className="py-1.5 text-sm text-muted-foreground">{player.team}</TableCell>
-                    <TableCell className="py-1.5 text-sm font-medium text-right">R{(player.price * 18).toFixed(1)}M</TableCell>
-                    <TableCell className="py-1.5 text-sm font-bold text-right">{player.points}</TableCell>
-                    <TableCell className="py-1.5">
-                      <div className="flex justify-center items-center gap-0.5">
-                        {player.form.slice(-3).map((score, i) => (
-                          <span key={i} className={`text-[10px] px-1 rounded ${score >= 8 ? 'bg-green-100 text-green-800' : score >= 6 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>{score}</span>
-                        ))}
-                        {formTrend === 'up' && <TrendingUp className="h-3 w-3 text-green-500 ml-1" />}
-                        {formTrend === 'down' && <TrendingDown className="h-3 w-3 text-red-500 ml-1" />}
+                  <TableRow key={player.id} className={`h-9 ${selected ? 'bg-bronze-50' : index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
+                    <TableCell className="py-1 pl-3">
+                      <div className="flex items-center gap-2">
+                        <img src={teamLogo} alt="" className="h-5 w-5 object-contain shrink-0" />
+                        <span className="text-xs font-medium truncate max-w-[120px]">{player.name}</span>
+                        <Badge className={`${getPositionColor(player.position)} text-[9px] px-1 py-0 leading-tight`}>{player.position}</Badge>
+                        <button onClick={() => setSelectedPlayer(player)} className="text-muted-foreground hover:text-foreground shrink-0">
+                          <Info className="h-3 w-3" />
+                        </button>
                       </div>
                     </TableCell>
-                    <TableCell className="py-1.5">
+                    <TableCell className="py-1 text-xs font-medium text-right">R{(player.price * 18).toFixed(1)}M</TableCell>
+                    <TableCell className="py-1 text-xs font-bold text-right">{player.points}</TableCell>
+                    <TableCell className="py-1">
+                      <div className="flex justify-center items-center gap-0.5">
+                        {formTrend === 'up' && <TrendingUp className="h-3 w-3 text-green-500" />}
+                        {formTrend === 'down' && <TrendingDown className="h-3 w-3 text-red-500" />}
+                        {formTrend === 'stable' && <span className="text-[10px] text-muted-foreground">—</span>}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-1">
                       {selected ? (
-                        <Button variant="destructive" size="sm" onClick={() => onPlayerRemove(player.id)} className="h-7 text-xs px-2">
-                          <Minus className="h-3 w-3 mr-1" />Remove
+                        <Button variant="destructive" size="sm" onClick={() => onPlayerRemove(player.id)} className="h-6 text-[10px] px-1.5">
+                          <Minus className="h-3 w-3" />
                         </Button>
                       ) : (
-                        <Button size="sm" onClick={() => onPlayerAdd(player)} disabled={!canAdd} className="h-7 text-xs px-2 bg-bronze-600 hover:bg-bronze-700 disabled:bg-gray-300">
-                          <Plus className="h-3 w-3 mr-1" />Add
+                        <Button size="sm" onClick={() => onPlayerAdd(player)} disabled={!canAdd} className="h-6 text-[10px] px-1.5 bg-bronze-600 hover:bg-bronze-700 disabled:bg-gray-300">
+                          <Plus className="h-3 w-3" />
                         </Button>
                       )}
                     </TableCell>
@@ -220,6 +224,59 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
           </div>
         </div>
       )}
+
+      {/* Player Info Dialog */}
+      <Dialog open={!!selectedPlayer} onOpenChange={(open) => !open && setSelectedPlayer(null)}>
+        <DialogContent className="max-w-sm">
+          {selectedPlayer && (() => {
+            const teamLogo = getTeamLogo(selectedPlayer.team);
+            return (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-base">
+                    <img src={teamLogo} alt="" className="h-6 w-6 object-contain" />
+                    {selectedPlayer.name}
+                  </DialogTitle>
+                  <DialogDescription>{selectedPlayer.team}</DialogDescription>
+                </DialogHeader>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="rounded-md bg-muted p-2.5">
+                    <p className="text-[10px] text-muted-foreground uppercase">Position</p>
+                    <Badge className={`${getPositionColor(selectedPlayer.position)} mt-1 text-xs`}>{selectedPlayer.position}</Badge>
+                  </div>
+                  <div className="rounded-md bg-muted p-2.5">
+                    <p className="text-[10px] text-muted-foreground uppercase">Value</p>
+                    <p className="font-semibold mt-1">R{(selectedPlayer.price * 18).toFixed(1)}M</p>
+                  </div>
+                  <div className="rounded-md bg-muted p-2.5">
+                    <p className="text-[10px] text-muted-foreground uppercase">Total Points</p>
+                    <p className="font-bold text-lg mt-1">{selectedPlayer.points}</p>
+                  </div>
+                  <div className="rounded-md bg-muted p-2.5">
+                    <p className="text-[10px] text-muted-foreground uppercase">Recent Form</p>
+                    <div className="flex gap-1 mt-1">
+                      {selectedPlayer.form.slice(-5).map((score, i) => (
+                        <span key={i} className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${score >= 8 ? 'bg-green-100 text-green-800' : score >= 6 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>{score}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="pt-2">
+                  {isPlayerSelected(selectedPlayer.id) ? (
+                    <Button variant="destructive" className="w-full" onClick={() => { onPlayerRemove(selectedPlayer.id); setSelectedPlayer(null); }}>
+                      <Minus className="h-4 w-4 mr-2" />Remove from Squad
+                    </Button>
+                  ) : (
+                    <Button className="w-full bg-bronze-600 hover:bg-bronze-700" disabled={!canAddPlayer(selectedPlayer)} onClick={() => { onPlayerAdd(selectedPlayer); setSelectedPlayer(null); }}>
+                      <Plus className="h-4 w-4 mr-2" />Add to Squad
+                    </Button>
+                  )}
+                </div>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
