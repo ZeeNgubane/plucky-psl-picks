@@ -1,28 +1,22 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, Star, Award } from 'lucide-react';
-import { players, teams } from '@/data/teams';
+import { TrendingUp, Award } from 'lucide-react';
 
-const getTeamLogo = (teamName: string) => {
-  const team = teams.find(t => t.name === teamName);
-  return team?.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(teamName)}&background=f59e0b&color=fff&size=32`;
-};
-
-const topPerformers = players.sort((a,b) => b.points - a.points).slice(0,5);
+const topScorers = [
+  { rank: 1, name: 'Junior Dion', team: 'Golden Arrows', goals: 9, apps: 15, position: 'CF', nationality: 'Chad' },
+  { rank: 2, name: 'Bradley Grobler', team: 'Sekhukhune United', goals: 7, apps: 16, position: 'CF', nationality: 'South Africa' },
+  { rank: 3, name: 'Iqraam Rayners', team: 'Mamelodi Sundowns', goals: 6, apps: 12, position: 'CF', nationality: 'South Africa' },
+  { rank: 4, name: 'Thandolwenkosi Ngwenya', team: 'AmaZulu FC', goals: 6, apps: 14, position: 'CF', nationality: 'Zimbabwe' },
+  { rank: 5, name: 'Langelihle Phili', team: 'Stellenbosch FC', goals: 6, apps: 13, position: 'LW', nationality: 'South Africa' },
+  { rank: 6, name: 'Seluleko Mahlambi', team: 'TS Galaxy', goals: 5, apps: 18, position: 'LW', nationality: 'South Africa' },
+  { rank: 7, name: 'Patrick Maswanganyi', team: 'Orlando Pirates', goals: 5, apps: 13, position: 'AM', nationality: 'South Africa' },
+  { rank: 8, name: 'Brayan León', team: 'Mamelodi Sundowns', goals: 4, apps: 3, position: 'CF', nationality: 'Colombia' },
+  { rank: 9, name: 'Relebohile Mofokeng', team: 'Orlando Pirates', goals: 3, apps: 14, position: 'LW', nationality: 'South Africa' },
+  { rank: 10, name: 'Flávio Silva', team: 'Kaizer Chiefs', goals: 4, apps: 9, position: 'CF', nationality: 'Guinea-Bissau' },
+];
 
 const TopPerformers = () => {
-  const getRankIcon = (index: number) => {
-    switch (index) {
-      case 0: return <Award className="h-4 w-4 text-yellow-500" />;
-      case 1: return <Award className="h-4 w-4 text-gray-400" />;
-      case 2: return <Award className="h-4 w-4 text-amber-600" />;
-      default: return <Star className="h-4 w-4 text-blue-500" />;
-    }
-  };
-
-  const getRankBadge = (index: number) => {
-    const rank = index + 1;
+  const getRankBadge = (rank: number) => {
     switch (rank) {
       case 1: return 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-white';
       case 2: return 'bg-gradient-to-r from-gray-300 to-gray-400 text-white';
@@ -31,83 +25,59 @@ const TopPerformers = () => {
     }
   };
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, teamName: string) => {
-    const target = e.target as HTMLImageElement;
-    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(teamName)}&background=f59e0b&color=fff&size=32`;
-  };
-
   return (
     <Card className="border-0 rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
       <CardHeader className="pb-4">
         <CardTitle className="text-xl font-bold text-gray-800 flex items-center">
           <TrendingUp className="h-5 w-5 mr-2 text-amber-600" />
-          Top Performers
-          <Badge className="ml-2 bg-amber-100 text-amber-800 text-xs">Hot Form! 🔥</Badge>
+          Top Goal Scorers
+          <Badge className="ml-2 bg-amber-100 text-amber-800 text-xs">25/26 Season 🔥</Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
-        {topPerformers.map((player, index) => (
-          <div 
-            key={player.id} 
-            className="group flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-gray-50 to-white hover:from-amber-50 hover:to-yellow-50 transition-all duration-300 hover:shadow-md transform hover:scale-[1.02] border border-gray-100"
-          >
-            <div className="flex items-center space-x-3">
-              {/* Rank Badge */}
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getRankBadge(index)} shadow-lg`}>
-                <span className="text-xs font-bold">#{index + 1}</span>
-              </div>
-              
-              {/* Team Logo */}
-              <div className="w-8 h-8 rounded-lg overflow-hidden bg-white shadow-sm flex items-center justify-center">
-                <img 
-                  src={getTeamLogo(player.team)} 
-                  alt={player.team} 
-                  className="w-full h-full object-contain"
-                  onError={(e) => handleImageError(e, player.team)}
-                  loading="lazy"
-                />
-              </div>
-              
-              {/* Player Info */}
-              <div>
-                <p className="font-semibold text-gray-800 group-hover:text-amber-700 transition-colors">
-                  {player.name}
-                </p>
-                <div className="flex items-center space-x-2">
-                  <p className="text-xs text-gray-500">{player.team}</p>
-                  <span className="text-xs text-gray-400">•</span>
-                  <Badge variant="outline" className="text-xs px-1 py-0">
-                    {player.position}
-                  </Badge>
+      <CardContent>
+        {/* Header */}
+        <div className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 border-b border-gray-200 mb-2">
+          <div className="flex items-center space-x-2 flex-1">
+            <span className="w-6 text-center">#</span>
+            <span>Player</span>
+          </div>
+          <div className="flex items-center space-x-3 text-center">
+            <span className="w-8">Apps</span>
+            <span className="w-8">⚽</span>
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          {topScorers.map((player) => (
+            <div 
+              key={player.rank} 
+              className="group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-amber-50 transition-all duration-200 text-sm"
+            >
+              <div className="flex items-center space-x-2 flex-1 min-w-0">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${getRankBadge(player.rank)} text-[10px] font-bold flex-shrink-0`}>
+                  {player.rank}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-medium text-gray-800 text-xs sm:text-sm truncate">
+                    {player.name}
+                  </p>
+                  <p className="text-[10px] text-gray-500 truncate">{player.team} · {player.position}</p>
                 </div>
               </div>
-            </div>
-            
-            {/* Points and Price */}
-            <div className="text-right">
-              <div className="flex items-center space-x-1 mb-1">
-                {getRankIcon(index)}
-                <p className="font-bold text-lg text-gray-800">{player.points}</p>
-                <span className="text-xs text-gray-500">pts</span>
+              
+              <div className="flex items-center space-x-3 text-center text-xs text-gray-600 flex-shrink-0">
+                <span className="w-8">{player.apps}</span>
+                <span className="w-8 font-bold text-gray-800 text-sm">{player.goals}</span>
               </div>
-              <p className="text-xs text-gray-500 font-medium">
-                R{(player.price * 18).toFixed(1)}M
-              </p>
             </div>
-          </div>
-        ))}
-        
-        {/* South African Touch */}
-        <div className="mt-4 p-3 bg-gradient-to-r from-green-100 via-yellow-100 to-blue-100 rounded-xl border border-green-200">
-          <p className="text-center text-sm font-medium text-gray-700">
-            🇿🇦 "These boys are showing class, hey!" 
-          </p>
+          ))}
         </div>
         
-        {/* View All Button */}
-        <button className="w-full py-3 text-amber-600 font-medium text-sm hover:bg-amber-50 rounded-xl transition-colors duration-200 mt-3">
-          View All Players →
-        </button>
+        <div className="mt-4 p-3 bg-gradient-to-r from-green-100 via-yellow-100 to-blue-100 rounded-xl border border-green-200">
+          <p className="text-center text-sm font-medium text-gray-700">
+            🇿🇦 "Junior Dion is on fire, boet!" 🔥
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
