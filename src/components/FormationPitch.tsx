@@ -202,31 +202,6 @@ const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap }: Format
       <PitchArrows />
       {/* Player positions overlay, now positioned with SVG coordinates */}
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 600">
-        <defs>
-          {allPlayersOnPitch.map(player => {
-            const team = teamMap.get(player.team);
-            const kitImage = team?.kitImage;
-            if (!kitImage) return null;
-            return (
-              <pattern
-                key={`pattern-${player.id}`}
-                id={`kit-${player.id}`}
-                patternUnits="objectBoundingBox"
-                width="1"
-                height="1"
-              >
-                <image
-                  href={kitImage}
-                  x="0"
-                  y="0"
-                  width="1"
-                  height="1"
-                  preserveAspectRatio="xMidYMid slice"
-                />
-              </pattern>
-            );
-          })}
-        </defs>
         {/* Formation name */}
         <text x="200" y="25" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="bold" style={{ textShadow: "0 1px 6px #082" }}>
           Your Formation: {bestFormation.name}
