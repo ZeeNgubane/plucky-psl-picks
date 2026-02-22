@@ -108,12 +108,21 @@ const Index = () => {
         return <MyTeam selectedPlayers={selectedPlayers} />;
       case 'transfers':
         return (
-          <Transfers 
-            selectedPlayers={selectedPlayers}
-            onPlayerAdd={handlePlayerAdd}
-            onPlayerRemove={handlePlayerRemove}
-            budget={budget}
-          />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Transfers 
+              selectedPlayers={selectedPlayers}
+              onPlayerAdd={handlePlayerAdd}
+              onPlayerRemove={handlePlayerRemove}
+              budget={budget}
+            />
+            <div className="hidden lg:block">
+              <FormationPitch 
+                selectedPlayers={selectedPlayers}
+                onPlayerClick={() => {}}
+                playerToSwap={null}
+              />
+            </div>
+          </div>
         );
       case 'league':
         return <League />;
