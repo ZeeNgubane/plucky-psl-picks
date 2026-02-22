@@ -115,7 +115,7 @@ const Index = () => {
               onPlayerRemove={handlePlayerRemove}
               budget={budget}
             />
-            <div className="hidden lg:block">
+            <div>
               <FormationPitch 
                 selectedPlayers={selectedPlayers}
                 onPlayerClick={() => {}}
