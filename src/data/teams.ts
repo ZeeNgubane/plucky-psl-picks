@@ -17,21 +17,21 @@ export interface Player {
 }
 
 export const teams: Team[] = [
-  { id: '1', name: 'Kaizer Chiefs', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/568.png?lm=1770202601', city: 'Johannesburg', kitImage: 'https://www.sollymsports.com/wp-content/uploads/2024/08/photo-output_3.jpeg' },
-  { id: '2', name: 'Orlando Pirates', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/2557.png?lm=1770195429', city: 'Johannesburg', kitImage: 'https://www.piratesshop.co.za/wp-content/uploads/2024/07/JJ2287_FL-1-copy.png' },
-  { id: '3', name: 'Mamelodi Sundowns', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/6356.png?lm=1770203751', city: 'Pretoria', kitImage: 'https://images.puma.com/image/upload/f_auto,q_auto,w_600,b_rgb:FAFAFA/global/images/782742/22/fnd/ZAF/fmt/png' },
-  { id: '4', name: 'Stellenbosch FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/23287.png?lm=1770202548', city: 'Stellenbosch', kitImage: 'https://cdn.footballkitarchive.com/2023/07/28/f3tL2M1sV9jR8cQ.jpg' },
-  { id: '5', name: 'Sekhukhune United', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/85501.png?lm=1770196093', city: 'Limpopo', kitImage: 'https://cdn.footballkitarchive.com/2023/08/23/l1V9Z0vN4c8Q7Gj.jpg' },
-  { id: '6', name: 'AmaZulu FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/9370.png?lm=1770202476', city: 'Durban', kitImage: 'https://cdn.footballkitarchive.com/2023/07/28/vX3bN6yK2zR1mHk.jpg' },
-  { id: '7', name: 'Chippa United', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/31283.png?lm=1770194721', city: 'Port Elizabeth', kitImage: 'https://cdn.footballkitarchive.com/2023/08/11/g4VjL9bR2nF3oT.jpg' },
-  { id: '8', name: 'Lamontville Golden Arrows', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/7011.png?lm=1451237378', city: 'Durban', kitImage: 'https://cdn.footballkitarchive.com/2023/08/04/iK6dJ9cM1bN2fE.jpg' },
-  { id: '9', name: 'Richards Bay FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/12668.png?lm=1770202101', city: 'Richards Bay', kitImage: 'https://cdn.footballkitarchive.com/2023/08/11/x5F8rV2kH3bL1jQ.jpg' },
-  { id: '10', name: 'Polokwane City FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/21202.png?lm=1770202417', city: 'Polokwane', kitImage: 'https://cdn.footballkitarchive.com/2023/08/25/h2gR8uF5wD7Z6bY.jpg' },
-  { id: '11', name: 'TS Galaxy FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/67074.png?lm=1543132402', city: 'Mpumalanga', kitImage: 'https://cdn.footballkitarchive.com/2023/07/28/a9C1oP4uJ7bF0Kx.jpg' },
-  { id: '12', name: 'Marumo Gallants FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/61852.png?lm=1770199218', city: 'Limpopo', kitImage: 'https://cdn.footballkitarchive.com/2023/07/28/a9C1oP4uJ7bF0Kx.jpg' },
-  { id: '13', name: 'Siwelele Football Club', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/132785.png?lm=1770201955', city: 'Free State', kitImage: 'https://cdn.footballkitarchive.com/2023/08/04/o1eR3G2c7N8P4Zk.jpg' },
-  { id: '14', name: 'Durban City Football Club', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/14187.png?lm=1770194595', city: 'Durban', kitImage: 'https://cdn.footballkitarchive.com/2023/08/04/o1eR3G2c7N8P4Zk.jpg' },
-  { id: '15', name: 'Magesi FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/97065.png?lm=1770199057', city: 'Limpopo', kitImage: 'https://cdn.footballkitarchive.com/2023/08/04/o1eR3G2c7N8P4Zk.jpg' },
+  { id: '1', name: 'Kaizer Chiefs', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/568.png?lm=1770202601', city: 'Johannesburg', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/Kaizer%20Chiefs.png' },
+  { id: '2', name: 'Orlando Pirates', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/2557.png?lm=1770195429', city: 'Johannesburg', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/Orlando%20Pirates.png' },
+  { id: '3', name: 'Mamelodi Sundowns', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/6356.png?lm=1770203751', city: 'Pretoria', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/Mamelodi%20Sundowns.png' },
+  { id: '4', name: 'Stellenbosch FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/23287.png?lm=1770202548', city: 'Stellenbosch', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/Stellenbosch%20FC.png' },
+  { id: '5', name: 'Sekhukhune United', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/85501.png?lm=1770196093', city: 'Limpopo', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/Sekhukhune%20United.png' },
+  { id: '6', name: 'AmaZulu FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/9370.png?lm=1770202476', city: 'Durban', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/AmaZulu.png' },
+  { id: '7', name: 'Chippa United', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/31283.png?lm=1770194721', city: 'Port Elizabeth', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/Chippa%20United.png' },
+  { id: '8', name: 'Lamontville Golden Arrows', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/7011.png?lm=1451237378', city: 'Durban', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/Golden%20Arrows.png' },
+  { id: '9', name: 'Richards Bay FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/12668.png?lm=1770202101', city: 'Richards Bay', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/Richards%20Bay.png' },
+  { id: '10', name: 'Polokwane City FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/21202.png?lm=1770202417', city: 'Polokwane', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/Polokwane%20City.png' },
+  { id: '11', name: 'TS Galaxy FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/67074.png?lm=1543132402', city: 'Mpumalanga', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/TS%20Galaxy.png' },
+  { id: '12', name: 'Marumo Gallants FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/61852.png?lm=1770199218', city: 'Limpopo', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/Marumo%20Gallants.png' },
+  { id: '13', name: 'Siwelele Football Club', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/132785.png?lm=1770201955', city: 'Free State', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/Siwelele.png' },
+  { id: '14', name: 'Durban City Football Club', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/14187.png?lm=1770194595', city: 'Durban', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/Cape%20Town%20City.png' },
+  { id: '15', name: 'Magesi FC', logo: 'https://tmssl.akamaized.net//images/wappen/verysmall/97065.png?lm=1770199057', city: 'Limpopo', kitImage: 'https://imageorigin.supersport.com/psl/clublogos/homekit/Magesi%20FC.png' },
 ];
 
 export const players: Player[] = [
