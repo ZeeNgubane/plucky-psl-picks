@@ -1,4 +1,4 @@
-import { Player, teams } from "@/data/teams";
+import { Player } from "@/data/teams";
 import PitchBackground from "./PitchBackground";
 import PitchArrows from "./PitchArrows";
 import PlayerIcon from "./PlayerIcon";
@@ -159,8 +159,6 @@ function getRowYPositions(lineLabels: string[]) {
   });
 }
 
-const teamMap = new Map(teams.map(t => [t.name, t]));
-
 const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap }: FormationPitchProps) => {
   const byPos = {
     GK: selectedPlayers.filter(p => p.position === 'GK'),
@@ -197,14 +195,14 @@ const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap }: Format
   const minX = 70, maxX = 330; // For horizontal placement inside the pitch
 
   return (
-    <div className="mt-8 relative min-h-[600px] max-w-md mx-auto overflow-hidden rounded-lg">
+    <div className="mt-6 relative min-h-[600px] max-w-md mx-auto overflow-hidden rounded-xl shadow-2xl border border-emerald-600/30">
       <PitchBackground />
       <PitchArrows />
-      {/* Player positions overlay, now positioned with SVG coordinates */}
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 600">
-        {/* Formation name */}
-        <text x="200" y="25" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="bold" style={{ textShadow: "0 1px 6px #082" }}>
-          Your Formation: {bestFormation.name}
+        {/* Formation badge */}
+        <rect x="145" y="8" width="110" height="26" rx="13" fill="rgba(0,0,0,0.5)" />
+        <text x="200" y="26" textAnchor="middle" fontSize="13" fill="#fff" fontWeight="700" letterSpacing="1.5" style={{ fontFamily: "'Inter', sans-serif" }}>
+          {bestFormation.name}
         </text>
         {/* Players in formation */}
         {reversedPlayerLines.map((line, rowIdx) => {
