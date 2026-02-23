@@ -1,25 +1,18 @@
-
 import React from "react";
 
 const PitchArrows = () => (
-  <div className="absolute inset-0 opacity-30 pointer-events-none">
+  <div className="absolute inset-0 opacity-15 pointer-events-none">
     <svg className="w-full h-full" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
       <defs>
-        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-          <polygon points="0 0, 10 3.5, 0 7" fill="rgba(255,255,255,0.7)" />
+        <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="rgba(255,255,255,0.5)" />
         </marker>
       </defs>
-      {/* Attacking movement arrows */}
-      <path d="M 150 450 Q 200 350 250 250" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="3" strokeDasharray="8,4" markerEnd="url(#arrowhead)"/>
-      <path d="M 250 450 Q 200 350 150 250" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="3" strokeDasharray="8,4" markerEnd="url(#arrowhead)"/>
-      {/* Wing play arrows */}
-      <path d="M 80 400 Q 120 300 160 200" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" strokeDasharray="6,3" markerEnd="url(#arrowhead)"/>
-      <path d="M 320 400 Q 280 300 240 200" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" strokeDasharray="6,3" markerEnd="url(#arrowhead)"/>
-      {/* Central attacking route */}
-      <path d="M 200 400 L 200 200" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="3" strokeDasharray="4,4" markerEnd="url(#arrowhead)"/>
-      {/* Pressing lines */}
-      <line x1="80" y1="300" x2="320" y2="300" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeDasharray="10,5"/>
-      <line x1="80" y1="450" x2="320" y2="450" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeDasharray="10,5"/>
+      {/* Central route */}
+      <path d="M 200 420 L 200 180" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeDasharray="6,4" markerEnd="url(#arrowhead)"/>
+      {/* Wing routes */}
+      <path d="M 100 400 Q 130 280 170 180" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeDasharray="5,4" markerEnd="url(#arrowhead)"/>
+      <path d="M 300 400 Q 270 280 230 180" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeDasharray="5,4" markerEnd="url(#arrowhead)"/>
     </svg>
   </div>
 );
