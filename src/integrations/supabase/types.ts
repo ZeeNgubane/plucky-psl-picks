@@ -41,6 +41,38 @@ export type Database = {
         }
         Relationships: []
       }
+      performer_likes: {
+        Row: {
+          created_at: string
+          gameweek: number
+          id: string
+          player_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          gameweek: number
+          id?: string
+          player_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          gameweek?: number
+          id?: string
+          player_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performer_likes_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       player_match_stats: {
         Row: {
           assists: number
