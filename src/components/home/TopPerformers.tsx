@@ -1,84 +1,115 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, Heart } from 'lucide-react';
+import { TrendingUp, Heart, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 
 const CURRENT_GAMEWEEK = 18;
 
-const topScorers = [
-  { rank: 1, name: 'Junior Dion', team: 'Golden Arrows', goals: 9, apps: 15, position: 'CF', nationality: 'Chad' },
-  { rank: 2, name: 'Bradley Grobler', team: 'Sekhukhune United', goals: 7, apps: 16, position: 'CF', nationality: 'South Africa' },
-  { rank: 3, name: 'Iqraam Rayners', team: 'Mamelodi Sundowns', goals: 6, apps: 12, position: 'CF', nationality: 'South Africa' },
-  { rank: 4, name: 'Thandolwenkosi Ngwenya', team: 'AmaZulu FC', goals: 6, apps: 14, position: 'CF', nationality: 'Zimbabwe' },
-  { rank: 5, name: 'Langelihle Phili', team: 'Stellenbosch FC', goals: 6, apps: 13, position: 'LW', nationality: 'South Africa' },
-  { rank: 6, name: 'Seluleko Mahlambi', team: 'TS Galaxy', goals: 5, apps: 18, position: 'LW', nationality: 'South Africa' },
-  { rank: 7, name: 'Patrick Maswanganyi', team: 'Orlando Pirates', goals: 5, apps: 13, position: 'AM', nationality: 'South Africa' },
-  { rank: 8, name: 'Brayan León', team: 'Mamelodi Sundowns', goals: 4, apps: 3, position: 'CF', nationality: 'Colombia' },
-  { rank: 9, name: 'Relebohile Mofokeng', team: 'Orlando Pirates', goals: 3, apps: 14, position: 'LW', nationality: 'South Africa' },
-  { rank: 10, name: 'Flávio Silva', team: 'Kaizer Chiefs', goals: 4, apps: 9, position: 'CF', nationality: 'Guinea-Bissau' },
-];
+interface TopScorer {
+  player_id: string;
+  name: string;
+  team_name: string;
+  position: string;
+  goals: number;
+  apps: number;
+}
 
 const TopPerformers = () => {
   const { toast } = useToast();
   const [userId, setUserId] = useState<string | null>(null);
-  const [playerIds, setPlayerIds] = useState<Record<string, string>>({});
+  const [topScorers, setTopScorers] = useState<TopScorer[]>([]);
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
   const [userLikes, setUserLikes] = useState<Set<string>>(new Set());
   const [loadingLike, setLoadingLike] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUserId(user?.id ?? null);
 
-      // Get player IDs by name
-      const { data: players } = await supabase
-        .from('players')
-        .select('id, name');
+      // Fetch top scorers from player_match_stats
+      const { data: stats } = await supabase
+        .from('player_match_stats')
+        .select('player_id, goals');
 
-      if (players) {
-        const map: Record<string, string> = {};
-        players.forEach(p => { map[p.name] = p.id; });
-        setPlayerIds(map);
+      if (stats && stats.length > 0) {
+        // Aggregate goals per player
+        const goalMap: Record<string, { goals: number; apps: number }> = {};
+        stats.forEach(s => {
+          if (!goalMap[s.player_id]) goalMap[s.player_id] = { goals: 0, apps: 0 };
+          goalMap[s.player_id].goals += s.goals;
+          goalMap[s.player_id].apps += 1;
+        });
 
-        // Fetch like counts for this gameweek
-        const playerIdList = players.map(p => p.id);
-        const { data: likes } = await supabase
-          .from('performer_likes')
-          .select('player_id')
-          .eq('gameweek', CURRENT_GAMEWEEK)
-          .in('player_id', playerIdList);
+        const playerIds = Object.keys(goalMap);
+        const { data: players } = await supabase
+          .from('players')
+          .select('id, name, position, team_id')
+          .in('id', playerIds);
 
-        if (likes) {
-          const counts: Record<string, number> = {};
-          likes.forEach(l => {
-            counts[l.player_id] = (counts[l.player_id] || 0) + 1;
-          });
-          setLikeCounts(counts);
-        }
+        if (players) {
+          const teamIds = [...new Set(players.map(p => p.team_id))];
+          const { data: teams } = await supabase
+            .from('teams')
+            .select('id, name')
+            .in('id', teamIds);
 
-        // Fetch user's likes
-        if (user) {
-          const { data: myLikes } = await supabase
-            .from('performer_likes')
-            .select('player_id')
-            .eq('user_id', user.id)
-            .eq('gameweek', CURRENT_GAMEWEEK);
+          const teamMap = new Map(teams?.map(t => [t.id, t.name]) ?? []);
 
-          if (myLikes) {
-            setUserLikes(new Set(myLikes.map(l => l.player_id)));
+          const scorers: TopScorer[] = players
+            .map(p => ({
+              player_id: p.id,
+              name: p.name,
+              team_name: teamMap.get(p.team_id) || '',
+              position: p.position,
+              goals: goalMap[p.id].goals,
+              apps: goalMap[p.id].apps,
+            }))
+            .filter(s => s.goals > 0)
+            .sort((a, b) => b.goals - a.goals)
+            .slice(0, 10);
+
+          setTopScorers(scorers);
+
+          // Fetch likes
+          const scorerIds = scorers.map(s => s.player_id);
+          if (scorerIds.length > 0) {
+            const { data: likes } = await supabase
+              .from('performer_likes')
+              .select('player_id')
+              .eq('gameweek', CURRENT_GAMEWEEK)
+              .in('player_id', scorerIds);
+
+            if (likes) {
+              const counts: Record<string, number> = {};
+              likes.forEach(l => { counts[l.player_id] = (counts[l.player_id] || 0) + 1; });
+              setLikeCounts(counts);
+            }
+
+            if (user) {
+              const { data: myLikes } = await supabase
+                .from('performer_likes')
+                .select('player_id')
+                .eq('user_id', user.id)
+                .eq('gameweek', CURRENT_GAMEWEEK);
+
+              if (myLikes) {
+                setUserLikes(new Set(myLikes.map(l => l.player_id)));
+              }
+            }
           }
         }
       }
+      setLoading(false);
     };
     init();
   }, []);
 
-  const handleLike = async (playerName: string) => {
-    const playerId = playerIds[playerName];
-    if (!playerId || !userId) {
+  const handleLike = async (playerId: string) => {
+    if (!userId) {
       toast({ title: "Sign in to like performers", variant: "destructive" });
       return;
     }
@@ -120,6 +151,16 @@ const TopPerformers = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <Card className="border-0 rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="border-0 rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
       <CardHeader className="pb-4">
@@ -130,70 +171,74 @@ const TopPerformers = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {/* Header */}
-        <div className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 border-b border-gray-200 mb-2">
-          <div className="flex items-center space-x-2 flex-1">
-            <span className="w-6 text-center">#</span>
-            <span>Player</span>
+        {topScorers.length === 0 ? (
+          <div className="text-center py-8">
+            <TrendingUp className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-500">No match stats recorded yet</p>
+            <p className="text-sm text-gray-400">Top scorers will appear once gameweek data is added</p>
           </div>
-          <div className="flex items-center space-x-3 text-center">
-            <span className="w-8">Apps</span>
-            <span className="w-8">⚽</span>
-            <span className="w-10">❤️</span>
-          </div>
-        </div>
-
-        <div className="space-y-1">
-          {topScorers.map((player) => {
-            const playerId = playerIds[player.name];
-            const isLiked = playerId ? userLikes.has(playerId) : false;
-            const count = playerId ? (likeCounts[playerId] || 0) : 0;
-
-            return (
-              <div 
-                key={player.rank} 
-                className="group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-amber-50 transition-all duration-200 text-sm"
-              >
-                <div className="flex items-center space-x-2 flex-1 min-w-0">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${getRankBadge(player.rank)} text-[10px] font-bold flex-shrink-0`}>
-                    {player.rank}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-medium text-gray-800 text-xs sm:text-sm truncate">
-                      {player.name}
-                    </p>
-                    <p className="text-[10px] text-gray-500 truncate">{player.team} · {player.position}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-3 text-center text-xs text-gray-600 flex-shrink-0">
-                  <span className="w-8">{player.apps}</span>
-                  <span className="w-8 font-bold text-gray-800 text-sm">{player.goals}</span>
-                  <button
-                    onClick={() => handleLike(player.name)}
-                    disabled={loadingLike === playerId}
-                    className="w-10 flex items-center justify-center gap-0.5 transition-all duration-200 hover:scale-110 disabled:opacity-50"
-                  >
-                    <Heart
-                      className={`h-4 w-4 transition-colors ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400 group-hover:text-red-300'}`}
-                    />
-                    {count > 0 && (
-                      <span className={`text-[10px] ${isLiked ? 'text-red-500 font-semibold' : 'text-gray-400'}`}>
-                        {count}
-                      </span>
-                    )}
-                  </button>
-                </div>
+        ) : (
+          <>
+            {/* Header */}
+            <div className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 border-b border-gray-200 mb-2">
+              <div className="flex items-center space-x-2 flex-1">
+                <span className="w-6 text-center">#</span>
+                <span>Player</span>
               </div>
-            );
-          })}
-        </div>
-        
-        <div className="mt-4 p-3 bg-gradient-to-r from-green-100 via-yellow-100 to-blue-100 rounded-xl border border-green-200">
-          <p className="text-center text-sm font-medium text-gray-700">
-            🇿🇦 "Junior Dion is on fire, boet!" 🔥
-          </p>
-        </div>
+              <div className="flex items-center space-x-3 text-center">
+                <span className="w-8">Apps</span>
+                <span className="w-8">⚽</span>
+                <span className="w-10">❤️</span>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              {topScorers.map((player, index) => {
+                const rank = index + 1;
+                const isLiked = userLikes.has(player.player_id);
+                const count = likeCounts[player.player_id] || 0;
+
+                return (
+                  <div 
+                    key={player.player_id} 
+                    className="group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-amber-50 transition-all duration-200 text-sm"
+                  >
+                    <div className="flex items-center space-x-2 flex-1 min-w-0">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${getRankBadge(rank)} text-[10px] font-bold flex-shrink-0`}>
+                        {rank}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-medium text-gray-800 text-xs sm:text-sm truncate">
+                          {player.name}
+                        </p>
+                        <p className="text-[10px] text-gray-500 truncate">{player.team_name} · {player.position}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-3 text-center text-xs text-gray-600 flex-shrink-0">
+                      <span className="w-8">{player.apps}</span>
+                      <span className="w-8 font-bold text-gray-800 text-sm">{player.goals}</span>
+                      <button
+                        onClick={() => handleLike(player.player_id)}
+                        disabled={loadingLike === player.player_id}
+                        className="w-10 flex items-center justify-center gap-0.5 transition-all duration-200 hover:scale-110 disabled:opacity-50"
+                      >
+                        <Heart
+                          className={`h-4 w-4 transition-colors ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400 group-hover:text-red-300'}`}
+                        />
+                        {count > 0 && (
+                          <span className={`text-[10px] ${isLiked ? 'text-red-500 font-semibold' : 'text-gray-400'}`}>
+                            {count}
+                          </span>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );
