@@ -20,12 +20,9 @@ export const PSLBot = () => {
   const fetchPSLData = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/fetch-psl-data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const { data, error } = await supabase.functions.invoke('fetch-psl-data');
+      if (error) throw error;
+      const response = { ok: true, json: async () => data };
 
       if (!response.ok) {
         throw new Error('Failed to fetch PSL data');
