@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      fixtures: {
+        Row: {
+          away_score: number | null
+          away_team: string
+          created_at: string
+          home_score: number | null
+          home_team: string
+          id: string
+          match_date: string
+          match_time: string | null
+          matchday: number | null
+          season: string | null
+          status: string
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          away_score?: number | null
+          away_team: string
+          created_at?: string
+          home_score?: number | null
+          home_team: string
+          id?: string
+          match_date: string
+          match_time?: string | null
+          matchday?: number | null
+          season?: string | null
+          status?: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          away_score?: number | null
+          away_team?: string
+          created_at?: string
+          home_score?: number | null
+          home_team?: string
+          id?: string
+          match_date?: string
+          match_time?: string | null
+          matchday?: number | null
+          season?: string | null
+          status?: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
       leaderboard: {
         Row: {
           gameweek_points: number
@@ -200,6 +248,60 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      standings: {
+        Row: {
+          created_at: string
+          draws: number
+          form: string[] | null
+          goal_difference: number
+          goals_against: number
+          goals_for: number
+          id: string
+          losses: number
+          played: number
+          points: number
+          position: number
+          season: string | null
+          team_name: string
+          updated_at: string
+          wins: number
+        }
+        Insert: {
+          created_at?: string
+          draws?: number
+          form?: string[] | null
+          goal_difference?: number
+          goals_against?: number
+          goals_for?: number
+          id?: string
+          losses?: number
+          played?: number
+          points?: number
+          position?: number
+          season?: string | null
+          team_name: string
+          updated_at?: string
+          wins?: number
+        }
+        Update: {
+          created_at?: string
+          draws?: number
+          form?: string[] | null
+          goal_difference?: number
+          goals_against?: number
+          goals_for?: number
+          id?: string
+          losses?: number
+          played?: number
+          points?: number
+          position?: number
+          season?: string | null
+          team_name?: string
+          updated_at?: string
+          wins?: number
         }
         Relationships: []
       }
