@@ -2,8 +2,12 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 }
+
+const SPORTSDB_BASE = 'https://www.thesportsdb.com/api/v1/json/3'
+const LEAGUE_ID = '4802' // South African Premier Soccer League
+const SEASON = '2025-2026'
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -15,81 +19,113 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, supabaseKey)
 
   try {
-    console.log('Starting PSL data fetch...')
+    console.log('Fetching PSL data from TheSportsDB...')
 
-    // Fetch from PSL website
-    const pslHtml = await fetchPage('https://www.psl.co.za/')
-    // Fetch from FlashScore for Betway Premiership
-    const flashHtml = await fetchPage('https://www.flashscore.co.za/football/south-africa/premier-soccer-league/')
+    // Fetch standings and recent events in parallel
+    const [standingsRes, eventsRes, nextEventsRes] = await Promise.all([
+      fetch(`${SPORTSDB_BASE}/lookuptable.php?l=${LEAGUE_ID}&s=${SEASON}`),
+      fetch(`${SPORTSDB_BASE}/eventspastleague.php?id=${LEAGUE_ID}`),
+      fetch(`${SPORTSDB_BASE}/eventsnextleague.php?id=${LEAGUE_ID}`),
+    ])
 
-    // Parse standings from FlashScore (more structured)
-    const standings = parseFlashScoreStandings(flashHtml)
-    const fixtures = parseFlashScoreFixtures(flashHtml)
+    const standingsData = await standingsRes.json()
+    const eventsData = await eventsRes.json()
+    const nextEventsData = await nextEventsRes.json()
 
-    // Also try PSL website
-    const pslFixtures = parsePSLFixtures(pslHtml)
-    const pslStandings = parsePSLStandings(pslHtml)
+    let standingsCount = 0
+    let fixturesCount = 0
 
-    // Merge: prefer FlashScore data, fallback to PSL
-    const finalStandings = standings.length > 0 ? standings : pslStandings
-    const finalFixtures = fixtures.length > 0 ? fixtures : pslFixtures
+    // Process standings
+    if (standingsData?.table && Array.isArray(standingsData.table)) {
+      const standings = standingsData.table.map((team: any, i: number) => ({
+        team_name: team.strTeam || team.name,
+        position: parseInt(team.intRank) || i + 1,
+        played: parseInt(team.intPlayed) || 0,
+        wins: parseInt(team.intWin) || 0,
+        draws: parseInt(team.intDraw) || 0,
+        losses: parseInt(team.intLoss) || 0,
+        goals_for: parseInt(team.intGoalsFor) || 0,
+        goals_against: parseInt(team.intGoalsAgainst) || 0,
+        goal_difference: parseInt(team.intGoalDifference) || 0,
+        points: parseInt(team.intPoints) || 0,
+        form: team.strForm ? team.strForm.split('') : [],
+        season: '2025/26',
+        updated_at: new Date().toISOString(),
+      }))
 
-    // Upsert standings into DB
-    if (finalStandings.length > 0) {
-      const { error: standingsError } = await supabase
+      const { error } = await supabase
         .from('standings')
-        .upsert(
-          finalStandings.map((s, i) => ({
-            team_name: s.team_name,
-            position: s.position || i + 1,
-            played: s.played,
-            wins: s.wins,
-            draws: s.draws,
-            losses: s.losses,
-            goals_for: s.goals_for,
-            goals_against: s.goals_against,
-            goal_difference: s.goal_difference,
-            points: s.points,
-            form: s.form || [],
-            season: '2025/26',
-            updated_at: new Date().toISOString(),
-          })),
-          { onConflict: 'team_name,season' }
-        )
-      if (standingsError) console.error('Standings upsert error:', standingsError)
-      else console.log(`Upserted ${finalStandings.length} standings`)
+        .upsert(standings, { onConflict: 'team_name,season' })
+
+      if (error) console.error('Standings upsert error:', error)
+      else standingsCount = standings.length
+      console.log(`Processed ${standings.length} standings`)
+    } else {
+      console.warn('No standings data returned:', JSON.stringify(standingsData).substring(0, 200))
     }
 
-    // Upsert fixtures into DB
-    if (finalFixtures.length > 0) {
-      const { error: fixturesError } = await supabase
-        .from('fixtures')
-        .upsert(
-          finalFixtures.map(f => ({
-            home_team: f.home_team,
-            away_team: f.away_team,
-            home_score: f.home_score,
-            away_score: f.away_score,
-            match_date: f.match_date,
-            match_time: f.match_time,
-            venue: f.venue || null,
-            status: f.status,
-            season: '2025/26',
-            updated_at: new Date().toISOString(),
-          })),
-          { onConflict: 'home_team,away_team,match_date' }
-        )
-      if (fixturesError) console.error('Fixtures upsert error:', fixturesError)
-      else console.log(`Upserted ${finalFixtures.length} fixtures`)
+    // Process past results
+    const allFixtures: any[] = []
+
+    if (eventsData?.events && Array.isArray(eventsData.events)) {
+      for (const event of eventsData.events) {
+        allFixtures.push({
+          home_team: event.strHomeTeam,
+          away_team: event.strAwayTeam,
+          home_score: event.intHomeScore !== null ? parseInt(event.intHomeScore) : null,
+          away_score: event.intAwayScore !== null ? parseInt(event.intAwayScore) : null,
+          match_date: event.dateEvent,
+          match_time: event.strTime?.substring(0, 5) || null,
+          venue: event.strVenue || null,
+          status: event.strStatus === 'Match Finished' ? 'completed' : (event.strStatus || 'completed'),
+          matchday: event.intRound ? parseInt(event.intRound) : null,
+          season: '2025/26',
+          updated_at: new Date().toISOString(),
+        })
+      }
+      console.log(`Processed ${eventsData.events.length} past events`)
     }
+
+    // Process upcoming fixtures
+    if (nextEventsData?.events && Array.isArray(nextEventsData.events)) {
+      for (const event of nextEventsData.events) {
+        allFixtures.push({
+          home_team: event.strHomeTeam,
+          away_team: event.strAwayTeam,
+          home_score: null,
+          away_score: null,
+          match_date: event.dateEvent,
+          match_time: event.strTime?.substring(0, 5) || null,
+          venue: event.strVenue || null,
+          status: 'upcoming',
+          matchday: event.intRound ? parseInt(event.intRound) : null,
+          season: '2025/26',
+          updated_at: new Date().toISOString(),
+        })
+      }
+      console.log(`Processed ${nextEventsData.events.length} upcoming events`)
+    }
+
+    if (allFixtures.length > 0) {
+      const { error } = await supabase
+        .from('fixtures')
+        .upsert(allFixtures, { onConflict: 'home_team,away_team,match_date' })
+
+      if (error) console.error('Fixtures upsert error:', error)
+      else fixturesCount = allFixtures.length
+    }
+
+    const result = {
+      success: true,
+      standings: standingsCount,
+      fixtures: fixturesCount,
+      lastUpdated: new Date().toISOString()
+    }
+
+    console.log('Result:', JSON.stringify(result))
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        standings: finalStandings.length,
-        fixtures: finalFixtures.length,
-        lastUpdated: new Date().toISOString()
-      }),
+      JSON.stringify(result),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
@@ -100,189 +136,3 @@ Deno.serve(async (req) => {
     )
   }
 })
-
-async function fetchPage(url: string): string {
-  try {
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      }
-    })
-    if (!response.ok) {
-      console.warn(`Failed to fetch ${url}: ${response.status}`)
-      return ''
-    }
-    return await response.text()
-  } catch (e) {
-    console.warn(`Error fetching ${url}:`, e)
-    return ''
-  }
-}
-
-// ========== FlashScore Parsing ==========
-
-function parseFlashScoreStandings(html: string) {
-  if (!html) return []
-  const standings: any[] = []
-  
-  try {
-    // FlashScore table rows pattern
-    // Look for table rows with team data
-    const tableRegex = /class="[^"]*tableCellParticipantName[^"]*"[^>]*>([^<]+)/gi
-    const rowRegex = /<div[^>]*class="[^"]*table__row[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\/div>/gi
-    
-    // Simple regex approach for standings table
-    const lines = html.split('\n')
-    let inTable = false
-    let position = 0
-    
-    for (const line of lines) {
-      // Look for team names in standings context
-      const teamMatch = line.match(/participant__participantName[^>]*>([^<]+)/i)
-      if (teamMatch) {
-        position++
-        const numbersInLine = html.substring(
-          html.indexOf(teamMatch[0]) - 500,
-          html.indexOf(teamMatch[0]) + 200
-        )
-        
-        standings.push({
-          team_name: teamMatch[1].trim(),
-          position,
-          played: 0,
-          wins: 0,
-          draws: 0,
-          losses: 0,
-          goals_for: 0,
-          goals_against: 0,
-          goal_difference: 0,
-          points: 0,
-          form: [],
-        })
-      }
-    }
-  } catch (e) {
-    console.warn('FlashScore standings parse error:', e)
-  }
-  
-  return standings
-}
-
-function parseFlashScoreFixtures(html: string) {
-  if (!html) return []
-  const fixtures: any[] = []
-  
-  try {
-    // Look for match entries with home/away teams and scores
-    const matchRegex = /event__participant--home[^>]*>([^<]+)[\s\S]*?event__participant--away[^>]*>([^<]+)[\s\S]*?event__score--home[^>]*>(\d+)[\s\S]*?event__score--away[^>]*>(\d+)/gi
-    let match
-    
-    while ((match = matchRegex.exec(html)) !== null) {
-      fixtures.push({
-        home_team: match[1].trim(),
-        away_team: match[2].trim(),
-        home_score: parseInt(match[3]),
-        away_score: parseInt(match[4]),
-        match_date: new Date().toISOString().split('T')[0],
-        match_time: null,
-        venue: null,
-        status: 'completed',
-      })
-    }
-  } catch (e) {
-    console.warn('FlashScore fixtures parse error:', e)
-  }
-  
-  return fixtures
-}
-
-// ========== PSL Website Parsing ==========
-
-function parsePSLStandings(html: string) {
-  if (!html) return []
-  const standings: any[] = []
-  
-  try {
-    // Look for league table data in PSL website
-    const tableRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi
-    let match
-    let position = 0
-    
-    while ((match = tableRegex.exec(html)) !== null) {
-      const row = match[1]
-      const cells = row.match(/<td[^>]*>([\s\S]*?)<\/td>/gi)
-      
-      if (cells && cells.length >= 7) {
-        const getText = (cell: string) => cell.replace(/<[^>]+>/g, '').trim()
-        const teamName = getText(cells[1] || '')
-        
-        if (teamName && teamName.length > 2 && !/^\d+$/.test(teamName)) {
-          position++
-          const p = parseInt(getText(cells[2] || '0')) || 0
-          const w = parseInt(getText(cells[3] || '0')) || 0
-          const d = parseInt(getText(cells[4] || '0')) || 0
-          const l = parseInt(getText(cells[5] || '0')) || 0
-          const gf = parseInt(getText(cells[6] || '0')) || 0
-          const ga = parseInt(getText(cells[7] || '0')) || 0
-          const pts = parseInt(getText(cells[cells.length - 1] || '0')) || 0
-          
-          standings.push({
-            team_name: teamName,
-            position,
-            played: p,
-            wins: w,
-            draws: d,
-            losses: l,
-            goals_for: gf,
-            goals_against: ga,
-            goal_difference: gf - ga,
-            points: pts,
-            form: [],
-          })
-        }
-      }
-    }
-  } catch (e) {
-    console.warn('PSL standings parse error:', e)
-  }
-  
-  return standings
-}
-
-function parsePSLFixtures(html: string) {
-  if (!html) return []
-  const fixtures: any[] = []
-  
-  try {
-    // Look for fixture blocks in PSL website
-    const fixtureRegex = /fixture[^>]*>([\s\S]*?)<\/div>/gi
-    let match
-    
-    while ((match = fixtureRegex.exec(html)) !== null) {
-      const block = match[1]
-      const teams = block.match(/>([A-Z][a-zA-Z\s]+(?:FC|United|City|Pirates|Chiefs|Sundowns|Arrows|Galaxy|Stellies))/gi)
-      const scores = block.match(/(\d+)\s*-\s*(\d+)/)
-      const dateMatch = block.match(/(\d{4}-\d{2}-\d{2}|\d{2}\s\w+\s\d{4})/)
-      
-      if (teams && teams.length >= 2) {
-        const homeTeam = teams[0].replace(/^>/, '').trim()
-        const awayTeam = teams[1].replace(/^>/, '').trim()
-        
-        fixtures.push({
-          home_team: homeTeam,
-          away_team: awayTeam,
-          home_score: scores ? parseInt(scores[1]) : null,
-          away_score: scores ? parseInt(scores[2]) : null,
-          match_date: dateMatch ? dateMatch[1] : new Date().toISOString().split('T')[0],
-          match_time: null,
-          venue: null,
-          status: scores ? 'completed' : 'upcoming',
-        })
-      }
-    }
-  } catch (e) {
-    console.warn('PSL fixtures parse error:', e)
-  }
-  
-  return fixtures
-}
