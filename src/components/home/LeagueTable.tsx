@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Medal, Award, Loader2 } from 'lucide-react';
+import { Trophy, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface TeamStanding {
   id: string;
-  name: string;
-  short_name: string | null;
+  team_name: string;
+  position: number;
   played: number;
   wins: number;
   draws: number;
   losses: number;
-  goalsFor: number;
-  goalsAgainst: number;
+  goals_for: number;
+  goals_against: number;
+  goal_difference: number;
   points: number;
   form: string[];
 }
@@ -23,31 +24,37 @@ const LeagueTable = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTeams = async () => {
-      const { data: teams } = await supabase
-        .from('teams')
-        .select('id, name, short_name')
-        .order('name');
+    const fetchStandings = async () => {
+      const { data, error } = await supabase
+        .from('standings')
+        .select('*')
+        .eq('season', '2025/26')
+        .order('position', { ascending: true });
 
-      // For now, display teams with placeholder stats until real match data is available
-      if (teams) {
-        setStandings(teams.map((team, index) => ({
-          id: team.id,
-          name: team.name,
-          short_name: team.short_name,
-          played: 0,
-          wins: 0,
-          draws: 0,
-          losses: 0,
-          goalsFor: 0,
-          goalsAgainst: 0,
-          points: 0,
-          form: [],
-        })));
+      if (data && data.length > 0) {
+        setStandings(data as TeamStanding[]);
+      } else {
+        // Fallback: show teams with zero stats
+        const { data: teams } = await supabase
+          .from('teams')
+          .select('id, name, short_name')
+          .order('name');
+
+        if (teams) {
+          setStandings(teams.map((team, i) => ({
+            id: team.id,
+            team_name: team.name,
+            position: i + 1,
+            played: 0, wins: 0, draws: 0, losses: 0,
+            goals_for: 0, goals_against: 0, goal_difference: 0,
+            points: 0, form: [],
+          })));
+        }
       }
+      if (error) console.error('Error fetching standings:', error);
       setLoading(false);
     };
-    fetchTeams();
+    fetchStandings();
   }, []);
 
   const getPositionBadge = (position: number) => {
@@ -95,10 +102,10 @@ const LeagueTable = () => {
           <div className="text-center py-8">
             <Trophy className="h-12 w-12 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-500">No league data available yet</p>
+            <p className="text-gray-400 text-sm mt-1">Data updates daily at midnight</p>
           </div>
         ) : (
           <>
-            {/* Table Header */}
             <div className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 border-b border-gray-200 mb-2">
               <div className="flex items-center space-x-2 flex-1">
                 <span className="w-8 text-center">#</span>
@@ -115,55 +122,49 @@ const LeagueTable = () => {
               </div>
             </div>
 
-            {/* Table Rows */}
             <div className="space-y-1">
-              {standings.map((team, index) => {
-                const position = index + 1;
-                const gd = team.goalsFor - team.goalsAgainst;
-                return (
-                  <div 
-                    key={team.id}
-                    className={`group flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 hover:bg-blue-50 text-sm ${
-                      position <= 1 ? 'bg-yellow-50/50' : 
-                      position <= 3 ? 'bg-green-50/30' : 
-                      position >= 15 ? 'bg-red-50/30' : ''
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2 flex-1">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${getPositionBadge(position)} text-[10px] font-bold`}>
-                        {position}
-                      </div>
-                      <p className="font-medium text-gray-800 text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">
-                        {team.name}
-                      </p>
+              {standings.map((team) => (
+                <div 
+                  key={team.id}
+                  className={`group flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 hover:bg-blue-50 text-sm ${
+                    team.position <= 1 ? 'bg-yellow-50/50' : 
+                    team.position <= 3 ? 'bg-green-50/30' : 
+                    team.position >= 15 ? 'bg-red-50/30' : ''
+                  }`}
+                >
+                  <div className="flex items-center space-x-2 flex-1">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${getPositionBadge(team.position)} text-[10px] font-bold`}>
+                      {team.position}
                     </div>
-                    
-                    <div className="flex items-center space-x-3 text-center text-xs text-gray-600">
-                      <span className="w-6">{team.played}</span>
-                      <span className="w-6">{team.wins}</span>
-                      <span className="w-6">{team.draws}</span>
-                      <span className="w-6">{team.losses}</span>
-                      <span className={`w-12 hidden sm:block font-medium ${gd > 0 ? 'text-green-600' : gd < 0 ? 'text-red-500' : 'text-gray-500'}`}>
-                        {gd > 0 ? '+' : ''}{gd}
-                      </span>
-                      <div className="hidden sm:flex items-center space-x-0.5 w-20 justify-center">
-                        {team.form.map((result, i) => (
-                          <div 
-                            key={i}
-                            className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold ${getFormColor(result)}`}
-                          >
-                            {result}
-                          </div>
-                        ))}
-                      </div>
-                      <span className="w-8 font-bold text-gray-800">{team.points}</span>
-                    </div>
+                    <p className="font-medium text-gray-800 text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">
+                      {team.team_name}
+                    </p>
                   </div>
-                );
-              })}
+                  
+                  <div className="flex items-center space-x-3 text-center text-xs text-gray-600">
+                    <span className="w-6">{team.played}</span>
+                    <span className="w-6">{team.wins}</span>
+                    <span className="w-6">{team.draws}</span>
+                    <span className="w-6">{team.losses}</span>
+                    <span className={`w-12 hidden sm:block font-medium ${team.goal_difference > 0 ? 'text-green-600' : team.goal_difference < 0 ? 'text-red-500' : 'text-gray-500'}`}>
+                      {team.goal_difference > 0 ? '+' : ''}{team.goal_difference}
+                    </span>
+                    <div className="hidden sm:flex items-center space-x-0.5 w-20 justify-center">
+                      {(team.form || []).map((result, i) => (
+                        <div 
+                          key={i}
+                          className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold ${getFormColor(result)}`}
+                        >
+                          {result}
+                        </div>
+                      ))}
+                    </div>
+                    <span className="w-8 font-bold text-gray-800">{team.points}</span>
+                  </div>
+                </div>
+              ))}
             </div>
             
-            {/* Legend */}
             <div className="mt-4 flex flex-wrap gap-3 text-[10px] text-gray-500 px-3">
               <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-yellow-400"></div> Champion + CAF CL</div>
               <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-400"></div> CAF CL</div>

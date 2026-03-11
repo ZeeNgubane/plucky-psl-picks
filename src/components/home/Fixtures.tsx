@@ -1,121 +1,41 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, MapPin } from 'lucide-react';
+import { Calendar, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
-const fixtures = [
-  {
-    id: 1,
-    homeTeam: 'Durban City FC',
-    awayTeam: 'TS Galaxy',
-    date: '2026-02-13',
-    time: '19:30',
-    venue: 'Harry Gwala Stadium',
-    status: 'completed',
-    homeScore: 2,
-    awayScore: 0
-  },
-  {
-    id: 2,
-    homeTeam: 'Magesi FC',
-    awayTeam: 'Golden Arrows',
-    date: '2026-02-13',
-    time: '19:30',
-    venue: 'Old Peter Mokaba Stadium',
-    status: 'completed',
-    homeScore: 0,
-    awayScore: 2
-  },
-  {
-    id: 3,
-    homeTeam: 'Orlando Pirates',
-    awayTeam: 'Marumo Gallants',
-    date: '2026-02-14',
-    time: '15:30',
-    venue: 'Orlando Stadium',
-    status: 'completed',
-    homeScore: 3,
-    awayScore: 0
-  },
-  {
-    id: 4,
-    homeTeam: 'Polokwane City',
-    awayTeam: 'Siwelele FC',
-    date: '2026-02-14',
-    time: '18:00',
-    venue: 'Old Peter Mokaba Stadium',
-    status: 'completed',
-    homeScore: 0,
-    awayScore: 0
-  },
-  {
-    id: 5,
-    homeTeam: 'Chippa United',
-    awayTeam: 'Richards Bay',
-    date: '2026-02-14',
-    time: '20:15',
-    venue: 'Buffalo City Stadium',
-    status: 'completed',
-    homeScore: 3,
-    awayScore: 0
-  },
-  {
-    id: 6,
-    homeTeam: 'Sekhukhune United',
-    awayTeam: 'Orbit College',
-    date: '2026-02-15',
-    time: '15:30',
-    venue: 'Peter Mokaba Stadium',
-    status: 'completed',
-    homeScore: 2,
-    awayScore: 0
-  },
-  {
-    id: 7,
-    homeTeam: 'Stellenbosch FC',
-    awayTeam: 'Magesi FC',
-    date: '2026-02-18',
-    time: '19:30',
-    venue: 'Danie Craven Stadium',
-    status: 'completed',
-    homeScore: 1,
-    awayScore: 1
-  },
-  {
-    id: 8,
-    homeTeam: 'Orlando Pirates',
-    awayTeam: 'Mamelodi Sundowns',
-    date: '2026-02-18',
-    time: '19:30',
-    venue: 'Orlando Stadium',
-    status: 'completed',
-    homeScore: 1,
-    awayScore: 2
-  },
-  {
-    id: 9,
-    homeTeam: 'AmaZulu FC',
-    awayTeam: 'Mamelodi Sundowns',
-    date: '2026-02-24',
-    time: '19:30',
-    venue: 'Moses Mabhida Stadium',
-    status: 'upcoming',
-    homeScore: null,
-    awayScore: null
-  },
-  {
-    id: 10,
-    homeTeam: 'Kaizer Chiefs',
-    awayTeam: 'Stellenbosch FC',
-    date: '2026-02-24',
-    time: '19:30',
-    venue: 'FNB Stadium',
-    status: 'upcoming',
-    homeScore: null,
-    awayScore: null
-  },
-];
+interface Fixture {
+  id: string;
+  home_team: string;
+  away_team: string;
+  home_score: number | null;
+  away_score: number | null;
+  match_date: string;
+  match_time: string | null;
+  venue: string | null;
+  status: string;
+  matchday: number | null;
+}
 
 const Fixtures = () => {
+  const [fixtures, setFixtures] = useState<Fixture[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFixtures = async () => {
+      const { data, error } = await supabase
+        .from('fixtures')
+        .select('*')
+        .order('match_date', { ascending: false })
+        .limit(15);
+
+      if (data) setFixtures(data as Fixture[]);
+      if (error) console.error('Error fetching fixtures:', error);
+      setLoading(false);
+    };
+    fetchFixtures();
+  }, []);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'live': return 'bg-red-500 text-white animate-pulse';
@@ -132,6 +52,16 @@ const Fixtures = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <Card className="border-0 rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="border-0 rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
       <CardHeader className="pb-4">
@@ -141,55 +71,56 @@ const Fixtures = () => {
             Fixtures & Results
           </CardTitle>
           <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
-            Matchday 18
+            Season 25/26
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        {fixtures.map((fixture) => (
-          <div 
-            key={fixture.id} 
-            className={`flex items-center justify-between p-3 rounded-xl transition-all duration-200 hover:shadow-md text-sm ${
-              fixture.status === 'live' 
-                ? 'bg-red-50 border-l-4 border-red-500' 
-                : fixture.status === 'completed'
-                ? 'bg-gray-50'
-                : 'bg-blue-50'
-            }`}
-          >
-            {/* Home Team */}
-            <div className="flex-1 text-right">
-              <p className="font-medium text-gray-800 text-xs sm:text-sm">{fixture.homeTeam}</p>
-            </div>
-
-            {/* Score/Status */}
-            <div className="flex flex-col items-center mx-3 min-w-[60px]">
-              {fixture.homeScore !== null && fixture.awayScore !== null ? (
-                <div className="flex items-center gap-1">
-                  <span className="font-bold text-lg text-gray-800">{fixture.homeScore}</span>
-                  <Badge className={`${getStatusColor(fixture.status)} px-1.5 py-0 text-[10px] font-bold rounded-full`}>
-                    {getStatusText(fixture.status)}
-                  </Badge>
-                  <span className="font-bold text-lg text-gray-800">{fixture.awayScore}</span>
-                </div>
-              ) : (
-                <Badge className={`${getStatusColor(fixture.status)} px-2 py-0.5 text-[10px] font-bold rounded-full`}>
-                  {fixture.time}
-                </Badge>
-              )}
-              <span className="text-[10px] text-gray-400 mt-0.5">{fixture.date.slice(5)}</span>
-            </div>
-
-            {/* Away Team */}
-            <div className="flex-1">
-              <p className="font-medium text-gray-800 text-xs sm:text-sm">{fixture.awayTeam}</p>
-            </div>
+        {fixtures.length === 0 ? (
+          <div className="text-center py-8">
+            <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-500">No fixtures available yet</p>
+            <p className="text-gray-400 text-sm mt-1">Data updates daily at midnight</p>
           </div>
-        ))}
-        
-        <button className="w-full py-3 text-amber-600 font-medium text-sm hover:bg-amber-50 rounded-xl transition-colors duration-200">
-          View All Fixtures →
-        </button>
+        ) : (
+          fixtures.map((fixture) => (
+            <div 
+              key={fixture.id} 
+              className={`flex items-center justify-between p-3 rounded-xl transition-all duration-200 hover:shadow-md text-sm ${
+                fixture.status === 'live' 
+                  ? 'bg-red-50 border-l-4 border-red-500' 
+                  : fixture.status === 'completed'
+                  ? 'bg-gray-50'
+                  : 'bg-blue-50'
+              }`}
+            >
+              <div className="flex-1 text-right">
+                <p className="font-medium text-gray-800 text-xs sm:text-sm">{fixture.home_team}</p>
+              </div>
+
+              <div className="flex flex-col items-center mx-3 min-w-[60px]">
+                {fixture.home_score !== null && fixture.away_score !== null ? (
+                  <div className="flex items-center gap-1">
+                    <span className="font-bold text-lg text-gray-800">{fixture.home_score}</span>
+                    <Badge className={`${getStatusColor(fixture.status)} px-1.5 py-0 text-[10px] font-bold rounded-full`}>
+                      {getStatusText(fixture.status)}
+                    </Badge>
+                    <span className="font-bold text-lg text-gray-800">{fixture.away_score}</span>
+                  </div>
+                ) : (
+                  <Badge className={`${getStatusColor(fixture.status)} px-2 py-0.5 text-[10px] font-bold rounded-full`}>
+                    {fixture.match_time || 'TBD'}
+                  </Badge>
+                )}
+                <span className="text-[10px] text-gray-400 mt-0.5">{fixture.match_date?.slice(5)}</span>
+              </div>
+
+              <div className="flex-1">
+                <p className="font-medium text-gray-800 text-xs sm:text-sm">{fixture.away_team}</p>
+              </div>
+            </div>
+          ))
+        )}
       </CardContent>
     </Card>
   );
