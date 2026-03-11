@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, RefreshCw, Trophy, Calendar, Users } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PSLData {
   fixtures?: any[];
@@ -20,16 +21,10 @@ export const PSLBot = () => {
   const fetchPSLData = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('fetch-psl-data');
+      const { data: result, error } = await supabase.functions.invoke('fetch-psl-data');
       if (error) throw error;
-      const response = { ok: true, json: async () => data };
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch PSL data');
-      }
-
-      const data = await response.json();
-      setPslData(data);
+      setPslData(result);
       
       toast({
         title: "Success",
