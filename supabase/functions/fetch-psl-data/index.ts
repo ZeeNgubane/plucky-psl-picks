@@ -1,225 +1,288 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders })
   }
 
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+  const supabase = createClient(supabaseUrl, supabaseKey)
+
   try {
-    // PSL website scraping
-    const pslData = await scrapePSLData()
-    
+    console.log('Starting PSL data fetch...')
+
+    // Fetch from PSL website
+    const pslHtml = await fetchPage('https://www.psl.co.za/')
+    // Fetch from FlashScore for Betway Premiership
+    const flashHtml = await fetchPage('https://www.flashscore.co.za/football/south-africa/premier-soccer-league/')
+
+    // Parse standings from FlashScore (more structured)
+    const standings = parseFlashScoreStandings(flashHtml)
+    const fixtures = parseFlashScoreFixtures(flashHtml)
+
+    // Also try PSL website
+    const pslFixtures = parsePSLFixtures(pslHtml)
+    const pslStandings = parsePSLStandings(pslHtml)
+
+    // Merge: prefer FlashScore data, fallback to PSL
+    const finalStandings = standings.length > 0 ? standings : pslStandings
+    const finalFixtures = fixtures.length > 0 ? fixtures : pslFixtures
+
+    // Upsert standings into DB
+    if (finalStandings.length > 0) {
+      const { error: standingsError } = await supabase
+        .from('standings')
+        .upsert(
+          finalStandings.map((s, i) => ({
+            team_name: s.team_name,
+            position: s.position || i + 1,
+            played: s.played,
+            wins: s.wins,
+            draws: s.draws,
+            losses: s.losses,
+            goals_for: s.goals_for,
+            goals_against: s.goals_against,
+            goal_difference: s.goal_difference,
+            points: s.points,
+            form: s.form || [],
+            season: '2025/26',
+            updated_at: new Date().toISOString(),
+          })),
+          { onConflict: 'team_name,season' }
+        )
+      if (standingsError) console.error('Standings upsert error:', standingsError)
+      else console.log(`Upserted ${finalStandings.length} standings`)
+    }
+
+    // Upsert fixtures into DB
+    if (finalFixtures.length > 0) {
+      const { error: fixturesError } = await supabase
+        .from('fixtures')
+        .upsert(
+          finalFixtures.map(f => ({
+            home_team: f.home_team,
+            away_team: f.away_team,
+            home_score: f.home_score,
+            away_score: f.away_score,
+            match_date: f.match_date,
+            match_time: f.match_time,
+            venue: f.venue || null,
+            status: f.status,
+            season: '2025/26',
+            updated_at: new Date().toISOString(),
+          })),
+          { onConflict: 'home_team,away_team,match_date' }
+        )
+      if (fixturesError) console.error('Fixtures upsert error:', fixturesError)
+      else console.log(`Upserted ${finalFixtures.length} fixtures`)
+    }
+
     return new Response(
       JSON.stringify({
-        ...pslData,
+        success: true,
+        standings: finalStandings.length,
+        fixtures: finalFixtures.length,
         lastUpdated: new Date().toISOString()
       }),
-      { 
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json' 
-        } 
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
     console.error('Error fetching PSL data:', error)
     return new Response(
-      JSON.stringify({ error: 'Failed to fetch PSL data' }),
-      { 
-        status: 500, 
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json' 
-        } 
-      }
+      JSON.stringify({ error: 'Failed to fetch PSL data', details: String(error) }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 })
 
-async function scrapePSLData() {
+async function fetchPage(url: string): string {
   try {
-    // Fetch PSL website data
-    const response = await fetch('https://www.psl.co.za/', {
+    const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
       }
     })
-    
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      console.warn(`Failed to fetch ${url}: ${response.status}`)
+      return ''
     }
-    
-    const html = await response.text()
-    
-    // Parse fixtures, standings, and news from the HTML
-    const fixtures = parseFixtures(html)
-    const standings = parseStandings(html)
-    const news = parseNews(html)
-    
-    return {
-      fixtures,
-      standings,
-      news
-    }
-  } catch (error) {
-    console.error('Error scraping PSL data:', error)
-    // Return mock data for development
-    return getMockPSLData()
+    return await response.text()
+  } catch (e) {
+    console.warn(`Error fetching ${url}:`, e)
+    return ''
   }
 }
 
-function parseFixtures(html: string) {
-  // This would parse actual fixtures from the HTML
-  // For now, returning mock data
-  return [
-    {
-      homeTeam: "Orlando Pirates",
-      awayTeam: "Kaizer Chiefs",
-      date: "2024-01-20T15:00:00Z",
-      venue: "FNB Stadium"
-    },
-    {
-      homeTeam: "Mamelodi Sundowns",
-      awayTeam: "SuperSport United",
-      date: "2024-01-21T15:30:00Z",
-      venue: "Loftus Versfeld"
-    }
-  ]
-}
+// ========== FlashScore Parsing ==========
 
-function parseStandings(html: string) {
-  // This would parse actual standings from the HTML
-  // For now, returning mock data
-  return [
-    {
-      name: "Mamelodi Sundowns",
-      played: 15,
-      wins: 12,
-      draws: 2,
-      losses: 1,
-      points: 38
-    },
-    {
-      name: "Orlando Pirates",
-      played: 15,
-      wins: 9,
-      draws: 4,
-      losses: 2,
-      points: 31
-    },
-    {
-      name: "Kaizer Chiefs",
-      played: 15,
-      wins: 8,
-      draws: 5,
-      losses: 2,
-      points: 29
+function parseFlashScoreStandings(html: string) {
+  if (!html) return []
+  const standings: any[] = []
+  
+  try {
+    // FlashScore table rows pattern
+    // Look for table rows with team data
+    const tableRegex = /class="[^"]*tableCellParticipantName[^"]*"[^>]*>([^<]+)/gi
+    const rowRegex = /<div[^>]*class="[^"]*table__row[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\/div>/gi
+    
+    // Simple regex approach for standings table
+    const lines = html.split('\n')
+    let inTable = false
+    let position = 0
+    
+    for (const line of lines) {
+      // Look for team names in standings context
+      const teamMatch = line.match(/participant__participantName[^>]*>([^<]+)/i)
+      if (teamMatch) {
+        position++
+        const numbersInLine = html.substring(
+          html.indexOf(teamMatch[0]) - 500,
+          html.indexOf(teamMatch[0]) + 200
+        )
+        
+        standings.push({
+          team_name: teamMatch[1].trim(),
+          position,
+          played: 0,
+          wins: 0,
+          draws: 0,
+          losses: 0,
+          goals_for: 0,
+          goals_against: 0,
+          goal_difference: 0,
+          points: 0,
+          form: [],
+        })
+      }
     }
-  ]
-}
-
-function parseNews(html: string) {
-  // This would parse actual news from the HTML
-  // For now, returning mock data
-  return [
-    {
-      title: "PSL Season 2024 Kicks Off",
-      summary: "The new PSL season promises exciting matches and fierce competition.",
-      date: "2024-01-15T10:00:00Z"
-    },
-    {
-      title: "Transfer Window Updates",
-      summary: "Latest player transfers and signings across PSL clubs.",
-      date: "2024-01-14T14:30:00Z"
-    }
-  ]
-}
-
-function getMockPSLData() {
-  return {
-    fixtures: [
-      {
-        homeTeam: "Orlando Pirates",
-        awayTeam: "Kaizer Chiefs",
-        date: "2024-01-20T15:00:00Z",
-        venue: "FNB Stadium"
-      },
-      {
-        homeTeam: "Mamelodi Sundowns",
-        awayTeam: "SuperSport United",
-        date: "2024-01-21T15:30:00Z",
-        venue: "Loftus Versfeld"
-      },
-      {
-        homeTeam: "AmaZulu FC",
-        awayTeam: "Cape Town City",
-        date: "2024-01-22T19:30:00Z",
-        venue: "Moses Mabhida Stadium"
-      }
-    ],
-    standings: [
-      {
-        name: "Mamelodi Sundowns",
-        played: 15,
-        wins: 12,
-        draws: 2,
-        losses: 1,
-        points: 38
-      },
-      {
-        name: "Orlando Pirates",
-        played: 15,
-        wins: 9,
-        draws: 4,
-        losses: 2,
-        points: 31
-      },
-      {
-        name: "Kaizer Chiefs",
-        played: 15,
-        wins: 8,
-        draws: 5,
-        losses: 2,
-        points: 29
-      },
-      {
-        name: "SuperSport United",
-        played: 15,
-        wins: 7,
-        draws: 6,
-        losses: 2,
-        points: 27
-      },
-      {
-        name: "Cape Town City",
-        played: 15,
-        wins: 7,
-        draws: 4,
-        losses: 4,
-        points: 25
-      }
-    ],
-    news: [
-      {
-        title: "PSL Season 2024 Kicks Off With Record Attendance",
-        summary: "The new PSL season promises exciting matches and fierce competition as fans return to stadiums.",
-        date: "2024-01-15T10:00:00Z"
-      },
-      {
-        title: "Transfer Window Updates: Major Signings Across PSL",
-        summary: "Latest player transfers and signings across PSL clubs shake up team dynamics.",
-        date: "2024-01-14T14:30:00Z"
-      },
-      {
-        title: "Mamelodi Sundowns Extend Lead at Top",
-        summary: "The defending champions continue their impressive form with another victory.",
-        date: "2024-01-13T16:45:00Z"
-      }
-    ]
+  } catch (e) {
+    console.warn('FlashScore standings parse error:', e)
   }
+  
+  return standings
+}
+
+function parseFlashScoreFixtures(html: string) {
+  if (!html) return []
+  const fixtures: any[] = []
+  
+  try {
+    // Look for match entries with home/away teams and scores
+    const matchRegex = /event__participant--home[^>]*>([^<]+)[\s\S]*?event__participant--away[^>]*>([^<]+)[\s\S]*?event__score--home[^>]*>(\d+)[\s\S]*?event__score--away[^>]*>(\d+)/gi
+    let match
+    
+    while ((match = matchRegex.exec(html)) !== null) {
+      fixtures.push({
+        home_team: match[1].trim(),
+        away_team: match[2].trim(),
+        home_score: parseInt(match[3]),
+        away_score: parseInt(match[4]),
+        match_date: new Date().toISOString().split('T')[0],
+        match_time: null,
+        venue: null,
+        status: 'completed',
+      })
+    }
+  } catch (e) {
+    console.warn('FlashScore fixtures parse error:', e)
+  }
+  
+  return fixtures
+}
+
+// ========== PSL Website Parsing ==========
+
+function parsePSLStandings(html: string) {
+  if (!html) return []
+  const standings: any[] = []
+  
+  try {
+    // Look for league table data in PSL website
+    const tableRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi
+    let match
+    let position = 0
+    
+    while ((match = tableRegex.exec(html)) !== null) {
+      const row = match[1]
+      const cells = row.match(/<td[^>]*>([\s\S]*?)<\/td>/gi)
+      
+      if (cells && cells.length >= 7) {
+        const getText = (cell: string) => cell.replace(/<[^>]+>/g, '').trim()
+        const teamName = getText(cells[1] || '')
+        
+        if (teamName && teamName.length > 2 && !/^\d+$/.test(teamName)) {
+          position++
+          const p = parseInt(getText(cells[2] || '0')) || 0
+          const w = parseInt(getText(cells[3] || '0')) || 0
+          const d = parseInt(getText(cells[4] || '0')) || 0
+          const l = parseInt(getText(cells[5] || '0')) || 0
+          const gf = parseInt(getText(cells[6] || '0')) || 0
+          const ga = parseInt(getText(cells[7] || '0')) || 0
+          const pts = parseInt(getText(cells[cells.length - 1] || '0')) || 0
+          
+          standings.push({
+            team_name: teamName,
+            position,
+            played: p,
+            wins: w,
+            draws: d,
+            losses: l,
+            goals_for: gf,
+            goals_against: ga,
+            goal_difference: gf - ga,
+            points: pts,
+            form: [],
+          })
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('PSL standings parse error:', e)
+  }
+  
+  return standings
+}
+
+function parsePSLFixtures(html: string) {
+  if (!html) return []
+  const fixtures: any[] = []
+  
+  try {
+    // Look for fixture blocks in PSL website
+    const fixtureRegex = /fixture[^>]*>([\s\S]*?)<\/div>/gi
+    let match
+    
+    while ((match = fixtureRegex.exec(html)) !== null) {
+      const block = match[1]
+      const teams = block.match(/>([A-Z][a-zA-Z\s]+(?:FC|United|City|Pirates|Chiefs|Sundowns|Arrows|Galaxy|Stellies))/gi)
+      const scores = block.match(/(\d+)\s*-\s*(\d+)/)
+      const dateMatch = block.match(/(\d{4}-\d{2}-\d{2}|\d{2}\s\w+\s\d{4})/)
+      
+      if (teams && teams.length >= 2) {
+        const homeTeam = teams[0].replace(/^>/, '').trim()
+        const awayTeam = teams[1].replace(/^>/, '').trim()
+        
+        fixtures.push({
+          home_team: homeTeam,
+          away_team: awayTeam,
+          home_score: scores ? parseInt(scores[1]) : null,
+          away_score: scores ? parseInt(scores[2]) : null,
+          match_date: dateMatch ? dateMatch[1] : new Date().toISOString().split('T')[0],
+          match_time: null,
+          venue: null,
+          status: scores ? 'completed' : 'upcoming',
+        })
+      }
+    }
+  } catch (e) {
+    console.warn('PSL fixtures parse error:', e)
+  }
+  
+  return fixtures
 }
