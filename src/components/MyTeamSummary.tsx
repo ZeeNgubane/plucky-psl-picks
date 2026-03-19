@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Player } from '@/data/teams';
+import { Player } from '@/integrations/supabase/types';
 import { supabase } from '@/integrations/supabase/client';
 
 interface MyTeamSummaryProps {
