@@ -30,13 +30,11 @@ const TopPerformers = () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUserId(user?.id ?? null);
 
-      // Fetch top scorers from player_match_stats
       const { data: stats } = await supabase
         .from('player_match_stats')
         .select('player_id, goals');
 
       if (stats && stats.length > 0) {
-        // Aggregate goals per player
         const goalMap: Record<string, { goals: number; apps: number }> = {};
         stats.forEach(s => {
           if (!goalMap[s.player_id]) goalMap[s.player_id] = { goals: 0, apps: 0 };
@@ -47,18 +45,18 @@ const TopPerformers = () => {
         const playerIds = Object.keys(goalMap);
         const { data: players } = await supabase
           .from('players')
-          .select('id, Name, position, team')
+          .select('id, name, position, teams(name)')
           .in('id', playerIds);
 
         if (players) {
           const scorers: TopScorer[] = players
             .map(p => ({
-              player_id: String(p.id),
-              name: p.Name,
-              team_name: p.team || '',
+              player_id: p.id,
+              name: p.name,
+              team_name: (p.teams as any)?.name || '',
               position: p.position,
-              goals: goalMap[String(p.id)].goals,
-              apps: goalMap[String(p.id)].apps,
+              goals: goalMap[p.id]?.goals || 0,
+              apps: goalMap[p.id]?.apps || 0,
             }))
             .filter(s => s.goals > 0)
             .sort((a, b) => b.goals - a.goals)
@@ -66,7 +64,6 @@ const TopPerformers = () => {
 
           setTopScorers(scorers);
 
-          // Fetch likes
           const scorerIds = scorers.map(s => s.player_id);
           if (scorerIds.length > 0) {
             const { data: likes } = await supabase

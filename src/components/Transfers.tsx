@@ -6,8 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Search, Plus, Minus, TrendingUp, TrendingDown, ChevronLeft, ChevronRight, Info } from 'lucide-react';
-import { Player, players, teams } from '@/data/teams';
+import { Search, Plus, Minus, ChevronLeft, ChevronRight, Info, Loader2 } from 'lucide-react';
+import { Player, getTeamName, getTeamLogo } from '@/data/teams';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 interface TransfersProps {
   selectedPlayers: Player[];
@@ -26,6 +28,26 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
+  const { data: allPlayers = [], isLoading } = useQuery({
+    queryKey: ['players-transfers'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('players')
+        .select('id, name, position, price, points, form, image_url, nationality, team_id, teams(id, name, short_name, logo_url)');
+      if (error) throw error;
+      return (data || []) as Player[];
+    },
+  });
+
+  const { data: dbTeams = [] } = useQuery({
+    queryKey: ['teams-transfers'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('teams').select('id, name, short_name, logo_url');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   const getPositionColor = (position: string) => {
     switch (position) {
       case 'GK': return 'bg-yellow-100 text-yellow-800';
@@ -36,17 +58,13 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
     }
   };
 
-  const getTeamLogo = (teamName: string) => {
-    const team = teams.find(t => t.name === teamName);
-    return team?.logo || 'https://logos-world.net/wp-content/uploads/2020/06/Kaizer-Chiefs-Logo.png';
-  };
-
-  const filteredPlayers = players
+  const filteredPlayers = allPlayers
     .filter(player => {
+      const teamName = getTeamName(player);
       const matchesSearch = player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           player.team.toLowerCase().includes(searchTerm.toLowerCase());
+                           teamName.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesPosition = positionFilter === 'all' || player.position === positionFilter;
-      const matchesTeam = teamFilter === 'all' || player.team === teamFilter;
+      const matchesTeam = teamFilter === 'all' || teamName === teamFilter;
       return matchesSearch && matchesPosition && matchesTeam;
     })
     .sort((a, b) => {
@@ -64,7 +82,6 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
     currentPage * PLAYERS_PER_PAGE
   );
 
-  // Reset to page 1 when filters change
   const handleFilterChange = (setter: (val: string) => void) => (val: string) => {
     setter(val);
     setCurrentPage(1);
@@ -76,19 +93,17 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
     if (isPlayerSelected(player.id)) return false;
     if (budget < player.price) return false;
     const positionCount = selectedPlayers.filter(p => p.position === player.position).length;
-    const maxByPosition = { GK: 2, DEF: 5, MID: 5, FWD: 3 };
-    return positionCount < maxByPosition[player.position] && selectedPlayers.length < 15;
+    const maxByPosition: Record<string, number> = { GK: 2, DEF: 5, MID: 5, FWD: 3 };
+    return positionCount < (maxByPosition[player.position] || 0) && selectedPlayers.length < 15;
   };
 
-  const getFormTrend = (form: number[]) => {
-    if (form.length < 2) return null;
-    const recent = form.slice(-2);
-    if (recent[1] > recent[0]) return 'up';
-    if (recent[1] < recent[0]) return 'down';
-    return 'stable';
-  };
-
-  const validTeams = teams.filter(team => team && team.name && team.name.trim() !== '' && team.id);
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -119,7 +134,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
               <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Team" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Teams</SelectItem>
-                {validTeams.map(team => (
+                {dbTeams.map(team => (
                   <SelectItem key={team.id} value={team.name}>{team.name}</SelectItem>
                 ))}
               </SelectContent>
@@ -157,14 +172,13 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
               {paginatedPlayers.map((player, index) => {
                 const selected = isPlayerSelected(player.id);
                 const canAdd = canAddPlayer(player);
-                const formTrend = getFormTrend(player.form);
-                const teamLogo = getTeamLogo(player.team);
+                const teamLogo = getTeamLogo(player);
 
                 return (
                   <TableRow key={player.id} className={`h-9 ${selected ? 'bg-bronze-50' : index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
                     <TableCell className="py-1 pl-3">
                       <div className="flex items-center gap-2">
-                        <img src={teamLogo} alt="" className="h-5 w-5 object-contain shrink-0" />
+                        {teamLogo && <img src={teamLogo} alt="" className="h-5 w-5 object-contain shrink-0" />}
                         <span className="text-xs font-medium truncate max-w-[120px]">{player.name}</span>
                         <Badge className={`${getPositionColor(player.position)} text-[9px] px-1 py-0 leading-tight`}>{player.position}</Badge>
                         <button onClick={() => setSelectedPlayer(player)} className="text-muted-foreground hover:text-foreground shrink-0">
@@ -175,10 +189,14 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                     <TableCell className="py-1 text-xs font-medium text-right">R{(player.price * 18).toFixed(1)}M</TableCell>
                     <TableCell className="py-1 text-xs font-bold text-right">{player.points}</TableCell>
                     <TableCell className="py-1">
-                      <div className="flex justify-center items-center gap-0.5">
-                        {formTrend === 'up' && <TrendingUp className="h-3 w-3 text-green-500" />}
-                        {formTrend === 'down' && <TrendingDown className="h-3 w-3 text-red-500" />}
-                        {formTrend === 'stable' && <span className="text-[10px] text-muted-foreground">—</span>}
+                      <div className="flex justify-center items-center">
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+                          player.form >= 8 ? 'bg-green-100 text-green-800' :
+                          player.form >= 6 ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {player.form}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell className="py-1">
@@ -229,15 +247,16 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
       <Dialog open={!!selectedPlayer} onOpenChange={(open) => !open && setSelectedPlayer(null)}>
         <DialogContent className="max-w-sm">
           {selectedPlayer && (() => {
-            const teamLogo = getTeamLogo(selectedPlayer.team);
+            const teamLogo = getTeamLogo(selectedPlayer);
+            const teamName = getTeamName(selectedPlayer);
             return (
               <>
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2 text-base">
-                    <img src={teamLogo} alt="" className="h-6 w-6 object-contain" />
+                    {teamLogo && <img src={teamLogo} alt="" className="h-6 w-6 object-contain" />}
                     {selectedPlayer.name}
                   </DialogTitle>
-                  <DialogDescription>{selectedPlayer.team}</DialogDescription>
+                  <DialogDescription>{teamName}</DialogDescription>
                 </DialogHeader>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div className="rounded-md bg-muted p-2.5">
@@ -253,12 +272,14 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                     <p className="font-bold text-lg mt-1">{selectedPlayer.points}</p>
                   </div>
                   <div className="rounded-md bg-muted p-2.5">
-                    <p className="text-[10px] text-muted-foreground uppercase">Recent Form</p>
-                    <div className="flex gap-1 mt-1">
-                      {selectedPlayer.form.slice(-5).map((score, i) => (
-                        <span key={i} className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${score >= 8 ? 'bg-green-100 text-green-800' : score >= 6 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>{score}</span>
-                      ))}
-                    </div>
+                    <p className="text-[10px] text-muted-foreground uppercase">Form</p>
+                    <span className={`text-xs px-2 py-1 rounded font-medium mt-1 inline-block ${
+                      selectedPlayer.form >= 8 ? 'bg-green-100 text-green-800' :
+                      selectedPlayer.form >= 6 ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {selectedPlayer.form}
+                    </span>
                   </div>
                 </div>
                 <div className="pt-2">

@@ -40,7 +40,7 @@ const SubstitutesBench = ({ substitutes, onPlayerClick, playerToSwap }: Substitu
               >
                 <div>
                   <p className="font-medium">{player.name}</p>
-                  <p className="text-sm text-gray-600">{player.team} - {player.position}</p>
+                  <p className="text-sm text-gray-600">{player.teams?.name || ''} - {player.position}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-semibold">R{(player.price * 18).toFixed(1)}M</p>

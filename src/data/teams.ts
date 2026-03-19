@@ -1,21 +1,23 @@
-// Shared Player type matching the real Supabase players table
+// Shared Player type matching the Supabase players table with team join
 export interface Player {
-  id: number;
+  id: string;
   created_at?: string;
-  Name: string;
+  name: string;
   position: string;
-  team: string;
-  "GW points"?: string | null;
-  "total points"?: string | null;
-  form?: string | null;
-  selection_percentage?: number | null;
-  price?: number | null;
-  price_change?: number | null;
-  // Legacy fields for backwards compatibility with UI components
-  name?: string; // alias for Name
-  points?: number;
+  team_id: string;
+  points: number;
+  form: number;
+  price: number;
+  image_url?: string | null;
+  nationality?: string | null;
+  teams?: {
+    id: string;
+    name: string;
+    short_name: string | null;
+    logo_url: string | null;
+  } | null;
 }
 
-// Empty teams array for backwards compatibility
-export const teams: { id: string; name: string; logo?: string; kitImage?: string }[] = [];
-
+// Helper to get team name from a player
+export const getTeamName = (player: Player): string => player.teams?.name || '';
+export const getTeamLogo = (player: Player): string => player.teams?.logo_url || '';
