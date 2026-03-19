@@ -1,10 +1,7 @@
-
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { House, Users, FileText, Award, Trophy, Medal, Star, TrendingUp, Calendar, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { House, Users, Trophy, TrendingUp, Medal, Star, Calendar, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import pslPlayersImg from '@/assets/psl-players-nobg.png';
-import { Link } from 'react-router-dom';
 import { Player } from '@/data/teams';
 import { useToast } from '@/hooks/use-toast';
 import MyTeam from '@/components/MyTeam';
@@ -30,9 +27,14 @@ const Index = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('players')
-        .select('id, name, position, price, points, form, image_url, nationality, team_id, teams(id, name, short_name, logo_url)');
+        .select('*');
       if (error) throw error;
-      return (data || []) as Player[];
+      return (data || []).map(p => ({
+        ...p,
+        name: p.Name,
+        price: Number(p.price) || 0,
+        points: Number(p['total points']) || 0,
+      })) as Player[];
     },
   });
 
@@ -43,14 +45,14 @@ const Index = () => {
       if (savedSquadIdsJSON) {
         const savedSquadIds = JSON.parse(savedSquadIdsJSON);
         if (Array.isArray(savedSquadIds) && savedSquadIds.length > 0) {
-          const allPlayersMap = new Map(allPlayers.map(p => [p.id, p]));
+          const allPlayersMap = new Map(allPlayers.map(p => [String(p.id), p]));
           const loadedPlayers = savedSquadIds
-            .map((id: string) => allPlayersMap.get(id))
+            .map((id: string) => allPlayersMap.get(String(id)))
             .filter((p): p is Player => p !== undefined);
 
           if (loadedPlayers.length > 0) {
             setSelectedPlayers(loadedPlayers);
-            const totalValue = loadedPlayers.reduce((sum, player) => sum + player.price, 0);
+            const totalValue = loadedPlayers.reduce((sum, player) => sum + (player.price || 0), 0);
             setBudget(100.0 - totalValue);
           }
         }
@@ -61,18 +63,18 @@ const Index = () => {
   }, [allPlayers]);
 
   const handlePlayerAdd = (player: Player) => {
-    if (budget < player.price) {
+    if (budget < (player.price || 0)) {
       toast({
         title: "Insufficient Budget",
-        description: `You need R${(player.price * 18).toFixed(1)}M but only have R${(budget * 18).toFixed(1)}M available.`,
+        description: `You need R${((player.price || 0) * 18).toFixed(1)}M but only have R${(budget * 18).toFixed(1)}M available.`,
         variant: "destructive",
       });
       return;
     }
 
     const positionCount = selectedPlayers.filter(p => p.position === player.position).length;
-    const maxByPosition: Record<string, number> = { GK: 2, DEF: 5, MID: 5, FWD: 3 };
-    
+    const maxByPosition: Record<string, number> = { GK: 2, DEF: 5, MID: 5, FWD: 3, Goalkeeper: 2, Defender: 5, Midfielder: 5, Forward: 3 };
+
     if (positionCount >= (maxByPosition[player.position] || 0)) {
       toast({
         title: "Position Limit Reached",
@@ -92,23 +94,23 @@ const Index = () => {
     }
 
     setSelectedPlayers([...selectedPlayers, player]);
-    setBudget(budget - player.price);
-    
+    setBudget(budget - (player.price || 0));
+
     toast({
       title: "Player Added",
-      description: `${player.name} has been added to your team!`,
+      description: `${player.name || player.Name} has been added to your team!`,
     });
   };
 
   const handlePlayerRemove = (playerId: string) => {
-    const player = selectedPlayers.find(p => p.id === playerId);
+    const player = selectedPlayers.find(p => String(p.id) === String(playerId));
     if (player) {
-      setSelectedPlayers(selectedPlayers.filter(p => p.id !== playerId));
-      setBudget(budget + player.price);
-      
+      setSelectedPlayers(selectedPlayers.filter(p => String(p.id) !== String(playerId)));
+      setBudget(budget + (player.price || 0));
+
       toast({
         title: "Player Removed",
-        description: `${player.name} has been removed from your team.`,
+        description: `${player.name || player.Name} has been removed from your team.`,
       });
     }
   };
@@ -120,14 +122,14 @@ const Index = () => {
       case 'transfers':
         return (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Transfers 
+            <Transfers
               selectedPlayers={selectedPlayers}
               onPlayerAdd={handlePlayerAdd}
               onPlayerRemove={handlePlayerRemove}
               budget={budget}
             />
             <div>
-              <FormationPitch 
+              <FormationPitch
                 selectedPlayers={selectedPlayers}
                 onPlayerClick={() => {}}
                 playerToSwap={null}
@@ -142,7 +144,6 @@ const Index = () => {
     }
   };
 
-  // Form indicator component
   const FormIndicator = ({ change }: { change: number }) => {
     if (change > 0) return <ArrowUp className="h-3 w-3 text-green-500" />;
     if (change < 0) return <ArrowDown className="h-3 w-3 text-red-500" />;
@@ -151,28 +152,20 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* PSL-Inspired Hero Header */}
+      {/* Hero Header */}
       <div className="relative overflow-hidden bg-psl-dark min-h-[200px]">
         <div className="absolute inset-0 bg-gradient-to-br from-psl-blue/30 via-transparent to-psl-gold/10"></div>
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-psl-gold via-psl-blue to-psl-gold"></div>
-        
+
         <div className="hidden md:block absolute right-0 top-0 bottom-0 w-[50%] overflow-hidden pointer-events-none" style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 25%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 25%)' }}>
-          <img 
-            src={pslPlayersImg} 
-            alt="PSL Players" 
-            className="absolute right-4 bottom-0 h-[110%] w-auto object-contain object-right-bottom mix-blend-screen"
-          />
+          <img src={pslPlayersImg} alt="PSL Players" className="absolute right-4 bottom-0 h-[110%] w-auto object-contain object-right-bottom mix-blend-screen" />
         </div>
-        
+
         <div className="relative z-10 container mx-auto px-6 py-8">
           <div className="flex items-center">
             <div className="flex items-center space-x-5">
               <div className="shrink-0">
-                <img 
-                  src="https://www.psl.co.za/assets/images/logo-mobile.png" 
-                  alt="PSL Logo" 
-                  className="h-20 w-20 object-contain drop-shadow-[0_0_15px_rgba(0,153,204,0.4)]"
-                />
+                <img src="https://www.psl.co.za/assets/images/logo-mobile.png" alt="PSL Logo" className="h-20 w-20 object-contain drop-shadow-[0_0_15px_rgba(0,153,204,0.4)]" />
               </div>
               <div>
                 <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white leading-none">
@@ -234,7 +227,6 @@ const Index = () => {
       <div className="container mx-auto px-6 py-8">
         {activeTab === 'home' ? (
           <div className="space-y-8">
-            {/* Stats Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className="bg-gradient-to-br from-primary to-accent text-primary-foreground border-0 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
                 <CardContent className="p-6">
@@ -305,7 +297,6 @@ const Index = () => {
               </Card>
             </div>
 
-            {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
                 <div className="transform transition-all duration-500 hover:scale-[1.01]">
@@ -323,11 +314,10 @@ const Index = () => {
                 <div className="transform transition-all duration-500 hover:scale-[1.01]">
                   <TopPerformers />
                 </div>
-                
                 <div className="transform transition-all duration-500 hover:scale-[1.01]">
                   <PSLBot />
                 </div>
-                
+
                 <Card className="bg-gradient-to-br from-primary via-secondary to-accent text-primary-foreground border-0 rounded-2xl shadow-xl overflow-hidden">
                   <CardContent className="p-8 text-center relative z-10">
                     <div className="mb-6">
@@ -338,7 +328,7 @@ const Index = () => {
                     </div>
                     <h3 className="font-black text-xl mb-4">Eish! What a season!</h3>
                     <p className="text-white/90 font-medium leading-relaxed">
-                      Your fantasy team is looking sharp, boet! 
+                      Your fantasy team is looking sharp, boet!
                       Keep those transfers coming and bag those points! 💪
                     </p>
                     <div className="mt-6 flex justify-center">
