@@ -47,26 +47,18 @@ const TopPerformers = () => {
         const playerIds = Object.keys(goalMap);
         const { data: players } = await supabase
           .from('players')
-          .select('id, name, position, team_id')
+          .select('id, Name, position, team')
           .in('id', playerIds);
 
         if (players) {
-          const teamIds = [...new Set(players.map(p => p.team_id))];
-          const { data: teams } = await supabase
-            .from('teams')
-            .select('id, name')
-            .in('id', teamIds);
-
-          const teamMap = new Map(teams?.map(t => [t.id, t.name]) ?? []);
-
           const scorers: TopScorer[] = players
             .map(p => ({
-              player_id: p.id,
-              name: p.name,
-              team_name: teamMap.get(p.team_id) || '',
+              player_id: String(p.id),
+              name: p.Name,
+              team_name: p.team || '',
               position: p.position,
-              goals: goalMap[p.id].goals,
-              apps: goalMap[p.id].apps,
+              goals: goalMap[String(p.id)].goals,
+              apps: goalMap[String(p.id)].apps,
             }))
             .filter(s => s.goals > 0)
             .sort((a, b) => b.goals - a.goals)
@@ -179,7 +171,6 @@ const TopPerformers = () => {
           </div>
         ) : (
           <>
-            {/* Header */}
             <div className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 border-b border-gray-200 mb-2">
               <div className="flex items-center space-x-2 flex-1">
                 <span className="w-6 text-center">#</span>
@@ -199,8 +190,8 @@ const TopPerformers = () => {
                 const count = likeCounts[player.player_id] || 0;
 
                 return (
-                  <div 
-                    key={player.player_id} 
+                  <div
+                    key={player.player_id}
                     className="group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-amber-50 transition-all duration-200 text-sm"
                   >
                     <div className="flex items-center space-x-2 flex-1 min-w-0">
@@ -214,7 +205,7 @@ const TopPerformers = () => {
                         <p className="text-[10px] text-gray-500 truncate">{player.team_name} · {player.position}</p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center space-x-3 text-center text-xs text-gray-600 flex-shrink-0">
                       <span className="w-8">{player.apps}</span>
                       <span className="w-8 font-bold text-gray-800 text-sm">{player.goals}</span>
