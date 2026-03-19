@@ -22,9 +22,9 @@ const TEAM_COLORS: Record<string, [string, string, string?]> = {
 };
 
 const PlayerIcon: React.FC<PlayerIconProps> = ({ player, x, y, label }) => {
-  const team = player ? teamMap.get(player.team) : null;
-  const kitImage = team?.kitImage;
-  const colors = player ? TEAM_COLORS[player.team] || ['#555', '#999'] : ['#555', '#999'];
+  const teamName = player ? getTeamName(player) : '';
+  const kitImage: string | undefined = undefined;
+  const colors = player ? TEAM_COLORS[teamName] || ['#555', '#999'] : ['#555', '#999'];
   const [primary, secondary, accent] = colors;
 
   if (player) {
