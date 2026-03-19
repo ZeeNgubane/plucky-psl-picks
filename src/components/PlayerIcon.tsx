@@ -2,6 +2,13 @@ import React from "react";
 import { User } from "lucide-react";
 import { Player, getTeamName } from "@/data/teams";
 
+interface PlayerIconProps {
+  player: Player | null;
+  x: number;
+  y: number;
+  label: string;
+}
+
 // Team kit colors: [primary, secondary, accent/stripe]
 const TEAM_COLORS: Record<string, [string, string, string?]> = {
   'Kaizer Chiefs': ['#FDB913', '#000000', '#000000'],
