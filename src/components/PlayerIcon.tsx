@@ -1,15 +1,6 @@
 import React from "react";
 import { User } from "lucide-react";
-import { Player, teams } from "@/data/teams";
-
-interface PlayerIconProps {
-  player: Player | null;
-  x: number;
-  y: number;
-  label: string;
-}
-
-const teamMap = new Map(teams.map(t => [t.name, t]));
+import { Player, getTeamName } from "@/data/teams";
 
 // Team kit colors: [primary, secondary, accent/stripe]
 const TEAM_COLORS: Record<string, [string, string, string?]> = {
