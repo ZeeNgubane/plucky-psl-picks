@@ -1,23 +1,25 @@
-// Shared Player type matching the Supabase players table with team join
+// Shared Player type matching the real Supabase players table
 export interface Player {
-  id: string;
+  id: number | string;
   created_at?: string;
-  name: string;
+  Name?: string;
+  name?: string;
   position: string;
-  team_id: string;
-  points: number;
-  form: number;
-  price: number;
-  image_url?: string | null;
-  nationality?: string | null;
-  teams?: {
-    id: string;
-    name: string;
-    short_name: string | null;
-    logo_url: string | null;
-  } | null;
+  team: string;
+  "GW points"?: string | null;
+  "total points"?: string | null;
+  form?: string | number | null;
+  selection_percentage?: number | null;
+  price?: number | null;
+  price_change?: number | null;
+  points?: number;
 }
 
-// Helper to get team name from a player
-export const getTeamName = (player: Player): string => player.teams?.name || '';
-export const getTeamLogo = (player: Player): string => player.teams?.logo_url || '';
+// Empty arrays for backwards compatibility
+export const players: Player[] = [];
+export const teams: { id: string; name: string; logo?: string; kitImage?: string }[] = [];
+
+// Helper functions for backwards compatibility
+export const getTeamName = (teamId: string): string => teamId;
+export const getTeamLogo = (teamName: string): string =>
+  `https://logos-world.net/wp-content/uploads/2020/06/Kaizer-Chiefs-Logo.png`;
