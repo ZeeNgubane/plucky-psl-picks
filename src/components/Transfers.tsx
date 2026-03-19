@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Search, Plus, Minus, ChevronLeft, ChevronRight, Info, Loader2 } from 'lucide-react';
-import { Player, getTeamName, getTeamLogo } from '@/data/teams';
+import { Player } from '@/data/teams';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -33,46 +33,55 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
     queryFn: async () => {
       const { data, error } = await supabase
         .from('players')
-        .select('id, name, position, price, points, form, image_url, nationality, team_id, teams(id, name, short_name, logo_url)');
+        .select('*');
       if (error) throw error;
-      return (data || []) as Player[];
+      return (data || []).map(p => ({
+        ...p,
+        name: p.Name,
+        price: Number(p.price) || 0,
+        points: Number(p['total points']) || 0,
+        form: Number(p.form) || 0,
+      })) as Player[];
     },
   });
 
-  const { data: dbTeams = [] } = useQuery({
-    queryKey: ['teams-transfers'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('teams').select('id, name, short_name, logo_url');
-      if (error) throw error;
-      return data || [];
-    },
-  });
+  const teams = [...new Set(allPlayers.map(p => p.team))].filter(Boolean).sort();
 
   const getPositionColor = (position: string) => {
-    switch (position) {
-      case 'GK': return 'bg-yellow-100 text-yellow-800';
-      case 'DEF': return 'bg-blue-100 text-blue-800';
-      case 'MID': return 'bg-green-100 text-green-800';
-      case 'FWD': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
+    const pos = position?.toLowerCase();
+    if (pos === 'gk' || pos === 'goalkeeper') return 'bg-yellow-100 text-yellow-800';
+    if (pos === 'def' || pos === 'defender') return 'bg-blue-100 text-blue-800';
+    if (pos === 'mid' || pos === 'midfielder') return 'bg-green-100 text-green-800';
+    if (pos === 'fwd' || pos === 'forward') return 'bg-red-100 text-red-800';
+    return 'bg-gray-100 text-gray-800';
+  };
+
+  const getPositionLabel = (position: string) => {
+    const pos = position?.toLowerCase();
+    if (pos === 'goalkeeper') return 'GK';
+    if (pos === 'defender') return 'DEF';
+    if (pos === 'midfielder') return 'MID';
+    if (pos === 'forward') return 'FWD';
+    return position;
   };
 
   const filteredPlayers = allPlayers
     .filter(player => {
-      const teamName = getTeamName(player);
-      const matchesSearch = player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           teamName.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesPosition = positionFilter === 'all' || player.position === positionFilter;
-      const matchesTeam = teamFilter === 'all' || teamName === teamFilter;
+      const playerName = (player.name || player.Name || '').toLowerCase();
+      const teamName = (player.team || '').toLowerCase();
+      const matchesSearch = playerName.includes(searchTerm.toLowerCase()) ||
+                           teamName.includes(searchTerm.toLowerCase());
+      const matchesPosition = positionFilter === 'all' ||
+        player.position?.toLowerCase() === positionFilter.toLowerCase();
+      const matchesTeam = teamFilter === 'all' || player.team === teamFilter;
       return matchesSearch && matchesPosition && matchesTeam;
     })
     .sort((a, b) => {
       switch (sortBy) {
-        case 'price': return b.price - a.price;
-        case 'points': return b.points - a.points;
-        case 'name': return a.name.localeCompare(b.name);
-        default: return b.points - a.points;
+        case 'price': return (Number(b.price) || 0) - (Number(a.price) || 0);
+        case 'points': return (Number(b.points) || 0) - (Number(a.points) || 0);
+        case 'name': return (a.name || a.Name || '').localeCompare(b.name || b.Name || '');
+        default: return (Number(b.points) || 0) - (Number(a.points) || 0);
       }
     });
 
@@ -87,14 +96,23 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
     setCurrentPage(1);
   };
 
-  const isPlayerSelected = (playerId: string) => selectedPlayers.some(p => p.id === playerId);
+  const isPlayerSelected = (playerId: string | number) =>
+    selectedPlayers.some(p => String(p.id) === String(playerId));
 
   const canAddPlayer = (player: Player) => {
     if (isPlayerSelected(player.id)) return false;
-    if (budget < player.price) return false;
-    const positionCount = selectedPlayers.filter(p => p.position === player.position).length;
-    const maxByPosition: Record<string, number> = { GK: 2, DEF: 5, MID: 5, FWD: 3 };
-    return positionCount < (maxByPosition[player.position] || 0) && selectedPlayers.length < 15;
+    if (budget < (player.price || 0)) return false;
+    const positionCount = selectedPlayers.filter(p =>
+      p.position?.toLowerCase() === player.position?.toLowerCase()
+    ).length;
+    const maxByPosition: Record<string, number> = {
+      gk: 2, goalkeeper: 2,
+      def: 5, defender: 5,
+      mid: 5, midfielder: 5,
+      fwd: 3, forward: 3,
+    };
+    const max = maxByPosition[player.position?.toLowerCase()] || 0;
+    return positionCount < max && selectedPlayers.length < 15;
   };
 
   if (isLoading) {
@@ -124,18 +142,18 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
               <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Position" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Positions</SelectItem>
-                <SelectItem value="GK">GK</SelectItem>
-                <SelectItem value="DEF">DEF</SelectItem>
-                <SelectItem value="MID">MID</SelectItem>
-                <SelectItem value="FWD">FWD</SelectItem>
+                <SelectItem value="goalkeeper">Goalkeeper</SelectItem>
+                <SelectItem value="defender">Defender</SelectItem>
+                <SelectItem value="midfielder">Midfielder</SelectItem>
+                <SelectItem value="forward">Forward</SelectItem>
               </SelectContent>
             </Select>
             <Select value={teamFilter} onValueChange={handleFilterChange(setTeamFilter)}>
               <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Team" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Teams</SelectItem>
-                {dbTeams.map(team => (
-                  <SelectItem key={team.id} value={team.name}>{team.name}</SelectItem>
+                {teams.map(team => (
+                  <SelectItem key={team} value={team}>{team}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -172,36 +190,41 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
               {paginatedPlayers.map((player, index) => {
                 const selected = isPlayerSelected(player.id);
                 const canAdd = canAddPlayer(player);
-                const teamLogo = getTeamLogo(player);
+                const playerName = player.name || player.Name || '';
+                const formVal = Number(player.form) || 0;
 
                 return (
                   <TableRow key={player.id} className={`h-9 ${selected ? 'bg-bronze-50' : index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
                     <TableCell className="py-1 pl-3">
                       <div className="flex items-center gap-2">
-                        {teamLogo && <img src={teamLogo} alt="" className="h-5 w-5 object-contain shrink-0" />}
-                        <span className="text-xs font-medium truncate max-w-[120px]">{player.name}</span>
-                        <Badge className={`${getPositionColor(player.position)} text-[9px] px-1 py-0 leading-tight`}>{player.position}</Badge>
+                        <span className="text-xs font-medium truncate max-w-[120px]">{playerName}</span>
+                        <Badge className={`${getPositionColor(player.position)} text-[9px] px-1 py-0 leading-tight`}>
+                          {getPositionLabel(player.position)}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground truncate max-w-[80px]">{player.team}</span>
                         <button onClick={() => setSelectedPlayer(player)} className="text-muted-foreground hover:text-foreground shrink-0">
                           <Info className="h-3 w-3" />
                         </button>
                       </div>
                     </TableCell>
-                    <TableCell className="py-1 text-xs font-medium text-right">R{(player.price * 18).toFixed(1)}M</TableCell>
-                    <TableCell className="py-1 text-xs font-bold text-right">{player.points}</TableCell>
+                    <TableCell className="py-1 text-xs font-medium text-right">
+                      {player.price ? `R${(Number(player.price) * 18).toFixed(1)}M` : '—'}
+                    </TableCell>
+                    <TableCell className="py-1 text-xs font-bold text-right">{player.points || 0}</TableCell>
                     <TableCell className="py-1">
                       <div className="flex justify-center items-center">
                         <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
-                          player.form >= 8 ? 'bg-green-100 text-green-800' :
-                          player.form >= 6 ? 'bg-yellow-100 text-yellow-800' :
+                          formVal >= 8 ? 'bg-green-100 text-green-800' :
+                          formVal >= 6 ? 'bg-yellow-100 text-yellow-800' :
                           'bg-red-100 text-red-800'
                         }`}>
-                          {player.form}
+                          {formVal}
                         </span>
                       </div>
                     </TableCell>
                     <TableCell className="py-1">
                       {selected ? (
-                        <Button variant="destructive" size="sm" onClick={() => onPlayerRemove(player.id)} className="h-6 text-[10px] px-1.5">
+                        <Button variant="destructive" size="sm" onClick={() => onPlayerRemove(String(player.id))} className="h-6 text-[10px] px-1.5">
                           <Minus className="h-3 w-3" />
                         </Button>
                       ) : (
@@ -247,44 +270,47 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
       <Dialog open={!!selectedPlayer} onOpenChange={(open) => !open && setSelectedPlayer(null)}>
         <DialogContent className="max-w-sm">
           {selectedPlayer && (() => {
-            const teamLogo = getTeamLogo(selectedPlayer);
-            const teamName = getTeamName(selectedPlayer);
+            const playerName = selectedPlayer.name || selectedPlayer.Name || '';
+            const formVal = Number(selectedPlayer.form) || 0;
             return (
               <>
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2 text-base">
-                    {teamLogo && <img src={teamLogo} alt="" className="h-6 w-6 object-contain" />}
-                    {selectedPlayer.name}
+                    {playerName}
                   </DialogTitle>
-                  <DialogDescription>{teamName}</DialogDescription>
+                  <DialogDescription>{selectedPlayer.team}</DialogDescription>
                 </DialogHeader>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div className="rounded-md bg-muted p-2.5">
                     <p className="text-[10px] text-muted-foreground uppercase">Position</p>
-                    <Badge className={`${getPositionColor(selectedPlayer.position)} mt-1 text-xs`}>{selectedPlayer.position}</Badge>
+                    <Badge className={`${getPositionColor(selectedPlayer.position)} mt-1 text-xs`}>
+                      {getPositionLabel(selectedPlayer.position)}
+                    </Badge>
                   </div>
                   <div className="rounded-md bg-muted p-2.5">
                     <p className="text-[10px] text-muted-foreground uppercase">Value</p>
-                    <p className="font-semibold mt-1">R{(selectedPlayer.price * 18).toFixed(1)}M</p>
+                    <p className="font-semibold mt-1">
+                      {selectedPlayer.price ? `R${(Number(selectedPlayer.price) * 18).toFixed(1)}M` : '—'}
+                    </p>
                   </div>
                   <div className="rounded-md bg-muted p-2.5">
                     <p className="text-[10px] text-muted-foreground uppercase">Total Points</p>
-                    <p className="font-bold text-lg mt-1">{selectedPlayer.points}</p>
+                    <p className="font-bold text-lg mt-1">{selectedPlayer.points || 0}</p>
                   </div>
                   <div className="rounded-md bg-muted p-2.5">
                     <p className="text-[10px] text-muted-foreground uppercase">Form</p>
                     <span className={`text-xs px-2 py-1 rounded font-medium mt-1 inline-block ${
-                      selectedPlayer.form >= 8 ? 'bg-green-100 text-green-800' :
-                      selectedPlayer.form >= 6 ? 'bg-yellow-100 text-yellow-800' :
+                      formVal >= 8 ? 'bg-green-100 text-green-800' :
+                      formVal >= 6 ? 'bg-yellow-100 text-yellow-800' :
                       'bg-red-100 text-red-800'
                     }`}>
-                      {selectedPlayer.form}
+                      {formVal}
                     </span>
                   </div>
                 </div>
                 <div className="pt-2">
                   {isPlayerSelected(selectedPlayer.id) ? (
-                    <Button variant="destructive" className="w-full" onClick={() => { onPlayerRemove(selectedPlayer.id); setSelectedPlayer(null); }}>
+                    <Button variant="destructive" className="w-full" onClick={() => { onPlayerRemove(String(selectedPlayer.id)); setSelectedPlayer(null); }}>
                       <Minus className="h-4 w-4 mr-2" />Remove from Squad
                     </Button>
                   ) : (
