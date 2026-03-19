@@ -12,7 +12,6 @@ interface MyTeamProps {
   selectedPlayers: Player[];
 }
 
-// --- Formation logic to determine starting XI ---
 const FORMATIONS = [
     { name: "4-4-2", def: 4, mid: 4, fwd: 2, layout: [ { label: 'FWD', count: 2 }, { label: 'MID', count: 4 }, { label: 'DEF', count: 4 }, { label: 'GK', count: 1 }, ] },
     { name: "4-3-3", def: 4, mid: 3, fwd: 3, layout: [ { label: 'FWD', count: 3 }, { label: 'MID', count: 3 }, { label: 'DEF', count: 4 }, { label: 'GK', count: 1 }, ] },
@@ -47,7 +46,6 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
   const [subs, setSubs] = useState<Player[]>([]);
   const [playerToSwap, setPlayerToSwap] = useState<Player | null>(null);
 
-  // Organize players by position for the Squad List (unchanged logic)
   const formationGroups = {
     GK: selectedPlayers.filter(p => p.position === 'GK'),
     DEF: selectedPlayers.filter(p => p.position === 'DEF'),
@@ -74,7 +72,7 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
     if (savedStarterIdsStr && savedSquadIdsStr) {
       try {
         if (squadIdsString === savedSquadIdsStr) {
-            const savedStarterIds = new Set(JSON.parse(savedStarterIdsStr));
+            const savedStarterIds = new Set<string>(JSON.parse(savedStarterIdsStr));
             setStarters(selectedPlayers.filter(p => savedStarterIds.has(p.id)));
             setSubs(selectedPlayers.filter(p => !savedStarterIds.has(p.id)));
             loadedFromSave = true;

@@ -19,13 +19,13 @@ const Players = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('players')
-        .select('*');
+        .select('id, name, position, price, points, form, image_url, nationality, team_id, teams(id, name, short_name, logo_url)');
       if (error) throw error;
       return data;
     },
   });
 
-  const teams = [...new Set(players.map(p => p.team))].filter(Boolean).sort();
+  const teams = [...new Set(players.map(p => p.teams?.name).filter(Boolean))].sort() as string[];
 
   const getPositionColor = (position: string) => {
     const pos = position?.toLowerCase();
@@ -47,20 +47,21 @@ const Players = () => {
 
   const filteredPlayers = players
     .filter(player => {
-      const matchesSearch = player.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           player.team?.toLowerCase().includes(searchTerm.toLowerCase());
+      const teamName = player.teams?.name || '';
+      const matchesSearch = player.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           teamName.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesPosition = !positionFilter || positionFilter === 'all' ||
                               player.position?.toLowerCase() === positionFilter.toLowerCase();
-      const matchesTeam = !teamFilter || teamFilter === 'all' || player.team === teamFilter;
+      const matchesTeam = !teamFilter || teamFilter === 'all' || teamName === teamFilter;
       return matchesSearch && matchesPosition && matchesTeam;
     })
     .sort((a, b) => {
       switch (sortBy) {
         case 'price': return (Number(b.price) || 0) - (Number(a.price) || 0);
-        case 'points': return (Number(b['total points']) || 0) - (Number(a['total points']) || 0);
-        case 'name': return (a.Name || '').localeCompare(b.Name || '');
-        case 'team': return (a.team || '').localeCompare(b.team || '');
-        default: return (Number(b['total points']) || 0) - (Number(a['total points']) || 0);
+        case 'points': return (b.points || 0) - (a.points || 0);
+        case 'name': return (a.name || '').localeCompare(b.name || '');
+        case 'team': return (a.teams?.name || '').localeCompare(b.teams?.name || '');
+        default: return (b.points || 0) - (a.points || 0);
       }
     });
 
@@ -177,10 +178,10 @@ const Players = () => {
                 <SelectTrigger><SelectValue placeholder="All Positions" /></SelectTrigger>
                 <SelectContent className="bg-white">
                   <SelectItem value="all">All Positions</SelectItem>
-                  <SelectItem value="goalkeeper">Goalkeeper</SelectItem>
-                  <SelectItem value="defender">Defender</SelectItem>
-                  <SelectItem value="midfielder">Midfielder</SelectItem>
-                  <SelectItem value="forward">Forward</SelectItem>
+                  <SelectItem value="gk">Goalkeeper</SelectItem>
+                  <SelectItem value="def">Defender</SelectItem>
+                  <SelectItem value="mid">Midfielder</SelectItem>
+                  <SelectItem value="fwd">Forward</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -222,30 +223,25 @@ const Players = () => {
                     <TableHead className="font-semibold text-gray-900">Position</TableHead>
                     <TableHead className="font-semibold text-gray-900">Team</TableHead>
                     <TableHead className="font-semibold text-gray-900">Price</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Total Points</TableHead>
-                    <TableHead className="font-semibold text-gray-900">GW Points</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Points</TableHead>
                     <TableHead className="font-semibold text-gray-900">Form</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Selected By</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredPlayers.map((player, index) => (
                     <TableRow key={player.id} className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                      <TableCell className="font-medium text-gray-900">{player.Name}</TableCell>
+                      <TableCell className="font-medium text-gray-900">{player.name}</TableCell>
                       <TableCell>
                         <Badge className={`${getPositionColor(player.position)} border font-medium`}>
                           {getPositionLabel(player.position)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-gray-900">{player.team}</TableCell>
+                      <TableCell className="text-gray-900">{player.teams?.name || '—'}</TableCell>
                       <TableCell className="font-semibold text-green-600">
                         {player.price ? `R${Number(player.price).toFixed(1)}M` : '—'}
                       </TableCell>
                       <TableCell className="font-bold text-blue-600">
-                        {player['total points'] || '0'}
-                      </TableCell>
-                      <TableCell className="font-bold text-purple-600">
-                        {player['GW points'] || '0'}
+                        {player.points || '0'}
                       </TableCell>
                       <TableCell>
                         <span className={`text-xs px-2 py-1 rounded font-medium ${
@@ -255,9 +251,6 @@ const Players = () => {
                         }`}>
                           {player.form || '0'}
                         </span>
-                      </TableCell>
-                      <TableCell className="text-gray-600">
-                        {player.selection_percentage ? `${player.selection_percentage}%` : '—'}
                       </TableCell>
                     </TableRow>
                   ))}

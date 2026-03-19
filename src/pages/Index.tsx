@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { House, Users, FileText, Award, Trophy, Medal, Star, TrendingUp, Calendar, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import pslPlayersImg from '@/assets/psl-players-nobg.png';
 import { Link } from 'react-router-dom';
-import { Player, teams, players } from '@/data/teams';
+import { Player } from '@/data/teams';
 import { useToast } from '@/hooks/use-toast';
 import MyTeam from '@/components/MyTeam';
 import Transfers from '@/components/Transfers';
@@ -16,23 +16,34 @@ import LatestNews from '@/components/home/LatestNews';
 import LeagueTable from '@/components/home/LeagueTable';
 import TopPerformers from '@/components/home/TopPerformers';
 import { PSLBot } from '@/components/PSLBot';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);
   const [budget, setBudget] = useState(100.0);
-  const [positionFilter, setPositionFilter] = useState('all');
-  const [teamFilter, setTeamFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('points');
   const { toast } = useToast();
 
+  const { data: allPlayers = [] } = useQuery({
+    queryKey: ['players-index'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('players')
+        .select('id, name, position, price, points, form, image_url, nationality, team_id, teams(id, name, short_name, logo_url)');
+      if (error) throw error;
+      return (data || []) as Player[];
+    },
+  });
+
   useEffect(() => {
+    if (allPlayers.length === 0) return;
     try {
       const savedSquadIdsJSON = localStorage.getItem('fantasy-squad-ids');
       if (savedSquadIdsJSON) {
         const savedSquadIds = JSON.parse(savedSquadIdsJSON);
         if (Array.isArray(savedSquadIds) && savedSquadIds.length > 0) {
-          const allPlayersMap = new Map(players.map(p => [p.id, p]));
+          const allPlayersMap = new Map(allPlayers.map(p => [p.id, p]));
           const loadedPlayers = savedSquadIds
             .map((id: string) => allPlayersMap.get(id))
             .filter((p): p is Player => p !== undefined);
@@ -47,7 +58,7 @@ const Index = () => {
     } catch (e) {
       console.error("Failed to load squad from localStorage", e);
     }
-  }, []);
+  }, [allPlayers]);
 
   const handlePlayerAdd = (player: Player) => {
     if (budget < player.price) {
@@ -60,9 +71,9 @@ const Index = () => {
     }
 
     const positionCount = selectedPlayers.filter(p => p.position === player.position).length;
-    const maxByPosition = { GK: 2, DEF: 5, MID: 5, FWD: 3 };
+    const maxByPosition: Record<string, number> = { GK: 2, DEF: 5, MID: 5, FWD: 3 };
     
-    if (positionCount >= maxByPosition[player.position]) {
+    if (positionCount >= (maxByPosition[player.position] || 0)) {
       toast({
         title: "Position Limit Reached",
         description: `You can only have ${maxByPosition[player.position]} ${player.position} players.`,
@@ -131,31 +142,6 @@ const Index = () => {
     }
   };
 
-  const filteredPlayers = players
-    .filter(player => {
-      const matchesPosition = positionFilter === 'all' || player.position === positionFilter;
-      const matchesTeam = teamFilter === 'all' || player.team === teamFilter;
-      return matchesPosition && matchesTeam;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case 'price': return b.price - a.price;
-        case 'points': return b.points - a.points;
-        case 'name': return a.name.localeCompare(b.name);
-        case 'team': return a.team.localeCompare(b.team);
-        default: return b.points - a.points;
-      }
-    });
-
-  const formation = {
-    GK: selectedPlayers.filter(p => p.position === 'GK'),
-    DEF: selectedPlayers.filter(p => p.position === 'DEF'),
-    MID: selectedPlayers.filter(p => p.position === 'MID'),
-    FWD: selectedPlayers.filter(p => p.position === 'FWD')
-  };
-
-  const validTeams = teams.filter(team => team.name && team.name.trim() !== '');
-
   // Form indicator component
   const FormIndicator = ({ change }: { change: number }) => {
     if (change > 0) return <ArrowUp className="h-3 w-3 text-green-500" />;
@@ -165,13 +151,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* PSL-Inspired Hero Header (NBA Fantasy style) */}
+      {/* PSL-Inspired Hero Header */}
       <div className="relative overflow-hidden bg-psl-dark min-h-[200px]">
-        {/* Diagonal gradient accent */}
         <div className="absolute inset-0 bg-gradient-to-br from-psl-blue/30 via-transparent to-psl-gold/10"></div>
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-psl-gold via-psl-blue to-psl-gold"></div>
         
-        {/* PSL Players Image - blended into header */}
         <div className="hidden md:block absolute right-0 top-0 bottom-0 w-[50%] overflow-hidden pointer-events-none" style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 25%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 25%)' }}>
           <img 
             src={pslPlayersImg} 
@@ -182,7 +166,6 @@ const Index = () => {
         
         <div className="relative z-10 container mx-auto px-6 py-8">
           <div className="flex items-center">
-            {/* Left: PSL Logo + Title */}
             <div className="flex items-center space-x-5">
               <div className="shrink-0">
                 <img 
@@ -205,7 +188,6 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Gameweek Counter */}
           <div className="mt-4 flex items-center space-x-4">
             <div className="bg-psl-blue/20 backdrop-blur-md rounded-xl px-6 py-2.5 border border-psl-blue/30">
               <div className="flex items-center space-x-3 text-white">
@@ -219,7 +201,7 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Enhanced Navigation */}
+      {/* Navigation */}
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm">
         <div className="container mx-auto px-6">
           <div className="flex justify-center py-4">
@@ -252,7 +234,7 @@ const Index = () => {
       <div className="container mx-auto px-6 py-8">
         {activeTab === 'home' ? (
           <div className="space-y-8">
-            {/* Grit & Glory Stats Cards */}
+            {/* Stats Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className="bg-gradient-to-br from-primary to-accent text-primary-foreground border-0 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
                 <CardContent className="p-6">
@@ -323,9 +305,8 @@ const Index = () => {
               </Card>
             </div>
 
-            {/* Enhanced Main Content Grid */}
+            {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Left Column - Main Content */}
               <div className="lg:col-span-2 space-y-8">
                 <div className="transform transition-all duration-500 hover:scale-[1.01]">
                   <Fixtures />
@@ -335,7 +316,6 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Right Column - Sidebar */}
               <div className="lg:col-span-1 space-y-8">
                 <div className="transform transition-all duration-500 hover:scale-[1.01]">
                   <LeagueTable />
@@ -348,7 +328,6 @@ const Index = () => {
                   <PSLBot />
                 </div>
                 
-                {/* Enhanced South African Motivational Card */}
                 <Card className="bg-gradient-to-br from-primary via-secondary to-accent text-primary-foreground border-0 rounded-2xl shadow-xl overflow-hidden">
                   <CardContent className="p-8 text-center relative z-10">
                     <div className="mb-6">
@@ -381,7 +360,7 @@ const Index = () => {
         )}
       </div>
 
-      {/* Enhanced Mobile Navigation */}
+      {/* Mobile Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-xl border-t border-border p-4 lg:hidden z-50 shadow-2xl">
         <div className="flex justify-around">
           {[
@@ -395,22 +374,16 @@ const Index = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex flex-col items-center space-y-1 p-3 rounded-2xl transition-all duration-300 ${
                 activeTab === tab.id
-                  ? 'text-primary bg-accent shadow-lg transform scale-110'
+                  ? 'text-primary bg-primary/10 scale-110'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              <tab.icon className="h-6 w-6" />
-              <span className="text-xs font-semibold">{tab.label}</span>
-              {activeTab === tab.id && (
-                <div className="w-1 h-1 bg-primary rounded-full"></div>
-              )}
+              <tab.icon className="h-5 w-5" />
+              <span className="text-[10px] font-bold">{tab.label}</span>
             </button>
           ))}
         </div>
       </div>
-
-      {/* Bottom Padding for Mobile Navigation */}
-      <div className="h-24 lg:hidden"></div>
     </div>
   );
 };
