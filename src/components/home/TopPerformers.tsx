@@ -52,8 +52,8 @@ const TopPerformers = () => {
           const scorers: TopScorer[] = players
             .map(p => ({
               player_id: String(p.id),
-              name: p.name,
-              team_name: p.team || '',
+              name: (p as any).name,
+              team_name: (p as any).team || '',
               position: p.position,
               goals: goalMap[String(p.id)]?.goals || 0,
               apps: goalMap[String(p.id)]?.apps || 0,

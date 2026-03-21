@@ -35,7 +35,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
         .from('players')
         .select('*');
       if (error) throw error;
-      return (data || []) as Player[];
+      return (data || []) as unknown as Player[];
     },
   });
 
