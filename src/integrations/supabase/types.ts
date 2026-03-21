@@ -7,13 +7,53 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
   public: {
     Tables: {
+      players: {
+        Row: {
+          id: number
+          created_at: string
+          name: string
+          position: string
+          team: string
+          gw_points: string | null
+          total_points: string | null
+          form: string | null
+          selection_percentage: number | null
+          price: number | null
+          price_change: number | null
+        }
+        Insert: {
+          id?: number
+          created_at?: string
+          name: string
+          position: string
+          team: string
+          gw_points?: string | null
+          total_points?: string | null
+          form?: string | null
+          selection_percentage?: number | null
+          price?: number | null
+          price_change?: number | null
+        }
+        Update: {
+          id?: number
+          created_at?: string
+          name?: string
+          position?: string
+          team?: string
+          gw_points?: string | null
+          total_points?: string | null
+          form?: string | null
+          selection_percentage?: number | null
+          price?: number | null
+          price_change?: number | null
+        }
+        Relationships: []
+      }
       fixtures: {
         Row: {
           away_score: number | null
@@ -111,15 +151,7 @@ export type Database = {
           player_id?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "performer_likes_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       player_match_stats: {
         Row: {
@@ -167,62 +199,7 @@ export type Database = {
           total_points?: number
           yellow_cards?: number
         }
-        Relationships: [
-          {
-            foreignKeyName: "player_match_stats_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      players: {
-        Row: {
-          created_at: string
-          form: number
-          id: string
-          image_url: string | null
-          name: string
-          nationality: string | null
-          points: number
-          position: string
-          price: number
-          team_id: string
-        }
-        Insert: {
-          created_at?: string
-          form?: number
-          id?: string
-          image_url?: string | null
-          name: string
-          nationality?: string | null
-          points?: number
-          position: string
-          price?: number
-          team_id: string
-        }
-        Update: {
-          created_at?: string
-          form?: number
-          id?: string
-          image_url?: string | null
-          name?: string
-          nationality?: string | null
-          points?: number
-          position?: string
-          price?: number
-          team_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "players_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -354,15 +331,7 @@ export type Database = {
           selected_at?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_team_selections_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
@@ -381,7 +350,6 @@ export type Database = {
 }
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
-
 type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
