@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, Filter, Loader2 } from 'lucide-react';
+import { Player } from '@/data/teams';
 
 const Players = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,7 +20,7 @@ const Players = () => {
     queryFn: async () => {
       const { data, error } = await supabase.from('players').select('*');
       if (error) throw error;
-      return data;
+      return (data || []) as unknown as Player[];
     },
   });
 
@@ -45,8 +46,8 @@ const Players = () => {
 
   const filteredPlayers = players
     .filter(player => {
-      const matchesSearch = player.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           player.team?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = (player.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           (player.team || '').toLowerCase().includes(searchTerm.toLowerCase());
       const matchesPosition = !positionFilter || positionFilter === 'all' ||
                               player.position?.toLowerCase() === positionFilter.toLowerCase();
       const matchesTeam = !teamFilter || teamFilter === 'all' || player.team === teamFilter;

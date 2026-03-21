@@ -24,7 +24,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
   const [searchTerm, setSearchTerm] = useState('');
   const [positionFilter, setPositionFilter] = useState('all');
   const [teamFilter, setTeamFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('points');
+  const [sortBy, setSortBy] = useState('total_points');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
@@ -35,13 +35,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
         .from('players')
         .select('*');
       if (error) throw error;
-      return (data || []).map(p => ({
-        ...p,
-        name: p.Name,
-        price: Number(p.price) || 0,
-        points: Number(p['total points']) || 0,
-        form: Number(p.form) || 0,
-      })) as Player[];
+      return (data || []) as unknown as Player[];
     },
   });
 
@@ -67,10 +61,8 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
 
   const filteredPlayers = allPlayers
     .filter(player => {
-      const playerName = (player.name || player.Name || '').toLowerCase();
-      const teamName = (player.team || '').toLowerCase();
-      const matchesSearch = playerName.includes(searchTerm.toLowerCase()) ||
-                           teamName.includes(searchTerm.toLowerCase());
+      const matchesSearch = (player.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           (player.team || '').toLowerCase().includes(searchTerm.toLowerCase());
       const matchesPosition = positionFilter === 'all' ||
         player.position?.toLowerCase() === positionFilter.toLowerCase();
       const matchesTeam = teamFilter === 'all' || player.team === teamFilter;
@@ -79,9 +71,9 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
     .sort((a, b) => {
       switch (sortBy) {
         case 'price': return (Number(b.price) || 0) - (Number(a.price) || 0);
-        case 'points': return (Number(b.points) || 0) - (Number(a.points) || 0);
-        case 'name': return (a.name || a.Name || '').localeCompare(b.name || b.Name || '');
-        default: return (Number(b.points) || 0) - (Number(a.points) || 0);
+        case 'total_points': return (Number(b.total_points) || 0) - (Number(a.total_points) || 0);
+        case 'name': return (a.name || '').localeCompare(b.name || '');
+        default: return (Number(b.total_points) || 0) - (Number(a.total_points) || 0);
       }
     });
 
@@ -96,12 +88,12 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
     setCurrentPage(1);
   };
 
-  const isPlayerSelected = (playerId: string | number) =>
-    selectedPlayers.some(p => String(p.id) === String(playerId));
+  const isPlayerSelected = (playerId: number) =>
+    selectedPlayers.some(p => p.id === playerId);
 
   const canAddPlayer = (player: Player) => {
     if (isPlayerSelected(player.id)) return false;
-    if (budget < (player.price || 0)) return false;
+    if (budget < (Number(player.price) || 0)) return false;
     const positionCount = selectedPlayers.filter(p =>
       p.position?.toLowerCase() === player.position?.toLowerCase()
     ).length;
@@ -125,7 +117,6 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
 
   return (
     <div className="space-y-4">
-      {/* Filters */}
       <Card className="border-bronze-200">
         <CardContent className="p-4">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -160,7 +151,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Sort" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="points">Points</SelectItem>
+                <SelectItem value="total_points">Points</SelectItem>
                 <SelectItem value="price">Price</SelectItem>
                 <SelectItem value="name">Name</SelectItem>
               </SelectContent>
@@ -173,7 +164,6 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
         </CardContent>
       </Card>
 
-      {/* Player List */}
       <Card className="shadow-sm">
         <CardContent className="p-0">
           <Table>
@@ -190,14 +180,13 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
               {paginatedPlayers.map((player, index) => {
                 const selected = isPlayerSelected(player.id);
                 const canAdd = canAddPlayer(player);
-                const playerName = player.name || player.Name || '';
                 const formVal = Number(player.form) || 0;
 
                 return (
                   <TableRow key={player.id} className={`h-9 ${selected ? 'bg-bronze-50' : index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
                     <TableCell className="py-1 pl-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium truncate max-w-[120px]">{playerName}</span>
+                        <span className="text-xs font-medium truncate max-w-[120px]">{player.name}</span>
                         <Badge className={`${getPositionColor(player.position)} text-[9px] px-1 py-0 leading-tight`}>
                           {getPositionLabel(player.position)}
                         </Badge>
@@ -210,7 +199,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                     <TableCell className="py-1 text-xs font-medium text-right">
                       {player.price ? `R${(Number(player.price) * 18).toFixed(1)}M` : '—'}
                     </TableCell>
-                    <TableCell className="py-1 text-xs font-bold text-right">{player.points || 0}</TableCell>
+                    <TableCell className="py-1 text-xs font-bold text-right">{player.total_points || '0'}</TableCell>
                     <TableCell className="py-1">
                       <div className="flex justify-center items-center">
                         <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
@@ -241,7 +230,6 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
         </CardContent>
       </Card>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-2">
           <span className="text-xs text-muted-foreground">
@@ -266,17 +254,15 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
         </div>
       )}
 
-      {/* Player Info Dialog */}
       <Dialog open={!!selectedPlayer} onOpenChange={(open) => !open && setSelectedPlayer(null)}>
         <DialogContent className="max-w-sm">
           {selectedPlayer && (() => {
-            const playerName = selectedPlayer.name || selectedPlayer.Name || '';
             const formVal = Number(selectedPlayer.form) || 0;
             return (
               <>
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2 text-base">
-                    {playerName}
+                    {selectedPlayer.name}
                   </DialogTitle>
                   <DialogDescription>{selectedPlayer.team}</DialogDescription>
                 </DialogHeader>
@@ -295,7 +281,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                   </div>
                   <div className="rounded-md bg-muted p-2.5">
                     <p className="text-[10px] text-muted-foreground uppercase">Total Points</p>
-                    <p className="font-bold text-lg mt-1">{selectedPlayer.points || 0}</p>
+                    <p className="font-bold text-lg mt-1">{selectedPlayer.total_points || '0'}</p>
                   </div>
                   <div className="rounded-md bg-muted p-2.5">
                     <p className="text-[10px] text-muted-foreground uppercase">Form</p>

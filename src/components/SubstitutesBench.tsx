@@ -10,10 +10,7 @@ interface SubstitutesBenchProps {
 }
 
 const positionOrder: { [key: string]: number } = {
-  GK: 1,
-  DEF: 2,
-  MID: 3,
-  FWD: 4,
+  GK: 1, DEF: 2, MID: 3, FWD: 4,
 };
 
 const SubstitutesBench = ({ substitutes, onPlayerClick, playerToSwap }: SubstitutesBenchProps) => {
@@ -40,11 +37,11 @@ const SubstitutesBench = ({ substitutes, onPlayerClick, playerToSwap }: Substitu
               >
                 <div>
                   <p className="font-medium">{player.name}</p>
-                  <p className="text-sm text-gray-600">{player.teams?.name || ''} - {player.position}</p>
+                  <p className="text-sm text-gray-600">{player.team} - {player.position}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold">R{(player.price * 18).toFixed(1)}M</p>
-                  <p className="text-sm text-green-600">{player.points} pts</p>
+                  <p className="font-semibold">R{((Number(player.price) || 0) * 18).toFixed(1)}M</p>
+                  <p className="text-sm text-green-600">{player.total_points || '0'} pts</p>
                 </div>
               </div>
             ))}

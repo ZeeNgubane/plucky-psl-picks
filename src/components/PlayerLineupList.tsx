@@ -1,4 +1,3 @@
-
 import { Player } from "@/data/teams";
 
 interface PlayerLineupListProps {
@@ -30,11 +29,11 @@ const PlayerLineupList = ({ formationGroups }: PlayerLineupListProps) => (
             <div key={player.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div>
                 <p className="font-medium">{player.name}</p>
-                <p className="text-sm text-gray-600">{player.teams?.name || ''}</p>
+                <p className="text-sm text-gray-600">{player.team}</p>
               </div>
               <div className="text-right">
-                <p className="font-semibold">R{(player.price * 18).toFixed(1)}M</p>
-                <p className="text-sm text-green-600">{player.points} pts</p>
+                <p className="font-semibold">R{((Number(player.price) || 0) * 18).toFixed(1)}M</p>
+                <p className="text-sm text-green-600">{player.total_points || '0'} pts</p>
               </div>
             </div>
           ))}

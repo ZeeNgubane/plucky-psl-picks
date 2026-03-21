@@ -40,7 +40,6 @@ function pickFormation(def: number, mid: number, fwd: number) {
   return best;
 }
 
-
 const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
   const [starters, setStarters] = useState<Player[]>([]);
   const [subs, setSubs] = useState<Player[]>([]);
@@ -73,8 +72,8 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
       try {
         if (squadIdsString === savedSquadIdsStr) {
             const savedStarterIds = new Set<string>(JSON.parse(savedStarterIdsStr));
-            setStarters(selectedPlayers.filter(p => savedStarterIds.has(p.id)));
-            setSubs(selectedPlayers.filter(p => !savedStarterIds.has(p.id)));
+            setStarters(selectedPlayers.filter(p => savedStarterIds.has(String(p.id))));
+            setSubs(selectedPlayers.filter(p => !savedStarterIds.has(String(p.id))));
             loadedFromSave = true;
         }
       } catch (e) {
@@ -100,14 +99,14 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
         for (let i = 0; i < row.count; i++) {
             const player = formationGroups[position]?.[indexer[position]];
             if (player) {
-                startingPlayerIds.add(player.id);
+                startingPlayerIds.add(String(player.id));
             }
             indexer[position]++;
         }
     });
 
-    setStarters(selectedPlayers.filter(p => startingPlayerIds.has(p.id)));
-    setSubs(selectedPlayers.filter(p => !startingPlayerIds.has(p.id)));
+    setStarters(selectedPlayers.filter(p => startingPlayerIds.has(String(p.id))));
+    setSubs(selectedPlayers.filter(p => !startingPlayerIds.has(String(p.id))));
   }, [selectedPlayers, squadIdsString]);
   
   const handlePlayerClick = (clickedPlayer: Player) => {
@@ -164,7 +163,7 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
     try {
       const squadIds = selectedPlayers.map(p => p.id).sort();
       localStorage.setItem('fantasy-squad-ids', JSON.stringify(squadIds));
-      localStorage.setItem('fantasy-starter-ids', JSON.stringify(starters.map(p => p.id)));
+      localStorage.setItem('fantasy-starter-ids', JSON.stringify(starters.map(p => String(p.id))));
       toast.success("Team Saved!", { description: "Your squad lineup has been saved." });
     } catch (error) {
       console.error("Failed to save team:", error);
