@@ -29,12 +29,7 @@ const Index = () => {
         .from('players')
         .select('*');
       if (error) throw error;
-      return (data || []).map(p => ({
-        ...p,
-        name: p.Name,
-        price: Number(p.price) || 0,
-        points: Number(p['total points']) || 0,
-      })) as Player[];
+      return (data || []) as Player[];
     },
   });
 
@@ -52,7 +47,7 @@ const Index = () => {
 
           if (loadedPlayers.length > 0) {
             setSelectedPlayers(loadedPlayers);
-            const totalValue = loadedPlayers.reduce((sum, player) => sum + (player.price || 0), 0);
+            const totalValue = loadedPlayers.reduce((sum, player) => sum + (Number(player.price) || 0), 0);
             setBudget(100.0 - totalValue);
           }
         }
@@ -63,10 +58,11 @@ const Index = () => {
   }, [allPlayers]);
 
   const handlePlayerAdd = (player: Player) => {
-    if (budget < (player.price || 0)) {
+    const playerPrice = Number(player.price) || 0;
+    if (budget < playerPrice) {
       toast({
         title: "Insufficient Budget",
-        description: `You need R${((player.price || 0) * 18).toFixed(1)}M but only have R${(budget * 18).toFixed(1)}M available.`,
+        description: `You need R${(playerPrice * 18).toFixed(1)}M but only have R${(budget * 18).toFixed(1)}M available.`,
         variant: "destructive",
       });
       return;
@@ -94,11 +90,11 @@ const Index = () => {
     }
 
     setSelectedPlayers([...selectedPlayers, player]);
-    setBudget(budget - (player.price || 0));
+    setBudget(budget - playerPrice);
 
     toast({
       title: "Player Added",
-      description: `${player.name || player.Name} has been added to your team!`,
+      description: `${player.name} has been added to your team!`,
     });
   };
 
@@ -106,11 +102,11 @@ const Index = () => {
     const player = selectedPlayers.find(p => String(p.id) === String(playerId));
     if (player) {
       setSelectedPlayers(selectedPlayers.filter(p => String(p.id) !== String(playerId)));
-      setBudget(budget + (player.price || 0));
+      setBudget(budget + (Number(player.price) || 0));
 
       toast({
         title: "Player Removed",
-        description: `${player.name || player.Name} has been removed from your team.`,
+        description: `${player.name} has been removed from your team.`,
       });
     }
   };

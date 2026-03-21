@@ -45,18 +45,18 @@ const TopPerformers = () => {
         const playerIds = Object.keys(goalMap);
         const { data: players } = await supabase
           .from('players')
-          .select('id, name, position, teams(name)')
+          .select('*')
           .in('id', playerIds);
 
         if (players) {
           const scorers: TopScorer[] = players
             .map(p => ({
-              player_id: p.id,
+              player_id: String(p.id),
               name: p.name,
-              team_name: (p.teams as any)?.name || '',
+              team_name: p.team || '',
               position: p.position,
-              goals: goalMap[p.id]?.goals || 0,
-              apps: goalMap[p.id]?.apps || 0,
+              goals: goalMap[String(p.id)]?.goals || 0,
+              apps: goalMap[String(p.id)]?.apps || 0,
             }))
             .filter(s => s.goals > 0)
             .sort((a, b) => b.goals - a.goals)
