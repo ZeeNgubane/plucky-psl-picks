@@ -12,20 +12,18 @@ const Players = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [positionFilter, setPositionFilter] = useState('');
   const [teamFilter, setTeamFilter] = useState('');
-  const [sortBy, setSortBy] = useState('points');
+  const [sortBy, setSortBy] = useState('total_points');
 
   const { data: players = [], isLoading, error } = useQuery({
     queryKey: ['players'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('players')
-        .select('id, name, position, price, points, form, image_url, nationality, team_id, teams(id, name, short_name, logo_url)');
+      const { data, error } = await supabase.from('players').select('*');
       if (error) throw error;
       return data;
     },
   });
 
-  const teams = [...new Set(players.map(p => p.teams?.name).filter(Boolean))].sort() as string[];
+  const teams = [...new Set(players.map(p => p.team))].filter(Boolean).sort();
 
   const getPositionColor = (position: string) => {
     const pos = position?.toLowerCase();
@@ -47,21 +45,20 @@ const Players = () => {
 
   const filteredPlayers = players
     .filter(player => {
-      const teamName = player.teams?.name || '';
       const matchesSearch = player.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           teamName.toLowerCase().includes(searchTerm.toLowerCase());
+                           player.team?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesPosition = !positionFilter || positionFilter === 'all' ||
                               player.position?.toLowerCase() === positionFilter.toLowerCase();
-      const matchesTeam = !teamFilter || teamFilter === 'all' || teamName === teamFilter;
+      const matchesTeam = !teamFilter || teamFilter === 'all' || player.team === teamFilter;
       return matchesSearch && matchesPosition && matchesTeam;
     })
     .sort((a, b) => {
       switch (sortBy) {
         case 'price': return (Number(b.price) || 0) - (Number(a.price) || 0);
-        case 'points': return (b.points || 0) - (a.points || 0);
+        case 'total_points': return (Number(b.total_points) || 0) - (Number(a.total_points) || 0);
         case 'name': return (a.name || '').localeCompare(b.name || '');
-        case 'team': return (a.teams?.name || '').localeCompare(b.teams?.name || '');
-        default: return (b.points || 0) - (a.points || 0);
+        case 'team': return (a.team || '').localeCompare(b.team || '');
+        default: return (Number(b.total_points) || 0) - (Number(a.total_points) || 0);
       }
     });
 
@@ -83,7 +80,6 @@ const Players = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <div className="bg-red-600 text-white">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
@@ -92,9 +88,7 @@ const Players = () => {
                 src="https://www.psl.co.za/media/10983/psl-logo-gold.png"
                 alt="PSL Logo"
                 className="h-16 w-auto"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL0JZOmbEBlLE_lP0SKjIaxOfpF4DvC3bZoQ&s';
-                }}
+                onError={(e) => { (e.target as HTMLImageElement).src = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL0JZOmbEBlLE_lP0SKjIaxOfpF4DvC3bZoQ&s'; }}
               />
               <div>
                 <h1 className="text-3xl font-bold">Betway Premiership</h1>
@@ -109,12 +103,10 @@ const Players = () => {
         </div>
       </div>
 
-      {/* Breadcrumb */}
       <div className="bg-gray-50 border-b">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center space-x-2 text-sm text-gray-600">
             <span>Home</span><span>/</span>
-            <span>Tournaments</span><span>/</span>
             <span className="text-red-600 font-medium">Betway Premiership</span><span>/</span>
             <span className="text-red-600 font-medium">Players</span>
           </div>
@@ -122,7 +114,6 @@ const Players = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="border-l-4 border-l-red-600">
             <CardContent className="p-4">
@@ -154,7 +145,6 @@ const Players = () => {
           </Card>
         </div>
 
-        {/* Filters */}
         <Card className="mb-6 shadow-sm">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center space-x-2 text-gray-900">
@@ -173,18 +163,16 @@ const Players = () => {
                   className="pl-10 border-gray-300 focus:border-red-500"
                 />
               </div>
-
               <Select value={positionFilter} onValueChange={setPositionFilter}>
                 <SelectTrigger><SelectValue placeholder="All Positions" /></SelectTrigger>
                 <SelectContent className="bg-white">
                   <SelectItem value="all">All Positions</SelectItem>
-                  <SelectItem value="gk">Goalkeeper</SelectItem>
-                  <SelectItem value="def">Defender</SelectItem>
-                  <SelectItem value="mid">Midfielder</SelectItem>
-                  <SelectItem value="fwd">Forward</SelectItem>
+                  <SelectItem value="goalkeeper">Goalkeeper</SelectItem>
+                  <SelectItem value="defender">Defender</SelectItem>
+                  <SelectItem value="midfielder">Midfielder</SelectItem>
+                  <SelectItem value="forward">Forward</SelectItem>
                 </SelectContent>
               </Select>
-
               <Select value={teamFilter} onValueChange={setTeamFilter}>
                 <SelectTrigger><SelectValue placeholder="All Teams" /></SelectTrigger>
                 <SelectContent className="bg-white max-h-60">
@@ -194,17 +182,15 @@ const Players = () => {
                   ))}
                 </SelectContent>
               </Select>
-
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger><SelectValue placeholder="Sort by" /></SelectTrigger>
                 <SelectContent className="bg-white">
-                  <SelectItem value="points">Points (High to Low)</SelectItem>
+                  <SelectItem value="total_points">Points (High to Low)</SelectItem>
                   <SelectItem value="price">Price (High to Low)</SelectItem>
                   <SelectItem value="name">Name (A-Z)</SelectItem>
                   <SelectItem value="team">Team (A-Z)</SelectItem>
                 </SelectContent>
               </Select>
-
               <div className="flex items-center text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-md border">
                 Results: <span className="font-semibold text-red-600 ml-1">{filteredPlayers.length}</span>
               </div>
@@ -212,7 +198,6 @@ const Players = () => {
           </CardContent>
         </Card>
 
-        {/* Table */}
         <Card className="shadow-sm">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
@@ -223,8 +208,10 @@ const Players = () => {
                     <TableHead className="font-semibold text-gray-900">Position</TableHead>
                     <TableHead className="font-semibold text-gray-900">Team</TableHead>
                     <TableHead className="font-semibold text-gray-900">Price</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Points</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Total Points</TableHead>
+                    <TableHead className="font-semibold text-gray-900">GW Points</TableHead>
                     <TableHead className="font-semibold text-gray-900">Form</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Selected By</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -236,13 +223,12 @@ const Players = () => {
                           {getPositionLabel(player.position)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-gray-900">{player.teams?.name || '—'}</TableCell>
+                      <TableCell className="text-gray-900">{player.team}</TableCell>
                       <TableCell className="font-semibold text-green-600">
                         {player.price ? `R${Number(player.price).toFixed(1)}M` : '—'}
                       </TableCell>
-                      <TableCell className="font-bold text-blue-600">
-                        {player.points || '0'}
-                      </TableCell>
+                      <TableCell className="font-bold text-blue-600">{player.total_points || '0'}</TableCell>
+                      <TableCell className="font-bold text-purple-600">{player.gw_points || '0'}</TableCell>
                       <TableCell>
                         <span className={`text-xs px-2 py-1 rounded font-medium ${
                           Number(player.form) >= 8 ? 'bg-green-100 text-green-800' :
@@ -251,6 +237,9 @@ const Players = () => {
                         }`}>
                           {player.form || '0'}
                         </span>
+                      </TableCell>
+                      <TableCell className="text-gray-600">
+                        {player.selection_percentage ? `${player.selection_percentage}%` : '—'}
                       </TableCell>
                     </TableRow>
                   ))}
