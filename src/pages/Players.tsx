@@ -15,6 +15,7 @@ const Players = () => {
   const [positionFilter, setPositionFilter] = useState('');
   const [teamFilter, setTeamFilter] = useState('');
   const [sortBy, setSortBy] = useState('total_points');
+  const logoMap = useTeamLogos();
 
   const { data: players = [], isLoading, error } = useQuery({
     queryKey: ['players'],

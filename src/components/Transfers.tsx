@@ -28,6 +28,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
   const [sortBy, setSortBy] = useState('total_points');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const logoMap = useTeamLogos();
 
   const { data: allPlayers = [], isLoading } = useQuery({
     queryKey: ['players-transfers'],
