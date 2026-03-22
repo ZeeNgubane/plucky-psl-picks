@@ -111,15 +111,7 @@ export type Database = {
           player_id?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "performer_likes_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       player_match_stats: {
         Row: {
@@ -167,62 +159,49 @@ export type Database = {
           total_points?: number
           yellow_cards?: number
         }
-        Relationships: [
-          {
-            foreignKeyName: "player_match_stats_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       players: {
         Row: {
           created_at: string
-          form: number
-          id: string
-          image_url: string | null
+          form: string | null
+          gw_points: string | null
+          id: number
           name: string
-          nationality: string | null
-          points: number
           position: string
-          price: number
-          team_id: string
+          price: number | null
+          price_change: number | null
+          selection_percentage: number | null
+          team: string
+          total_points: string | null
         }
         Insert: {
           created_at?: string
-          form?: number
-          id?: string
-          image_url?: string | null
+          form?: string | null
+          gw_points?: string | null
+          id?: never
           name: string
-          nationality?: string | null
-          points?: number
           position: string
-          price?: number
-          team_id: string
+          price?: number | null
+          price_change?: number | null
+          selection_percentage?: number | null
+          team: string
+          total_points?: string | null
         }
         Update: {
           created_at?: string
-          form?: number
-          id?: string
-          image_url?: string | null
+          form?: string | null
+          gw_points?: string | null
+          id?: never
           name?: string
-          nationality?: string | null
-          points?: number
           position?: string
-          price?: number
-          team_id?: string
+          price?: number | null
+          price_change?: number | null
+          selection_percentage?: number | null
+          team?: string
+          total_points?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "players_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -354,15 +333,7 @@ export type Database = {
           selected_at?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_team_selections_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
