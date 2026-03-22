@@ -42,7 +42,7 @@ const TopPerformers = () => {
           goalMap[s.player_id].apps += 1;
         });
 
-        const playerIds = Object.keys(goalMap);
+        const playerIds = Object.keys(goalMap).map(Number);
         const { data: players } = await supabase
           .from('players')
           .select('*')
