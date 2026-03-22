@@ -10,6 +10,7 @@ import { Search, Plus, Minus, ChevronLeft, ChevronRight, Info, Loader2 } from 'l
 import { Player } from '@/data/teams';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useTeamLogos } from '@/hooks/use-team-logos';
 
 interface TransfersProps {
   selectedPlayers: Player[];
@@ -27,6 +28,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
   const [sortBy, setSortBy] = useState('total_points');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const logoMap = useTeamLogos();
 
   const { data: allPlayers = [], isLoading } = useQuery({
     queryKey: ['players-transfers'],
@@ -190,6 +192,9 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                         <Badge className={`${getPositionColor(player.position)} text-[9px] px-1 py-0 leading-tight`}>
                           {getPositionLabel(player.position)}
                         </Badge>
+                        {logoMap[player.team] && (
+                          <img src={logoMap[player.team]} alt={player.team} className="h-4 w-4 object-contain shrink-0" />
+                        )}
                         <span className="text-xs text-muted-foreground truncate max-w-[80px]">{player.team}</span>
                         <button onClick={() => setSelectedPlayer(player)} className="text-muted-foreground hover:text-foreground shrink-0">
                           <Info className="h-3 w-3" />

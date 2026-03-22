@@ -8,12 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, Filter, Loader2 } from 'lucide-react';
 import { Player } from '@/data/teams';
+import { useTeamLogos } from '@/hooks/use-team-logos';
 
 const Players = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [positionFilter, setPositionFilter] = useState('');
   const [teamFilter, setTeamFilter] = useState('');
   const [sortBy, setSortBy] = useState('total_points');
+  const logoMap = useTeamLogos();
 
   const { data: players = [], isLoading, error } = useQuery({
     queryKey: ['players'],
@@ -224,7 +226,14 @@ const Players = () => {
                           {getPositionLabel(player.position)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-gray-900">{player.team}</TableCell>
+                      <TableCell className="text-gray-900">
+                        <div className="flex items-center gap-2">
+                          {logoMap[player.team] && (
+                            <img src={logoMap[player.team]} alt={player.team} className="h-5 w-5 object-contain" />
+                          )}
+                          <span>{player.team}</span>
+                        </div>
+                      </TableCell>
                       <TableCell className="font-semibold text-green-600">
                         {player.price ? `R${Number(player.price).toFixed(1)}M` : '—'}
                       </TableCell>
