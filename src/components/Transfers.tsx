@@ -171,7 +171,9 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="font-semibold text-[11px] pl-3">Player</TableHead>
+                <TableHead className="font-semibold text-[11px] pl-3 w-[50px]">Pos</TableHead>
+                <TableHead className="font-semibold text-[11px]">Player</TableHead>
+                <TableHead className="font-semibold text-[11px]">Team</TableHead>
                 <TableHead className="font-semibold text-[11px] text-right">Value</TableHead>
                 <TableHead className="font-semibold text-[11px] text-right">Pts</TableHead>
                 <TableHead className="font-semibold text-[11px] text-center">Form</TableHead>
@@ -187,18 +189,24 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                 return (
                   <TableRow key={player.id} className={`h-9 ${selected ? 'bg-bronze-50' : index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
                     <TableCell className="py-1 pl-3">
-                      <div className="flex items-center gap-2">
+                      <Badge className={`${getPositionColor(player.position)} text-[9px] px-1 py-0 leading-tight`}>
+                        {getPositionLabel(player.position)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="py-1">
+                      <div className="flex items-center gap-1.5">
                         <span className="text-xs font-medium truncate max-w-[120px]">{player.name}</span>
-                        <Badge className={`${getPositionColor(player.position)} text-[9px] px-1 py-0 leading-tight`}>
-                          {getPositionLabel(player.position)}
-                        </Badge>
+                        <button onClick={() => setSelectedPlayer(player)} className="text-muted-foreground hover:text-foreground shrink-0">
+                          <Info className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-1">
+                      <div className="flex items-center gap-1.5">
                         {logoMap[player.team] && (
                           <img src={logoMap[player.team]} alt={player.team} className="h-4 w-4 object-contain shrink-0" />
                         )}
                         <span className="text-xs text-muted-foreground truncate max-w-[80px]">{player.team}</span>
-                        <button onClick={() => setSelectedPlayer(player)} className="text-muted-foreground hover:text-foreground shrink-0">
-                          <Info className="h-3 w-3" />
-                        </button>
                       </div>
                     </TableCell>
                     <TableCell className="py-1 text-xs font-medium text-right">
