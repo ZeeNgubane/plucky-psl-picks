@@ -157,7 +157,7 @@ const Index = () => {
 
       <div className="container mx-auto px-6 pb-6">
         {activeTab === 'home' ? (
-          <div className="space-y-6 -mt-4">
+          <div className="space-y-6">
             {/* Top section: left (badge + HUD) | right (fixtures + league table) */}
             <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
               <div className="space-y-4">
