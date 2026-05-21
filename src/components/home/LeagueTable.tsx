@@ -106,19 +106,17 @@ const LeagueTable = () => {
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 border-b border-gray-200 mb-2">
-              <div className="flex items-center space-x-2 flex-1">
-                <span className="w-8 text-center">#</span>
+            <div className="flex items-center justify-between px-2 py-2 text-[11px] font-semibold text-gray-500 border-b border-gray-200 mb-2">
+              <div className="flex items-center space-x-2 flex-1 min-w-0">
+                <span className="w-6 text-center">#</span>
                 <span>Team</span>
               </div>
-              <div className="flex items-center space-x-3 text-center">
-                <span className="w-6">P</span>
-                <span className="w-6">W</span>
-                <span className="w-6">D</span>
-                <span className="w-6">L</span>
-                <span className="w-12 hidden sm:block">GD</span>
-                <span className="hidden sm:flex w-20 justify-center">Form</span>
-                <span className="w-8">Pts</span>
+              <div className="flex items-center space-x-2 text-center shrink-0">
+                <span className="w-5">P</span>
+                <span className="w-5">W</span>
+                <span className="w-5">D</span>
+                <span className="w-5">L</span>
+                <span className="w-7">Pts</span>
               </div>
             </div>
 
@@ -126,49 +124,36 @@ const LeagueTable = () => {
               {standings.map((team) => (
                 <div 
                   key={team.id}
-                  className={`group flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 hover:bg-blue-50 text-sm ${
+                  className={`group flex items-center justify-between px-2 py-1.5 rounded-lg transition-all duration-200 hover:bg-blue-50 text-[12px] ${
                     team.position <= 1 ? 'bg-yellow-50/50' : 
                     team.position <= 3 ? 'bg-green-50/30' : 
                     team.position >= 15 ? 'bg-red-50/30' : ''
                   }`}
                 >
-                  <div className="flex items-center space-x-2 flex-1">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${getPositionBadge(team.position)} text-[10px] font-bold`}>
+                  <div className="flex items-center space-x-2 flex-1 min-w-0">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center ${getPositionBadge(team.position)} text-[10px] font-bold shrink-0`}>
                       {team.position}
                     </div>
-                    <p className="font-medium text-gray-800 text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">
+                    <p className="font-medium text-gray-800 text-[12px] truncate min-w-0">
                       {team.team_name}
                     </p>
                   </div>
                   
-                  <div className="flex items-center space-x-3 text-center text-xs text-gray-600">
-                    <span className="w-6">{team.played}</span>
-                    <span className="w-6">{team.wins}</span>
-                    <span className="w-6">{team.draws}</span>
-                    <span className="w-6">{team.losses}</span>
-                    <span className={`w-12 hidden sm:block font-medium ${team.goal_difference > 0 ? 'text-green-600' : team.goal_difference < 0 ? 'text-red-500' : 'text-gray-500'}`}>
-                      {team.goal_difference > 0 ? '+' : ''}{team.goal_difference}
-                    </span>
-                    <div className="hidden sm:flex items-center space-x-0.5 w-20 justify-center">
-                      {(team.form || []).map((result, i) => (
-                        <div 
-                          key={i}
-                          className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold ${getFormColor(result)}`}
-                        >
-                          {result}
-                        </div>
-                      ))}
-                    </div>
-                    <span className="w-8 font-bold text-gray-800">{team.points}</span>
+                  <div className="flex items-center space-x-2 text-center text-[12px] text-gray-600 shrink-0">
+                    <span className="w-5">{team.played}</span>
+                    <span className="w-5">{team.wins}</span>
+                    <span className="w-5">{team.draws}</span>
+                    <span className="w-5">{team.losses}</span>
+                    <span className="w-7 font-bold text-gray-800">{team.points}</span>
                   </div>
                 </div>
               ))}
             </div>
             
-            <div className="mt-4 flex flex-wrap gap-3 text-[10px] text-gray-500 px-3">
-              <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-yellow-400"></div> Champion + CAF CL</div>
+            <div className="mt-4 flex flex-wrap gap-3 text-[10px] text-gray-500 px-2">
+              <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-yellow-400"></div> Champion</div>
               <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-400"></div> CAF CL</div>
-              <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-400"></div> Relegation zone</div>
+              <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-400"></div> Relegation</div>
             </div>
           </>
         )}
