@@ -127,7 +127,7 @@ const Index = () => {
       </div>
 
       {/* Navigation */}
-      <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm">
+      <div className="sticky top-0 z-50 bg-white/75 dark:bg-card/60 backdrop-blur-[10px] border-b border-border/40 shadow-sm">
         <div className="container mx-auto px-6">
           <div className="flex justify-center py-4">
             <div className="flex bg-secondary/20 rounded-2xl p-1.5 shadow-lg border border-border">
@@ -157,7 +157,7 @@ const Index = () => {
 
       <div className="container mx-auto px-6 pb-6">
         {activeTab === 'home' ? (
-          <div className="space-y-6 -mt-4">
+          <div className="space-y-6">
             {/* Top section: left (badge + HUD) | right (fixtures + league table) */}
             <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
               <div className="space-y-4">
