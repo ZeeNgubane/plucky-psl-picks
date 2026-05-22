@@ -171,11 +171,11 @@ const Index = () => {
                 />
               </div>
 
-              <div className="order-3 lg:order-2 min-w-0">
+              <div className="order-2 min-w-0">
                 <CompactFixtures />
               </div>
 
-              <div className="order-first lg:order-last min-w-0">
+              <div className="order-3 lg:order-last min-w-0">
                 <LeagueTable />
               </div>
             </div>
