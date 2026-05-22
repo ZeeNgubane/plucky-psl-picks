@@ -158,10 +158,10 @@ const Index = () => {
       <div className="container mx-auto px-6 pb-6">
         {activeTab === 'home' ? (
           <div className="space-y-6">
-            {/* Top section: left (badge + HUD) | right (fixtures + league table) */}
-            <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
-              <div className="space-y-4">
-                <UserBadgePanel teamName="My Fantasy XI" tier="gold" />
+            {/* Top section: 3 columns on desktop, custom order on mobile */}
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-[220px_1fr_1fr]">
+              <div className="order-2 lg:order-first flex flex-col-reverse lg:flex-col gap-4 min-w-0">
+                <UserBadgePanel teamName="My Fantasy XI" tier="gold" compact />
                 <PlayerStatHUD
                   gwPoints={62}
                   leagueRank={4}
@@ -171,13 +171,12 @@ const Index = () => {
                 />
               </div>
 
-              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 min-w-0">
-                <div className="min-w-0">
-                  <CompactFixtures />
-                </div>
-                <div className="min-w-0">
-                  <LeagueTable />
-                </div>
+              <div className="order-3 lg:order-2 min-w-0">
+                <CompactFixtures />
+              </div>
+
+              <div className="order-first lg:order-last min-w-0">
+                <LeagueTable />
               </div>
             </div>
 
