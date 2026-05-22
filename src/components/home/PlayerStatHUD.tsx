@@ -27,7 +27,7 @@ const PlayerStatHUD = ({
 
   return (
     <div
-      className="rounded-xl p-4 font-mono text-white"
+      className="rounded-xl p-4 pb-6 font-mono text-white"
       style={{ backgroundColor: '#0a0e1a', border: '1px solid #1e3a5f' }}
     >
       <p className="text-[10px] uppercase tracking-[0.2em] text-[#00d4ff] text-center">GW Points</p>
@@ -40,11 +40,11 @@ const PlayerStatHUD = ({
         </div>
         <div className="flex justify-between">
           <span className="text-gray-400">Squad Value</span>
-          <span className="text-white tabular-nums">R{squadValue.toFixed(1)}M</span>
+          <span className="text-white tabular-nums">R{Math.round(squadValue).toLocaleString()}M</span>
         </div>
         <div className="flex justify-between">
           <span className="text-gray-400">Bank</span>
-          <span className="text-white tabular-nums">R{bank.toFixed(1)}M</span>
+          <span className="text-white tabular-nums">R{Math.round(bank).toLocaleString()}M</span>
         </div>
       </div>
 
