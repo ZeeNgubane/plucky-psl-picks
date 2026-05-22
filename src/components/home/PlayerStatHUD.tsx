@@ -27,7 +27,7 @@ const PlayerStatHUD = ({
 
   return (
     <div
-      className="rounded-xl p-4 font-mono text-white"
+      className="rounded-xl p-4 pb-6 font-mono text-white"
       style={{ backgroundColor: '#0a0e1a', border: '1px solid #1e3a5f' }}
     >
       <p className="text-[10px] uppercase tracking-[0.2em] text-[#00d4ff] text-center">GW Points</p>
