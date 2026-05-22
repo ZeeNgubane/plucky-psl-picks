@@ -40,11 +40,11 @@ const PlayerStatHUD = ({
         </div>
         <div className="flex justify-between">
           <span className="text-gray-400">Squad Value</span>
-          <span className="text-white tabular-nums">R{squadValue.toFixed(1)}M</span>
+          <span className="text-white tabular-nums">R{Math.round(squadValue).toLocaleString()}M</span>
         </div>
         <div className="flex justify-between">
           <span className="text-gray-400">Bank</span>
-          <span className="text-white tabular-nums">R{bank.toFixed(1)}M</span>
+          <span className="text-white tabular-nums">R{Math.round(bank).toLocaleString()}M</span>
         </div>
       </div>
 
