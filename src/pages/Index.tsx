@@ -160,7 +160,7 @@ const Index = () => {
           <div className="space-y-6">
             {/* Top section: 3 columns on desktop, custom order on mobile */}
             <div className="grid gap-4 grid-cols-1 lg:grid-cols-[220px_1fr_1fr]">
-              <div className="order-2 lg:order-first flex flex-col-reverse lg:flex-col gap-4 min-w-0">
+              <div className="order-first flex flex-col-reverse lg:flex-col gap-4 min-w-0">
                 <UserBadgePanel teamName="My Fantasy XI" tier="gold" compact />
                 <PlayerStatHUD
                   gwPoints={62}
