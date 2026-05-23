@@ -173,17 +173,11 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-start gap-4">
-        <div className="flex-1 min-w-0">
-          <PlayerStatHUD
-            squadValue={selectedPlayers.reduce((s, p) => s + (Number(p.price) || 0), 0) * 18}
-            bank={(100 - selectedPlayers.reduce((s, p) => s + (Number(p.price) || 0), 0)) * 18}
-          />
-        </div>
-        <Button onClick={handleSaveTeam}>
-          <Save className="mr-2 h-4 w-4" />
-          Save Team
-        </Button>
+      <div className="flex-1 min-w-3/4">
+        <PlayerStatHUD
+          squadValue={selectedPlayers.reduce((s, p) => s + (Number(p.price) || 0), 0) * 18}
+          bank={(100 - selectedPlayers.reduce((s, p) => s + (Number(p.price) || 0), 0)) * 18}
+        />
       </div>
       
       <div className="space-y-6">
@@ -197,6 +191,13 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
           onPlayerClick={handlePlayerClick}
           playerToSwap={playerToSwap}
         />
+      </div>
+
+      <div className="flex justify-center pt-2 pb-4">
+        <Button onClick={handleSaveTeam} size="lg">
+          <Save className="mr-2 h-5 w-5" />
+          Save Team
+        </Button>
       </div>
       
       <PlayerLineupList formationGroups={formationGroups} />
