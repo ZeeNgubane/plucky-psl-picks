@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
-import MyTeamSummary from "./MyTeamSummary";
 import PlayerLineupList from "./PlayerLineupList";
 import FormationPitch from "./FormationPitch";
 import { Player } from "@/data/teams";
 import SubstitutesBench from "./SubstitutesBench";
+import PlayerStatHUD from "./home/PlayerStatHUD";
 import { Button } from "./ui/button";
 import { toast } from "./ui/sonner";
 import { Save } from "lucide-react";
