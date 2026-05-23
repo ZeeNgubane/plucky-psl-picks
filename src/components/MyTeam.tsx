@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
-import MyTeamSummary from "./MyTeamSummary";
 import PlayerLineupList from "./PlayerLineupList";
 import FormationPitch from "./FormationPitch";
 import { Player } from "@/data/teams";
 import SubstitutesBench from "./SubstitutesBench";
+import PlayerStatHUD from "./home/PlayerStatHUD";
 import { Button } from "./ui/button";
 import { toast } from "./ui/sonner";
 import { Save } from "lucide-react";
@@ -173,8 +173,13 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <MyTeamSummary selectedPlayers={selectedPlayers} />
+      <div className="flex justify-between items-start gap-4">
+        <div className="flex-1 min-w-0">
+          <PlayerStatHUD
+            squadValue={selectedPlayers.reduce((s, p) => s + (Number(p.price) || 0), 0) * 18}
+            bank={(100 - selectedPlayers.reduce((s, p) => s + (Number(p.price) || 0), 0)) * 18}
+          />
+        </div>
         <Button onClick={handleSaveTeam}>
           <Save className="mr-2 h-4 w-4" />
           Save Team
