@@ -1,99 +1,24 @@
 import { Player } from "@/data/teams";
-import PitchBackground from "./PitchBackground";
-import PitchArrows from "./PitchArrows";
-import PlayerIcon from "./PlayerIcon";
+import { useTeamLogos } from "@/hooks/use-team-logos";
 
-// --- Formation mapping and utility ---
 const FORMATIONS = [
-  {
-    name: "4-4-2",
-    def: 4,
-    mid: 4,
-    fwd: 2,
-    layout: [
-      { label: 'FWD', count: 2 },
-      { label: 'MID', count: 4 },
-      { label: 'DEF', count: 4 },
-      { label: 'GK', count: 1 },
-    ]
-  },
-  {
-    name: "4-3-3",
-    def: 4,
-    mid: 3,
-    fwd: 3,
-    layout: [
-      { label: 'FWD', count: 3 },
-      { label: 'MID', count: 3 },
-      { label: 'DEF', count: 4 },
-      { label: 'GK', count: 1 },
-    ]
-  },
-  {
-    name: "3-5-2",
-    def: 3,
-    mid: 5,
-    fwd: 2,
-    layout: [
-      { label: 'FWD', count: 2 },
-      { label: 'MID', count: 5 },
-      { label: 'DEF', count: 3 },
-      { label: 'GK', count: 1 },
-    ]
-  },
-  {
-    name: "3-4-3",
-    def: 3,
-    mid: 4,
-    fwd: 3,
-    layout: [
-      { label: 'FWD', count: 3 },
-      { label: 'MID', count: 4 },
-      { label: 'DEF', count: 3 },
-      { label: 'GK', count: 1 },
-    ]
-  },
-  {
-    name: "4-2-3-1",
-    def: 4,
-    mid: 5,
-    fwd: 1,
-    layout: [
-      { label: 'FWD', count: 1 },
-      { label: 'MID', count: 3 },
-      { label: 'MID', count: 2 },
-      { label: 'DEF', count: 4 },
-      { label: 'GK', count: 1 },
-    ],
-  },
-  {
-    name: "5-3-2",
-    def: 5,
-    mid: 3,
-    fwd: 2,
-    layout: [
-      { label: 'FWD', count: 2 },
-      { label: 'MID', count: 3 },
-      { label: 'DEF', count: 5 },
-      { label: 'GK', count: 1 },
-    ]
-  },
+  { name: "4-4-2", def: 4, mid: 4, fwd: 2, layout: [{ label: "GK", count: 1 }, { label: "DEF", count: 4 }, { label: "MID", count: 4 }, { label: "FWD", count: 2 }] },
+  { name: "4-3-3", def: 4, mid: 3, fwd: 3, layout: [{ label: "GK", count: 1 }, { label: "DEF", count: 4 }, { label: "MID", count: 3 }, { label: "FWD", count: 3 }] },
+  { name: "3-5-2", def: 3, mid: 5, fwd: 2, layout: [{ label: "GK", count: 1 }, { label: "DEF", count: 3 }, { label: "MID", count: 5 }, { label: "FWD", count: 2 }] },
+  { name: "3-4-3", def: 3, mid: 4, fwd: 3, layout: [{ label: "GK", count: 1 }, { label: "DEF", count: 3 }, { label: "MID", count: 4 }, { label: "FWD", count: 3 }] },
+  { name: "5-3-2", def: 5, mid: 3, fwd: 2, layout: [{ label: "GK", count: 1 }, { label: "DEF", count: 5 }, { label: "MID", count: 3 }, { label: "FWD", count: 2 }] },
 ];
 
-// Find the best formation for current selection
 function pickFormation(def: number, mid: number, fwd: number) {
-  const perfect = FORMATIONS.find(f =>
-    f.def === def && f.mid === mid && f.fwd === fwd
-  );
+  const perfect = FORMATIONS.find((f) => f.def === def && f.mid === mid && f.fwd === fwd);
   if (perfect) return perfect;
-
   let best = FORMATIONS[0];
   let bestScore = -1;
-  FORMATIONS.forEach(f => {
-    let score = 0;
-    score += Math.min(def, f.def) / f.def;
-    score += Math.min(mid, f.mid) / f.mid;
-    score += Math.min(fwd, f.fwd) / (f.fwd || 1);
+  FORMATIONS.forEach((f) => {
+    const score =
+      Math.min(def, f.def) / f.def +
+      Math.min(mid, f.mid) / f.mid +
+      Math.min(fwd, f.fwd) / (f.fwd || 1);
     if (score > bestScore) {
       best = f;
       bestScore = score;
@@ -108,137 +33,136 @@ interface FormationPitchProps {
   playerToSwap: Player | null;
 }
 
-// Updated: function to map each row label to Y%
-function getRowYPositions(lineLabels: string[]) {
-  // SVG pitch: 0 (top) to 600 (bottom)
-  const PENALTY_BOX_Y = 140;    // Goalkeeper line
-  const HALF_WAY_Y = 550;       // Forwards line
-  const DEFENDERS_EXTRA_UP = 60; // How far "up" from GK we put defenders
-
-  const n = lineLabels.length;
-
-  // If we have only two lines (GK/FWD), just do penalty box and halfway
-  if (n <= 2) {
-    return lineLabels.map((label) =>
-      label === "GK" ? PENALTY_BOX_Y
-      : label === "FWD" ? HALF_WAY_Y
-      : (PENALTY_BOX_Y + HALF_WAY_Y) / 2
-    );
-  }
-
-  // Find indexes for each line
-  const idxGK = lineLabels.findIndex(l => l === "GK");
-  const idxDEF = lineLabels.findIndex(l => l === "DEF");
-  const idxMID = lineLabels.findIndex(l => l === "MID");
-  const idxFWD = lineLabels.findIndex(l => l === "FWD");
-
-  // We'll assign positions:
-  // GK: stays at penalty box
-  // DEF: farther from GK, but not too close (PENALTY_BOX_Y + DEFENDERS_EXTRA_UP)
-  // MID: between DEF and FWD
-  // FWD: halfway line
-
-  return lineLabels.map((label, i) => {
-    if (label === "GK") return PENALTY_BOX_Y;
-    if (label === "FWD") return HALF_WAY_Y;
-    if (label === "DEF") {
-      // Fixed offset up from GK toward MID/FWD
-      // Place defenders well above the GK line (toward midfield)
-      return PENALTY_BOX_Y + DEFENDERS_EXTRA_UP;
-    }
-    if (label === "MID") {
-      // Position midfielders proportionally between DEF and FWD
-      const yDEF = PENALTY_BOX_Y + DEFENDERS_EXTRA_UP;
-      return yDEF + (HALF_WAY_Y - yDEF) * 0.5;
-    }
-    // If any other line, distribute linearly in-between
-    const y0 = PENALTY_BOX_Y + DEFENDERS_EXTRA_UP;
-    const y1 = HALF_WAY_Y;
-    const t = (i - 2) / (n - 3); // For any additional lines
-    return y0 + (y1 - y0) * t;
-  });
-}
+const PlayerCard = ({
+  player,
+  label,
+  logo,
+  isSelected,
+  onClick,
+}: {
+  player: Player | null;
+  label: string;
+  logo?: string;
+  isSelected?: boolean;
+  onClick?: () => void;
+}) => {
+  const surname = player ? player.name.split(" ").slice(-1)[0].toUpperCase() : "";
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex flex-col items-center w-[60px] sm:w-[80px] focus:outline-none transition-transform ${
+        isSelected ? "scale-105" : ""
+      }`}
+    >
+      <div
+        className={`flex items-center justify-center h-[50px] sm:h-[60px] w-full ${
+          isSelected ? "ring-2 ring-primary rounded-md" : ""
+        }`}
+      >
+        {player && logo ? (
+          <img src={logo} alt={player.team} className="h-full w-auto object-contain drop-shadow-md" />
+        ) : (
+          <div className="h-full w-[40px] sm:w-[48px] rounded-md bg-white/15 border border-dashed border-white/40 flex items-center justify-center text-white/60 text-xs font-bold">
+            {player ? surname.slice(0, 2) : "+"}
+          </div>
+        )}
+      </div>
+      <div className="w-full mt-1 rounded-[3px] overflow-hidden bg-[#0a0e27] shadow">
+        <div className="text-white text-[10px] sm:text-[11px] font-bold text-center py-[2px] px-1 truncate leading-tight">
+          {player ? surname : label}
+        </div>
+        <div className="bg-[#1a1f3a] text-gray-300 text-[8px] sm:text-[9px] text-center py-[1px] px-1 truncate leading-tight">
+          {player ? "SUN (A)" : "—"}
+        </div>
+      </div>
+    </button>
+  );
+};
 
 const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap }: FormationPitchProps) => {
+  const logos = useTeamLogos();
   const byPos = {
-    GK: selectedPlayers.filter(p => p.position === 'GK'),
-    DEF: selectedPlayers.filter(p => p.position === 'DEF'),
-    MID: selectedPlayers.filter(p => p.position === 'MID'),
-    FWD: selectedPlayers.filter(p => p.position === 'FWD'),
+    GK: selectedPlayers.filter((p) => p.position === "GK"),
+    DEF: selectedPlayers.filter((p) => p.position === "DEF"),
+    MID: selectedPlayers.filter((p) => p.position === "MID"),
+    FWD: selectedPlayers.filter((p) => p.position === "FWD"),
   };
 
-  const bestFormation = pickFormation(
-    byPos.DEF.length,
-    byPos.MID.length,
-    byPos.FWD.length
-  );
+  const formation = pickFormation(byPos.DEF.length, byPos.MID.length, byPos.FWD.length);
 
-  const playerLines: { players: (Player | null)[], label: string }[] = [];
-  let indexer = { FWD: 0, MID: 0, DEF: 0, GK: 0 };
-  bestFormation.layout.forEach(row => {
-    const arr: (Player | null)[] = [];
+  const rows: { label: string; players: (Player | null)[] }[] = [];
+  const idx = { GK: 0, DEF: 0, MID: 0, FWD: 0 };
+  formation.layout.forEach((row) => {
+    const players: (Player | null)[] = [];
     for (let i = 0; i < row.count; i++) {
-      const player = byPos[row.label as keyof typeof byPos]?.[indexer[row.label as keyof typeof byPos]] || null;
-      arr.push(player);
-      indexer[row.label as keyof typeof byPos]++;
+      const key = row.label as keyof typeof idx;
+      players.push(byPos[key][idx[key]] || null);
+      idx[key]++;
     }
-    playerLines.push({ players: arr, label: row.label });
+    rows.push({ label: row.label, players });
   });
 
-  const allPlayersOnPitch = playerLines.flatMap(line => line.players).filter((p): p is Player => p !== null);
-
-  // REVERSE the order here (so FWD is first, then MID, DEF, GK last)
-  const reversedPlayerLines = [...playerLines].reverse();
-
-  // Adjust all below references for playerLines to use reversedPlayerLines
-  const yPositions = getRowYPositions(reversedPlayerLines.map(l => l.label));
-  const minX = 70, maxX = 330; // For horizontal placement inside the pitch
-
   return (
-    <div className="mt-6 relative min-h-[600px] max-w-md mx-auto overflow-hidden rounded-xl shadow-2xl border border-emerald-600/30">
-      <PitchBackground />
-      <PitchArrows />
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 600">
-        {/* Formation badge */}
-        <rect x="145" y="8" width="110" height="26" rx="13" fill="rgba(0,0,0,0.5)" />
-        <text x="200" y="26" textAnchor="middle" fontSize="13" fill="#fff" fontWeight="700" letterSpacing="1.5" style={{ fontFamily: "'Inter', sans-serif" }}>
-          {bestFormation.name}
-        </text>
-        {/* Players in formation */}
-        {reversedPlayerLines.map((line, rowIdx) => {
-          const y = yPositions[rowIdx];
-          const n = line.players.length;
-          // Horizontal spacing for n players
-          const xs = n === 1
-            ? [200]
-            : Array.from({length: n}, (_, i) =>
-                minX + ((maxX - minX) * i) / (n - 1)
-              );
-          return line.players.map((player, i) => {
-            const isSelected = player && playerToSwap && player.id === playerToSwap.id;
-            return (
-              <g
-                key={player?.id || `empty-${i}-${line.label}`}
-                onClick={() => player && onPlayerClick(player)}
-                className="cursor-pointer"
-                style={{ outline: "none" }}
-              >
-                {isSelected && (
-                   <circle cx={xs[i]} cy={y} r="25" fill="none" stroke="hsl(var(--primary))" strokeWidth="3" strokeDasharray="4" >
-                     <animate attributeName="stroke-dashoffset" from="0" to="20" dur="1s" repeatCount="indefinite"/>
-                   </circle>
-                )}
-                <PlayerIcon
-                  player={player}
-                  x={xs[i]}
-                  y={y}
-                  label={line.label}
-                />
-              </g>
-            );
-          });
-        })}
-      </svg>
+    <div className="relative w-full mx-auto rounded-xl overflow-hidden" style={{ aspectRatio: "3 / 4", maxWidth: "480px" }}>
+      {/* Pitch background gradient */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, #1a6b2a 0%, #2d9e42 40%, #2d9e42 60%, #1a6b2a 100%)",
+        }}
+      />
+
+      {/* Edge fade into app background */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, transparent 55%, hsl(var(--background)) 100%)",
+        }}
+      />
+
+      {/* Pitch markings (white borders, no fill) */}
+      <div className="absolute inset-[3%] border-2 border-white/70 rounded-sm pointer-events-none">
+        {/* Halfway line */}
+        <div className="absolute left-0 right-0 top-1/2 border-t-2 border-white/70" />
+        {/* Centre circle */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[28%] aspect-square rounded-full border-2 border-white/70" />
+        {/* Centre spot */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white/80" />
+        {/* Top penalty box */}
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[55%] h-[18%] border-2 border-t-0 border-white/70" />
+        {/* Top goal box */}
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[28%] h-[8%] border-2 border-t-0 border-white/70" />
+        {/* Bottom penalty box */}
+        <div className="absolute left-1/2 bottom-0 -translate-x-1/2 w-[55%] h-[18%] border-2 border-b-0 border-white/70" />
+        {/* Bottom goal box */}
+        <div className="absolute left-1/2 bottom-0 -translate-x-1/2 w-[28%] h-[8%] border-2 border-b-0 border-white/70" />
+      </div>
+
+      {/* Formation pill */}
+      <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-full tracking-wider">
+        {formation.name}
+      </div>
+
+      {/* Players grid */}
+      <div className="absolute inset-0 flex flex-col justify-around py-6 px-2 z-[1]">
+        {rows.map((row, ri) => (
+          <div key={ri} className="flex justify-around items-center">
+            {row.players.map((p, pi) => (
+              <PlayerCard
+                key={p?.id || `${row.label}-${pi}`}
+                player={p}
+                label={row.label}
+                logo={p ? logos[p.team] : undefined}
+                isSelected={!!(p && playerToSwap && p.id === playerToSwap.id)}
+                onClick={() => p && onPlayerClick(p)}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
