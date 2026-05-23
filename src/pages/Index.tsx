@@ -191,7 +191,7 @@ const Index = () => {
       </div>
 
       {/* Mobile Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-xl border-t border-border p-4 lg:hidden z-50 shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-xl border-t border-border p-2 lg:hidden z-50 shadow-2xl">
         <div className="flex justify-around">
           {[
             { id: 'home', label: 'Home', icon: House },
@@ -206,8 +206,8 @@ const Index = () => {
                 activeTab === tab.id ? 'text-primary bg-primary/10 scale-110' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              <tab.icon className="h-5 w-5" />
-              <span className="text-[10px] font-bold">{tab.label}</span>
+              <tab.icon className="h-4 w-4" />
+              <span className="text-[9px] font-bold">{tab.label}</span>
             </button>
           ))}
         </div>
