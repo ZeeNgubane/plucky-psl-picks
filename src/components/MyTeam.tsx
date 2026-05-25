@@ -50,6 +50,7 @@ const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: My
   const [playerToSwap, setPlayerToSwap] = useState<Player | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerPosition, setPickerPosition] = useState<string | null>(null);
+  const [pickerPitchPlayer, setPickerPitchPlayer] = useState<Player | null>(null);
 
   const formationGroups = {
     GK: selectedPlayers.filter(p => p.position === 'GK'),
@@ -191,8 +192,10 @@ const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: My
           selectedPlayers={starters} 
           onPlayerClick={handlePlayerClick}
           playerToSwap={playerToSwap}
-          onSlotClick={(position, _player) => {
+          mode="team"
+          onSlotClick={(position, player) => {
             setPickerPosition(position);
+            setPickerPitchPlayer(player);
             setPickerOpen(true);
           }}
         />
@@ -217,9 +220,17 @@ const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: My
         onOpenChange={setPickerOpen}
         position={pickerPosition}
         selectedPlayers={selectedPlayers}
-        budget={budget}
-        onPlayerAdd={(p) => onPlayerAdd?.(p)}
-        onPlayerRemove={(id) => onPlayerRemove?.(id)}
+        mode="team"
+        substitutes={subs}
+        selectedPitchPlayer={pickerPitchPlayer}
+        onSwap={(sub) => {
+          if (!pickerPitchPlayer) return;
+          setStarters((prev) => prev.filter((p) => p.id !== pickerPitchPlayer.id).concat(sub));
+          setSubs((prev) => prev.filter((p) => p.id !== sub.id).concat(pickerPitchPlayer));
+          toast.success('Swap successful', {
+            description: `${sub.name} is now starting in place of ${pickerPitchPlayer.name}.`,
+          });
+        }}
       />
     </div>
   );
