@@ -92,7 +92,12 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Transfers selectedPlayers={selectedPlayers} onPlayerAdd={handlePlayerAdd} onPlayerRemove={handlePlayerRemove} budget={budget} />
             <div>
-              <FormationPitch selectedPlayers={selectedPlayers} onPlayerClick={() => {}} playerToSwap={null} />
+              <TransfersPitch
+                selectedPlayers={selectedPlayers}
+                budget={budget}
+                onPlayerAdd={handlePlayerAdd}
+                onPlayerRemove={handlePlayerRemove}
+              />
             </div>
           </div>
         );
