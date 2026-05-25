@@ -158,7 +158,10 @@ const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap, onSlotCl
                 label={row.label}
                 logo={p ? logos[p.team] : undefined}
                 isSelected={!!(p && playerToSwap && p.id === playerToSwap.id)}
-                onClick={() => p && onPlayerClick(p)}
+                onClick={() => {
+                  if (onSlotClick) onSlotClick(row.label, p);
+                  else if (p) onPlayerClick(p);
+                }}
               />
             ))}
           </div>
