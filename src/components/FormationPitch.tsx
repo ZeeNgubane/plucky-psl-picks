@@ -81,7 +81,7 @@ const PlayerCard = ({
   );
 };
 
-const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap }: FormationPitchProps) => {
+const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap, onSlotClick }: FormationPitchProps) => {
   const logos = useTeamLogos();
   const byPos = {
     GK: selectedPlayers.filter((p) => p.position === "GK"),
