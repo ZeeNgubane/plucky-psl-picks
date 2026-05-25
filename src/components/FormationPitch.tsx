@@ -31,6 +31,7 @@ interface FormationPitchProps {
   selectedPlayers: Player[];
   onPlayerClick: (player: Player) => void;
   playerToSwap: Player | null;
+  onSlotClick?: (position: string, player: Player | null) => void;
 }
 
 const PlayerCard = ({
