@@ -191,6 +191,10 @@ const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: My
           selectedPlayers={starters} 
           onPlayerClick={handlePlayerClick}
           playerToSwap={playerToSwap}
+          onSlotClick={(position, _player) => {
+            setPickerPosition(position);
+            setPickerOpen(true);
+          }}
         />
         <SubstitutesBench 
           substitutes={subs} 
@@ -207,6 +211,16 @@ const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: My
       </div>
       
       <PlayerLineupList formationGroups={formationGroups} />
+
+      <PlayerPickerSheet
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        position={pickerPosition}
+        selectedPlayers={selectedPlayers}
+        budget={budget}
+        onPlayerAdd={(p) => onPlayerAdd?.(p)}
+        onPlayerRemove={(id) => onPlayerRemove?.(id)}
+      />
     </div>
   );
 };
