@@ -44,10 +44,12 @@ function pickFormation(def: number, mid: number, fwd: number) {
   return best;
 }
 
-const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
+const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: MyTeamProps) => {
   const [starters, setStarters] = useState<Player[]>([]);
   const [subs, setSubs] = useState<Player[]>([]);
   const [playerToSwap, setPlayerToSwap] = useState<Player | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerPosition, setPickerPosition] = useState<string | null>(null);
 
   const formationGroups = {
     GK: selectedPlayers.filter(p => p.position === 'GK'),
