@@ -222,4 +222,44 @@ const Index = () => {
   );
 };
 
+const TransfersPitch = ({
+  selectedPlayers,
+  budget,
+  onPlayerAdd,
+  onPlayerRemove,
+}: {
+  selectedPlayers: Player[];
+  budget: number;
+  onPlayerAdd: (player: Player) => void;
+  onPlayerRemove: (playerId: string) => void;
+}) => {
+  const [open, setOpen] = useState(false);
+  const [position, setPosition] = useState<string | null>(null);
+
+  return (
+    <>
+      <FormationPitch
+        selectedPlayers={selectedPlayers}
+        onPlayerClick={() => {}}
+        playerToSwap={null}
+        mode="transfers"
+        onSlotClick={(pos) => {
+          setPosition(pos);
+          setOpen(true);
+        }}
+      />
+      <PlayerPickerSheet
+        open={open}
+        onOpenChange={setOpen}
+        position={position}
+        selectedPlayers={selectedPlayers}
+        budget={budget}
+        mode="transfers"
+        onPlayerAdd={onPlayerAdd}
+        onPlayerRemove={onPlayerRemove}
+      />
+    </>
+  );
+};
+
 export default Index;
