@@ -4,20 +4,28 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Plus, Minus, Loader2 } from 'lucide-react';
+import { Search, Plus, Minus, Loader2, ArrowLeftRight } from 'lucide-react';
 import { Player } from '@/data/teams';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useTeamLogos } from '@/hooks/use-team-logos';
+
+type PickerMode = 'team' | 'transfers';
 
 interface PlayerPickerSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   position: string | null; // GK | DEF | MID | FWD
   selectedPlayers: Player[];
-  budget: number;
-  onPlayerAdd: (player: Player) => void;
-  onPlayerRemove: (playerId: string) => void;
+  budget?: number;
+  mode?: PickerMode;
+  // transfers mode
+  onPlayerAdd?: (player: Player) => void;
+  onPlayerRemove?: (playerId: string) => void;
+  // team mode
+  substitutes?: Player[];
+  selectedPitchPlayer?: Player | null;
+  onSwap?: (sub: Player) => void;
 }
 
 const POSITION_LABELS: Record<string, string> = {
@@ -50,9 +58,13 @@ const PlayerPickerSheet = ({
   onOpenChange,
   position,
   selectedPlayers,
-  budget,
+  budget = 0,
+  mode = 'transfers',
   onPlayerAdd,
   onPlayerRemove,
+  substitutes = [],
+  selectedPitchPlayer,
+  onSwap,
 }: PlayerPickerSheetProps) => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'points' | 'price' | 'name'>('points');
@@ -65,6 +77,7 @@ const PlayerPickerSheet = ({
       if (error) throw error;
       return (data || []) as unknown as Player[];
     },
+    enabled: mode === 'transfers',
   });
 
   const filtered = useMemo(() => {
@@ -84,6 +97,11 @@ const PlayerPickerSheet = ({
       });
   }, [allPlayers, position, search, sortBy]);
 
+  const teamSubs = useMemo(
+    () => substitutes.filter((p) => (position ? normalizePos(p.position) === position : true)),
+    [substitutes, position]
+  );
+
   const isSelected = (id: number) => selectedPlayers.some((p) => p.id === id);
 
   const canAdd = (player: Player) => {
@@ -96,14 +114,19 @@ const PlayerPickerSheet = ({
 
   const handlePick = (player: Player) => {
     if (isSelected(player.id)) {
-      onPlayerRemove(String(player.id));
+      onPlayerRemove?.(String(player.id));
     } else {
-      onPlayerAdd(player);
+      onPlayerAdd?.(player);
     }
     onOpenChange(false);
   };
 
-  const title = position ? `Select ${POSITION_LABELS[position] || position}` : 'Select Player';
+  const title =
+    mode === 'team'
+      ? 'Select Substitute'
+      : position
+      ? `Select ${POSITION_LABELS[position] || position}`
+      : 'Select Player';
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -120,32 +143,78 @@ const PlayerPickerSheet = ({
           <SheetTitle className="text-left">{title}</SheetTitle>
         </SheetHeader>
 
-        {/* Search + sort */}
-        <div className="px-4 pb-3 flex items-center gap-2 shrink-0">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search name or team..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 h-9 text-sm"
-            />
+        {mode === 'transfers' && (
+          <div className="px-4 pb-3 flex items-center gap-2 shrink-0">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search name or team..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9 h-9 text-sm"
+              />
+            </div>
+            <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+              <SelectTrigger className="h-9 w-[110px] text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="points">Points</SelectItem>
+                <SelectItem value="price">Value</SelectItem>
+                <SelectItem value="name">Name</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-            <SelectTrigger className="h-9 w-[110px] text-sm">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="points">Points</SelectItem>
-              <SelectItem value="price">Value</SelectItem>
-              <SelectItem value="name">Name</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        )}
 
         {/* List */}
         <div className="flex-1 overflow-y-auto px-2 pb-4">
-          {isLoading ? (
+          {mode === 'team' ? (
+            teamSubs.length === 0 ? (
+              <div className="text-center text-sm text-muted-foreground py-8 px-4">
+                No substitutes available for this position
+              </div>
+            ) : (
+              <ul className="divide-y divide-border">
+                {teamSubs.map((player) => {
+                  const pos = normalizePos(player.position);
+                  return (
+                    <li
+                      key={player.id}
+                      className="flex items-center gap-2 px-2 min-h-[48px] py-2"
+                    >
+                      <Badge className={`${POSITION_COLORS[pos] || 'bg-gray-100 text-gray-800'} text-[10px] px-1.5 py-0 leading-tight shrink-0`}>
+                        {pos}
+                      </Badge>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-medium truncate">{player.name}</div>
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          {logos[player.team] && (
+                            <img src={logos[player.team]} alt={player.team} className="h-3.5 w-3.5 object-contain" />
+                          )}
+                          <span className="truncate">{player.team}</span>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0 mr-2">
+                        <div className="text-[11px] font-bold">{player.total_points || '0'} pts</div>
+                      </div>
+                      <Button
+                        size="sm"
+                        className="h-8 px-2 shrink-0"
+                        onClick={() => {
+                          onSwap?.(player);
+                          onOpenChange(false);
+                        }}
+                        disabled={!selectedPitchPlayer}
+                      >
+                        <ArrowLeftRight className="h-3.5 w-3.5 mr-1" />Swap
+                      </Button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )
+          ) : isLoading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
