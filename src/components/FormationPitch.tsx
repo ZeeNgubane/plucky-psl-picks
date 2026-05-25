@@ -31,6 +31,7 @@ interface FormationPitchProps {
   selectedPlayers: Player[];
   onPlayerClick: (player: Player) => void;
   playerToSwap: Player | null;
+  onSlotClick?: (position: string, player: Player | null) => void;
 }
 
 const PlayerCard = ({
@@ -80,7 +81,7 @@ const PlayerCard = ({
   );
 };
 
-const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap }: FormationPitchProps) => {
+const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap, onSlotClick }: FormationPitchProps) => {
   const logos = useTeamLogos();
   const byPos = {
     GK: selectedPlayers.filter((p) => p.position === "GK"),
@@ -157,7 +158,10 @@ const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap }: Format
                 label={row.label}
                 logo={p ? logos[p.team] : undefined}
                 isSelected={!!(p && playerToSwap && p.id === playerToSwap.id)}
-                onClick={() => p && onPlayerClick(p)}
+                onClick={() => {
+                  if (onSlotClick) onSlotClick(row.label, p);
+                  else if (p) onPlayerClick(p);
+                }}
               />
             ))}
           </div>

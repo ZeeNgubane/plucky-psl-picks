@@ -4,12 +4,16 @@ import FormationPitch from "./FormationPitch";
 import { Player } from "@/data/teams";
 import SubstitutesBench from "./SubstitutesBench";
 import PlayerStatHUD from "./home/PlayerStatHUD";
+import PlayerPickerSheet from "./PlayerPickerSheet";
 import { Button } from "./ui/button";
 import { toast } from "./ui/sonner";
 import { Save } from "lucide-react";
 
 interface MyTeamProps {
   selectedPlayers: Player[];
+  budget?: number;
+  onPlayerAdd?: (player: Player) => void;
+  onPlayerRemove?: (playerId: string) => void;
 }
 
 const FORMATIONS = [
@@ -40,10 +44,12 @@ function pickFormation(def: number, mid: number, fwd: number) {
   return best;
 }
 
-const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
+const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: MyTeamProps) => {
   const [starters, setStarters] = useState<Player[]>([]);
   const [subs, setSubs] = useState<Player[]>([]);
   const [playerToSwap, setPlayerToSwap] = useState<Player | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerPosition, setPickerPosition] = useState<string | null>(null);
 
   const formationGroups = {
     GK: selectedPlayers.filter(p => p.position === 'GK'),
@@ -185,6 +191,10 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
           selectedPlayers={starters} 
           onPlayerClick={handlePlayerClick}
           playerToSwap={playerToSwap}
+          onSlotClick={(position, _player) => {
+            setPickerPosition(position);
+            setPickerOpen(true);
+          }}
         />
         <SubstitutesBench 
           substitutes={subs} 
@@ -201,6 +211,16 @@ const MyTeam = ({ selectedPlayers }: MyTeamProps) => {
       </div>
       
       <PlayerLineupList formationGroups={formationGroups} />
+
+      <PlayerPickerSheet
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        position={pickerPosition}
+        selectedPlayers={selectedPlayers}
+        budget={budget}
+        onPlayerAdd={(p) => onPlayerAdd?.(p)}
+        onPlayerRemove={(id) => onPlayerRemove?.(id)}
+      />
     </div>
   );
 };
