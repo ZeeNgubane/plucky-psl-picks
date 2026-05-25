@@ -6,6 +6,7 @@ import MyTeam from '@/components/MyTeam';
 import Transfers from '@/components/Transfers';
 import League from '@/components/League';
 import FormationPitch from '@/components/FormationPitch';
+import PlayerPickerSheet from '@/components/PlayerPickerSheet';
 import CompactFixtures from '@/components/home/CompactFixtures';
 import LeagueTable from '@/components/home/LeagueTable';
 import UserBadgePanel from '@/components/home/UserBadgePanel';
