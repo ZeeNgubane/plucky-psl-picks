@@ -86,7 +86,7 @@ const Index = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'team':
-        return <MyTeam selectedPlayers={selectedPlayers} />;
+        return <MyTeam selectedPlayers={selectedPlayers} budget={budget} onPlayerAdd={handlePlayerAdd} onPlayerRemove={handlePlayerRemove} />;
       case 'transfers':
         return (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
