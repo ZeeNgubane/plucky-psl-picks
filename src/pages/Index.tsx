@@ -6,6 +6,7 @@ import MyTeam from '@/components/MyTeam';
 import Transfers from '@/components/Transfers';
 import League from '@/components/League';
 import FormationPitch from '@/components/FormationPitch';
+import PlayerPickerSheet from '@/components/PlayerPickerSheet';
 import CompactFixtures from '@/components/home/CompactFixtures';
 import LeagueTable from '@/components/home/LeagueTable';
 import UserBadgePanel from '@/components/home/UserBadgePanel';
@@ -92,7 +93,12 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Transfers selectedPlayers={selectedPlayers} onPlayerAdd={handlePlayerAdd} onPlayerRemove={handlePlayerRemove} budget={budget} />
             <div>
-              <FormationPitch selectedPlayers={selectedPlayers} onPlayerClick={() => {}} playerToSwap={null} />
+              <TransfersPitch
+                selectedPlayers={selectedPlayers}
+                budget={budget}
+                onPlayerAdd={handlePlayerAdd}
+                onPlayerRemove={handlePlayerRemove}
+              />
             </div>
           </div>
         );
@@ -213,6 +219,46 @@ const Index = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const TransfersPitch = ({
+  selectedPlayers,
+  budget,
+  onPlayerAdd,
+  onPlayerRemove,
+}: {
+  selectedPlayers: Player[];
+  budget: number;
+  onPlayerAdd: (player: Player) => void;
+  onPlayerRemove: (playerId: string) => void;
+}) => {
+  const [open, setOpen] = useState(false);
+  const [position, setPosition] = useState<string | null>(null);
+
+  return (
+    <>
+      <FormationPitch
+        selectedPlayers={selectedPlayers}
+        onPlayerClick={() => {}}
+        playerToSwap={null}
+        mode="transfers"
+        onSlotClick={(pos) => {
+          setPosition(pos);
+          setOpen(true);
+        }}
+      />
+      <PlayerPickerSheet
+        open={open}
+        onOpenChange={setOpen}
+        position={position}
+        selectedPlayers={selectedPlayers}
+        budget={budget}
+        mode="transfers"
+        onPlayerAdd={onPlayerAdd}
+        onPlayerRemove={onPlayerRemove}
+      />
+    </>
   );
 };
 

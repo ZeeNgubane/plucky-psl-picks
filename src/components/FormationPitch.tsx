@@ -32,6 +32,7 @@ interface FormationPitchProps {
   onPlayerClick: (player: Player) => void;
   playerToSwap: Player | null;
   onSlotClick?: (position: string, player: Player | null) => void;
+  mode?: 'team' | 'transfers';
 }
 
 const PlayerCard = ({
@@ -81,7 +82,7 @@ const PlayerCard = ({
   );
 };
 
-const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap, onSlotClick }: FormationPitchProps) => {
+const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap, onSlotClick, mode: _mode }: FormationPitchProps) => {
   const logos = useTeamLogos();
   const byPos = {
     GK: selectedPlayers.filter((p) => p.position === "GK"),
