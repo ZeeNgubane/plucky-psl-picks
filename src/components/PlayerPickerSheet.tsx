@@ -265,11 +265,11 @@ const PlayerPickerSheet = ({
                     ) : (
                       <Button
                         size="sm"
-                        className="h-8 px-2 shrink-0 bg-bronze-600 hover:bg-bronze-700 disabled:bg-gray-300"
+                        className="h-8 px-2 shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                         disabled={!addable}
                         onClick={() => handlePick(player)}
                       >
-                        <Plus className="h-3.5 w-3.5 mr-1" />Add
+                        <Plus className="h-3.5 w-3.5 mr-1" />Add to Squad
                       </Button>
                     )}
                   </li>
