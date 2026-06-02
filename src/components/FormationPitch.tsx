@@ -82,13 +82,22 @@ const PlayerCard = ({
   );
 };
 
+const normalizePos = (p?: string | null): string => {
+  const s = (p || '').toLowerCase();
+  if (s === 'gk' || s === 'goalkeeper') return 'GK';
+  if (s === 'def' || s === 'defender') return 'DEF';
+  if (s === 'mid' || s === 'midfielder') return 'MID';
+  if (s === 'fwd' || s === 'forward') return 'FWD';
+  return (p || '').toUpperCase();
+};
+
 const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap, onSlotClick, mode: _mode }: FormationPitchProps) => {
   const logos = useTeamLogos();
   const byPos = {
-    GK: selectedPlayers.filter((p) => p.position === "GK"),
-    DEF: selectedPlayers.filter((p) => p.position === "DEF"),
-    MID: selectedPlayers.filter((p) => p.position === "MID"),
-    FWD: selectedPlayers.filter((p) => p.position === "FWD"),
+    GK: selectedPlayers.filter((p) => normalizePos(p.position) === "GK"),
+    DEF: selectedPlayers.filter((p) => normalizePos(p.position) === "DEF"),
+    MID: selectedPlayers.filter((p) => normalizePos(p.position) === "MID"),
+    FWD: selectedPlayers.filter((p) => normalizePos(p.position) === "FWD"),
   };
 
   const formation = pickFormation(byPos.DEF.length, byPos.MID.length, byPos.FWD.length);
