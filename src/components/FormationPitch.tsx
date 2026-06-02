@@ -168,7 +168,11 @@ const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap, onSlotCl
       {/* Players grid */}
       <div className="absolute inset-0 flex flex-col justify-around py-6 px-2 z-[1]">
         {rows.map((row, ri) => (
-          <div key={ri} className="flex justify-around items-center">
+          <div
+            key={ri}
+            className="grid items-center w-full px-2"
+            style={{ gridTemplateColumns: `repeat(${row.players.length}, minmax(0, 1fr))` }}
+          >
             {row.players.map((p, pi) => (
               <PlayerCard
                 key={p?.id || `${row.label}-${pi}`}
