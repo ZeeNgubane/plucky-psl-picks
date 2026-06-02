@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Player } from "@/data/teams";
 import { useTeamLogos } from "@/hooks/use-team-logos";
 
@@ -49,23 +50,30 @@ const PlayerCard = ({
   onClick?: () => void;
 }) => {
   const surname = player ? player.name.split(" ").slice(-1)[0].toUpperCase() : "";
+  const [imgFailed, setImgFailed] = useState(false);
+  const showLogo = !!(player && logo && !imgFailed);
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex flex-col items-center w-[60px] sm:w-[80px] focus:outline-none transition-transform ${
+      className={`flex flex-col items-center justify-self-center w-[60px] sm:w-[80px] shrink-0 focus:outline-none transition-transform ${
         isSelected ? "scale-105" : ""
       }`}
     >
       <div
-        className={`flex items-center justify-center h-[50px] sm:h-[60px] w-full ${
+        className={`flex items-center justify-center h-[50px] sm:h-[60px] w-full overflow-hidden ${
           isSelected ? "ring-2 ring-primary rounded-md" : ""
         }`}
       >
-        {player && logo ? (
-          <img src={logo} alt={player.team} className="h-full w-auto object-contain drop-shadow-md" />
+        {showLogo ? (
+          <img
+            src={logo}
+            alt={player!.team}
+            onError={() => setImgFailed(true)}
+            className="max-h-full max-w-full object-contain drop-shadow-md"
+          />
         ) : (
-          <div className="h-full w-[40px] sm:w-[48px] rounded-md bg-white/15 border border-dashed border-white/40 flex items-center justify-center text-white/60 text-xs font-bold">
+          <div className="h-full w-[40px] sm:w-[48px] rounded-md bg-white/15 border border-dashed border-white/40 flex items-center justify-center text-white/70 text-xs font-bold">
             {player ? surname.slice(0, 2) : "+"}
           </div>
         )}
@@ -160,7 +168,11 @@ const FormationPitch = ({ selectedPlayers, onPlayerClick, playerToSwap, onSlotCl
       {/* Players grid */}
       <div className="absolute inset-0 flex flex-col justify-around py-6 px-2 z-[1]">
         {rows.map((row, ri) => (
-          <div key={ri} className="flex justify-around items-center">
+          <div
+            key={ri}
+            className="grid items-center w-full px-2"
+            style={{ gridTemplateColumns: `repeat(${row.players.length}, minmax(0, 1fr))` }}
+          >
             {row.players.map((p, pi) => (
               <PlayerCard
                 key={p?.id || `${row.label}-${pi}`}
