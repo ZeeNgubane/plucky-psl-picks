@@ -140,7 +140,7 @@ const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: My
       return;
     }
 
-    if (playerToSwap.position !== clickedPlayer.position) {
+    if (normalizePos(playerToSwap.position) !== normalizePos(clickedPlayer.position)) {
       toast.error("Invalid Swap", {
         description: "Players must have the same position.",
       });
