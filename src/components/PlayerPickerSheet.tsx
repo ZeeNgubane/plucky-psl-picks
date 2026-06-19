@@ -68,6 +68,7 @@ const PlayerPickerSheet = ({
 }: PlayerPickerSheetProps) => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'points' | 'price' | 'name'>('points');
+  const [glowingId, setGlowingId] = useState<number | null>(null);
   const logos = useTeamLogos();
 
   const { data: allPlayers = [], isLoading } = useQuery({
