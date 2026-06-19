@@ -169,7 +169,7 @@ const PlayerPickerSheet = ({
         )}
 
         {/* List */}
-        <div className="flex-1 overflow-y-auto px-2 pb-4">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden w-full px-1 pb-4">
           {mode === 'team' ? (
             teamSubs.length === 0 ? (
               <div className="text-center text-sm text-muted-foreground py-8 px-4">
@@ -182,26 +182,26 @@ const PlayerPickerSheet = ({
                   return (
                     <li
                       key={player.id}
-                      className="flex items-center gap-2 px-2 min-h-[48px] py-2"
+                      className="flex items-center gap-1 px-1 min-h-[48px] py-2"
                     >
-                      <Badge className={`${POSITION_COLORS[pos] || 'bg-gray-100 text-gray-800'} text-[10px] px-1.5 py-0 leading-tight shrink-0`}>
+                      <Badge className={`${POSITION_COLORS[pos] || 'bg-gray-100 text-gray-800'} text-[10px] px-1 py-0 leading-tight shrink-0`}>
                         {pos}
                       </Badge>
                       <div className="min-w-0 flex-1">
                         <div className="text-sm font-medium truncate">{player.name}</div>
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
                           {logos[player.team] && (
                             <img src={logos[player.team]} alt={player.team} className="h-3.5 w-3.5 object-contain" />
                           )}
                           <span className="truncate">{player.team}</span>
                         </div>
                       </div>
-                      <div className="text-right shrink-0 mr-2">
+                      <div className="text-right shrink-0 px-1">
                         <div className="text-[11px] font-bold">{player.total_points || '0'} pts</div>
                       </div>
                       <Button
                         size="sm"
-                        className="h-8 px-2 shrink-0"
+                        className="h-8 px-1.5 text-[11px] shrink-0"
                         onClick={() => {
                           onSwap?.(player);
                           onOpenChange(false);
@@ -232,24 +232,24 @@ const PlayerPickerSheet = ({
                 return (
                   <li
                     key={player.id}
-                    className={`flex items-center gap-2 px-2 min-h-[48px] py-2 ${
+                    className={`flex items-center gap-1 px-1 min-h-[48px] py-2 ${
                       selected ? 'bg-bronze-50' : ''
                     }`}
                   >
-                    <Badge className={`${POSITION_COLORS[pos] || 'bg-gray-100 text-gray-800'} text-[10px] px-1.5 py-0 leading-tight shrink-0`}>
+                    <Badge className={`${POSITION_COLORS[pos] || 'bg-gray-100 text-gray-800'} text-[10px] px-1 py-0 leading-tight shrink-0`}>
                       {pos}
                     </Badge>
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-medium truncate">{player.name}</div>
-                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
                         {logos[player.team] && (
                           <img src={logos[player.team]} alt={player.team} className="h-3.5 w-3.5 object-contain" />
                         )}
                         <span className="truncate">{player.team}</span>
                       </div>
                     </div>
-                    <div className="text-right shrink-0 mr-2">
-                      <div className="text-xs font-medium">
+                    <div className="text-right shrink-0 px-1">
+                      <div className="text-[11px] font-medium">
                         {player.price ? `R${(Number(player.price) * 18).toFixed(1)}M` : '—'}
                       </div>
                       <div className="text-[11px] font-bold">{player.total_points || '0'} pts</div>
@@ -258,7 +258,7 @@ const PlayerPickerSheet = ({
                       <Button
                         variant="destructive"
                         size="sm"
-                        className="h-8 px-2 shrink-0"
+                        className="h-8 px-1.5 text-[11px] shrink-0"
                         onClick={() => handlePick(player)}
                       >
                         <Minus className="h-3.5 w-3.5 mr-1" />Remove
@@ -266,7 +266,7 @@ const PlayerPickerSheet = ({
                     ) : (
                       <Button
                         size="sm"
-                        className="h-8 px-2 shrink-0 bg-green-50 border border-green-300 text-green-700 hover:bg-green-100 hover:text-green-800 disabled:opacity-50"
+                        className="h-8 px-1.5 text-[11px] shrink-0 bg-green-50 border border-green-300 text-green-700 hover:bg-green-100 hover:text-green-800 disabled:opacity-50"
                         disabled={!addable}
                         onClick={() => {
                           setGlowingId(player.id);
