@@ -102,3 +102,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 0px rgba(74, 222, 128, 0); }
+  50% { box-shadow: 0 0 10px 4px rgba(74, 222, 128, 0.7); }
+  100% { box-shadow: 0 0 0px rgba(74, 222, 128, 0); }
+}
