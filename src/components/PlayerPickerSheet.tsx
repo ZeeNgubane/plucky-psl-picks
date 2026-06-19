@@ -189,7 +189,7 @@ const PlayerPickerSheet = ({
                       </Badge>
                       <div className="min-w-0 flex-1">
                         <div className="text-sm font-medium truncate">{player.name}</div>
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
                           {logos[player.team] && (
                             <img src={logos[player.team]} alt={player.team} className="h-3.5 w-3.5 object-contain" />
                           )}
