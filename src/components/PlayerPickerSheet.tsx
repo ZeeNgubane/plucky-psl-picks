@@ -266,11 +266,17 @@ const PlayerPickerSheet = ({
                     ) : (
                       <Button
                         size="sm"
-                        className="h-8 px-2 shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                        className="h-8 px-2 shrink-0 bg-green-50 border border-green-300 text-green-700 hover:bg-green-100 hover:text-green-800 disabled:opacity-50"
                         disabled={!addable}
-                        onClick={() => handlePick(player)}
+                        onClick={() => {
+                          setGlowingId(player.id);
+                          setTimeout(() => setGlowingId(null), 600);
+                          onPlayerAdd?.(player);
+                          setTimeout(() => onOpenChange(false), 300);
+                        }}
+                        style={glowingId === player.id ? { animation: 'glowPulse 600ms ease-out 1' } : undefined}
                       >
-                        <Plus className="h-3.5 w-3.5 mr-1" />Add to Squad
+                        <Plus className="h-3.5 w-3.5 mr-1 text-green-600" />Add to Squad
                       </Button>
                     )}
                   </li>
