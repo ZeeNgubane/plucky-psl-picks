@@ -144,6 +144,12 @@ const UserDetailsSheet = ({ user, open, onOpenChange }: Props) => {
               <ArrowLeft className="h-4 w-4" />
             </button>
           )}
+          <Avatar className="h-10 w-10 ring-2 ring-emerald-400/40">
+            {avatarUrl ? <AvatarImage src={avatarUrl} alt={user.display_name} /> : null}
+            <AvatarFallback className="bg-emerald-500/20 text-emerald-200 font-bold text-sm">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
           <SheetHeader className="flex-1 text-left space-y-0">
             <SheetTitle className="text-white text-lg font-bold">
               {user.display_name}
@@ -153,6 +159,7 @@ const UserDetailsSheet = ({ user, open, onOpenChange }: Props) => {
             </p>
           </SheetHeader>
         </div>
+
 
         <div className="p-5">
           {view === 'menu' && (
