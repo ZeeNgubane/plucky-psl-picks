@@ -173,37 +173,55 @@ const League = () => {
               const accent = rankAccent(entry.rank!);
               const isMe = entry.user_id === currentUserId;
               return (
-                <li
-                  key={entry.id}
-                  className={`flex items-center justify-between px-5 py-3 transition-colors ${
-                    isMe ? 'bg-emerald-500/10 ring-1 ring-inset ring-emerald-400/30' : idx % 2 === 0 ? 'bg-slate-900/40' : 'bg-transparent'
-                  } ${accent.bg ? `bg-gradient-to-r ${accent.bg}` : ''} hover:bg-white/5`}
-                >
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className={`flex items-center justify-center h-9 w-9 rounded-lg bg-slate-900/80 ring-1 ${accent.ring}`}>
-                      {accent.icon ?? <span className={`text-sm font-bold ${accent.text}`}>{entry.rank}</span>}
+                <li key={entry.id}>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSelectedUser({
+                        user_id: entry.user_id,
+                        display_name: entry.display_name || 'Manager',
+                        rank: entry.rank,
+                        total_points: entry.total_points,
+                        gameweek_points: entry.gameweek_points,
+                      })
+                    }
+                    className={`w-full flex items-center justify-between px-5 py-3 text-left transition-colors ${
+                      isMe ? 'bg-emerald-500/10 ring-1 ring-inset ring-emerald-400/30' : idx % 2 === 0 ? 'bg-slate-900/40' : 'bg-transparent'
+                    } ${accent.bg ? `bg-gradient-to-r ${accent.bg}` : ''} hover:bg-white/5`}
+                  >
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div className={`flex items-center justify-center h-9 w-9 rounded-lg bg-slate-900/80 ring-1 ${accent.ring}`}>
+                        {accent.icon ?? <span className={`text-sm font-bold ${accent.text}`}>{entry.rank}</span>}
+                      </div>
+                      <div className="min-w-0">
+                        <p className={`font-semibold truncate ${isMe ? 'text-emerald-300' : 'text-white'}`}>
+                          {isMe ? 'You' : entry.display_name}
+                        </p>
+                        <p className="text-[11px] uppercase tracking-wider text-slate-500">
+                          Rank #{entry.rank} · GW {entry.gameweek_points}
+                        </p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className={`font-semibold truncate ${isMe ? 'text-emerald-300' : 'text-white'}`}>
-                        {isMe ? 'You' : entry.display_name}
+                    <div className="text-right">
+                      <p className={`text-lg font-extrabold ${entry.rank === 1 ? 'text-yellow-300' : 'text-white'}`}>
+                        {entry.total_points.toLocaleString()}
                       </p>
-                      <p className="text-[11px] uppercase tracking-wider text-slate-500">
-                        Rank #{entry.rank} · GW {entry.gameweek_points}
-                      </p>
+                      <p className="text-[10px] uppercase tracking-widest text-slate-500">pts</p>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <p className={`text-lg font-extrabold ${entry.rank === 1 ? 'text-yellow-300' : 'text-white'}`}>
-                      {entry.total_points.toLocaleString()}
-                    </p>
-                    <p className="text-[10px] uppercase tracking-widest text-slate-500">pts</p>
-                  </div>
+                  </button>
                 </li>
               );
             })}
           </ul>
         )}
       </div>
+
+      <UserDetailsSheet
+        user={selectedUser}
+        open={!!selectedUser}
+        onOpenChange={(o) => !o && setSelectedUser(null)}
+      />
+
     </div>
   );
 };
