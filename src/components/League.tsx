@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Trophy, Medal, Award, Users, Loader2, Crown, Star, TrendingDown, Target } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import UserDetailsSheet, { type SelectedLeagueUser } from '@/components/league/UserDetailsSheet';
+
 
 interface LeaderboardEntry {
   id: string;
