@@ -216,16 +216,89 @@ const UserDetailsSheet = ({ user, open, onOpenChange }: Props) => {
           )}
 
           {view === 'profile' && (
-            <div className="space-y-3">
-              <ProfileStat label="Display name" value={user.display_name} />
-              <ProfileStat label="Overall rank" value={user.rank ? `#${user.rank}` : '—'} />
-              <ProfileStat label="Total points" value={user.total_points.toLocaleString()} highlight />
-              <ProfileStat label="Gameweek points" value={user.gameweek_points.toLocaleString()} />
-              <div className="mt-4 rounded-xl bg-slate-800/60 ring-1 ring-white/5 p-4 flex items-center gap-3">
-                <Trophy className="h-5 w-5 text-emerald-400" />
-                <p className="text-sm text-slate-300">
-                  Competing in the Betway Premiership fantasy league.
-                </p>
+            <div className="space-y-4">
+              {/* Hero card */}
+              <div className="relative rounded-2xl p-[1px] bg-gradient-to-br from-emerald-300/60 via-white/10 to-emerald-500/40 shadow-[0_0_30px_-10px_rgba(16,185,129,0.55)]">
+                <div className="rounded-2xl bg-slate-900/95 p-5">
+                  <div className="flex items-center gap-4">
+                    <Avatar className="h-16 w-16 ring-2 ring-emerald-400/50">
+                      {avatarUrl ? <AvatarImage src={avatarUrl} alt={user.display_name} /> : null}
+                      <AvatarFallback className="bg-gradient-to-br from-emerald-400 to-emerald-700 text-slate-900 font-extrabold text-lg">
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-lg font-bold text-white truncate">{user.display_name}</p>
+                      <p className="text-[11px] uppercase tracking-widest text-slate-400">
+                        Rank #{user.rank ?? '—'} · Betway Premiership
+                      </p>
+                    </div>
+                    <FormBadge delta={formDelta} />
+                  </div>
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <div className="rounded-xl bg-slate-800/60 ring-1 ring-white/5 p-3 text-center">
+                      <p className="text-[10px] uppercase tracking-widest text-slate-400">Total Points</p>
+                      <p className="mt-1 text-2xl font-extrabold bg-gradient-to-r from-emerald-200 to-emerald-400 bg-clip-text text-transparent">
+                        {user.total_points.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-slate-800/60 ring-1 ring-white/5 p-3 text-center">
+                      <p className="text-[10px] uppercase tracking-widest text-slate-400">This GW</p>
+                      <p className="mt-1 text-2xl font-extrabold text-white">{user.gameweek_points}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Last 5 GWs */}
+              <div className="rounded-2xl bg-slate-800/60 ring-1 ring-white/5 p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-400 font-semibold">Last 5 Gameweeks</p>
+                  <FormBadge delta={formDelta} compact />
+                </div>
+                <div className="flex items-end justify-between gap-2 h-24">
+                  {gwHistory.map((pts, i) => {
+                    const isLast = i === gwHistory.length - 1;
+                    const height = Math.max(12, Math.round((pts / maxGw) * 100));
+                    return (
+                      <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
+                        <span className={`text-[11px] font-bold tabular-nums ${isLast ? 'text-emerald-300' : 'text-white'}`}>
+                          {pts}
+                        </span>
+                        <div className="w-full rounded-md bg-slate-900/70 ring-1 ring-white/5 overflow-hidden flex items-end" style={{ height: '60px' }}>
+                          <div
+                            className={`w-full rounded-md ${isLast
+                              ? 'bg-gradient-to-t from-emerald-500 to-emerald-300'
+                              : 'bg-gradient-to-t from-slate-600 to-slate-400'}`}
+                            style={{ height: `${height}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] uppercase tracking-wider text-slate-500">
+                          GW{gwHistory.length - i === 1 ? gwHistory.length : i + 1}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Badges */}
+              <div className="rounded-2xl bg-slate-800/60 ring-1 ring-white/5 p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-400 font-semibold mb-3">Badges</p>
+                <div className="flex flex-wrap gap-2">
+                  {badges.map((b) => {
+                    const Icon = b.icon;
+                    return (
+                      <div
+                        key={b.label}
+                        className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 bg-gradient-to-br ring-1 ${b.tone}`}
+                      >
+                        <Icon className="h-3.5 w-3.5" />
+                        <span className="text-xs font-bold">{b.label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
@@ -234,6 +307,25 @@ const UserDetailsSheet = ({ user, open, onOpenChange }: Props) => {
     </Sheet>
   );
 };
+
+const FormBadge = ({ delta, compact }: { delta: number; compact?: boolean }) => {
+  const tone =
+    delta > 0
+      ? { ring: 'ring-emerald-400/40', bg: 'bg-emerald-500/15', text: 'text-emerald-300', Icon: TrendingUp, label: 'Improving' }
+      : delta < 0
+      ? { ring: 'ring-rose-400/40', bg: 'bg-rose-500/15', text: 'text-rose-300', Icon: TrendingDown, label: 'Declining' }
+      : { ring: 'ring-white/15', bg: 'bg-slate-700/50', text: 'text-slate-300', Icon: Minus, label: 'Flat' };
+  const { Icon } = tone;
+  return (
+    <div className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 ring-1 ${tone.ring} ${tone.bg} ${tone.text}`}>
+      <Icon className="h-3.5 w-3.5" />
+      <span className="text-[11px] font-bold uppercase tracking-wider">
+        {compact ? `${delta > 0 ? '+' : ''}${delta}` : tone.label}
+      </span>
+    </div>
+  );
+};
+
 
 const ProfileStat = ({
   label,
