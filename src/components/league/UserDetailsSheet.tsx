@@ -31,10 +31,26 @@ const UserDetailsSheet = ({ user, open, onOpenChange }: Props) => {
   const [view, setView] = useState<View>('menu');
   const [squad, setSquad] = useState<Player[] | null>(null);
   const [loadingSquad, setLoadingSquad] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) setView('menu');
   }, [open, user?.user_id]);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    supabase
+      .from('profiles')
+      .select('avatar_url')
+      .eq('user_id', user.user_id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled) setAvatarUrl((data as any)?.avatar_url ?? null);
+      });
+    return () => { cancelled = true; };
+  }, [user?.user_id]);
+
 
   useEffect(() => {
     if (view !== 'squad' || !user) return;
