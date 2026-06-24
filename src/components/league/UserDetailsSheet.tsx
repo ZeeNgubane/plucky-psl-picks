@@ -327,21 +327,6 @@ const FormBadge = ({ delta, compact }: { delta: number; compact?: boolean }) => 
 };
 
 
-const ProfileStat = ({
-  label,
-  value,
-  highlight,
-}: {
-  label: string;
-  value: string;
-  highlight?: boolean;
-}) => (
-  <div className="flex items-center justify-between rounded-xl bg-slate-800/60 ring-1 ring-white/5 px-4 py-3">
-    <span className="text-sm text-slate-400">{label}</span>
-    <span className={`font-bold tabular-nums ${highlight ? 'text-emerald-300 text-lg' : 'text-white'}`}>
-      {value}
-    </span>
-  </div>
-);
+
 
 export default UserDetailsSheet;
