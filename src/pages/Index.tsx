@@ -133,7 +133,7 @@ const Index = () => {
       </div>
 
       {/* Navigation */}
-      <div className="sticky top-0 z-50 hidden lg:flex bg-white/75 dark:bg-card/60 backdrop-blur-[10px] border-b border-border/40 shadow-sm">
+      <div className="sticky top-0 z-50 hidden lg:flex bg-transparent backdrop-blur-[10px] border-b border-white/10 shadow-sm">
         <div className="container mx-auto px-6">
           <div className="flex justify-center py-2">
             <div className="flex bg-secondary/20 rounded-2xl p-1.5 shadow-lg border border-border">
