@@ -1,10 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Users, User, Trophy, Loader2, ArrowLeft } from 'lucide-react';
+import {
+  Users, User, Trophy, Loader2, ArrowLeft,
+  TrendingUp, TrendingDown, Minus, Shield, Sparkles, Flame, Star,
+} from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import FormationPitch from '@/components/FormationPitch';
 import type { Player } from '@/data/teams';
+
 
 export interface SelectedLeagueUser {
   user_id: string;
