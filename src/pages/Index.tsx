@@ -135,8 +135,8 @@ const Index = () => {
       {/* Navigation */}
       <div className="sticky top-0 z-50 hidden lg:flex bg-transparent backdrop-blur-[10px] border-b border-white/10 shadow-sm">
         <div className="container mx-auto px-6">
-          <div className="flex justify-center py-2">
-            <div className="flex bg-secondary/20 rounded-2xl p-1.5 shadow-lg border border-border">
+          <div className="flex justify-center py-1">
+            <div className="flex bg-secondary/20 rounded-2xl p-0.5 shadow-lg border border-border">
               {[
                 { id: 'home', label: 'Home', icon: House },
                 { id: 'team', label: 'My Team', icon: Users },
