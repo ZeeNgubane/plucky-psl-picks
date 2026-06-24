@@ -17,6 +17,8 @@ const League = () => {
   const [leagueData, setLeagueData] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<SelectedLeagueUser | null>(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
