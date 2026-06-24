@@ -88,7 +88,45 @@ const UserDetailsSheet = ({ user, open, onOpenChange }: Props) => {
     };
   }, [view, user]);
 
+  const initials = useMemo(() => {
+    if (!user) return '??';
+    return user.display_name
+      .split(/\s+/).filter(Boolean).slice(0, 2)
+      .map(s => s[0]?.toUpperCase()).join('') || 'M';
+  }, [user?.display_name]);
+
+  // Deterministic last-5 GW history seeded from user_id until real history exists.
+  const gwHistory = useMemo(() => {
+    if (!user) return [] as number[];
+    let seed = 0;
+    for (let i = 0; i < user.user_id.length; i++) seed = (seed * 31 + user.user_id.charCodeAt(i)) >>> 0;
+    const rand = () => { seed = (seed * 1103515245 + 12345) >>> 0; return seed / 0xffffffff; };
+    const base = Math.max(20, Math.min(70, Math.round(user.total_points / 5) || 40));
+    const arr: number[] = [];
+    for (let i = 0; i < 4; i++) arr.push(Math.max(15, Math.round(base + (rand() - 0.5) * 30)));
+    arr.push(Math.max(15, user.gameweek_points || Math.round(base + (rand() - 0.5) * 20)));
+    return arr;
+  }, [user?.user_id, user?.gameweek_points, user?.total_points]);
+
+  const formDelta = gwHistory.length >= 2
+    ? gwHistory[gwHistory.length - 1] - gwHistory[gwHistory.length - 2]
+    : 0;
+  const maxGw = Math.max(1, ...gwHistory);
+
+  const badges = useMemo(() => {
+    if (!user) return [] as { label: string; icon: typeof Star; tone: string }[];
+    const out: { label: string; icon: typeof Star; tone: string }[] = [
+      { label: 'Beta Tester', icon: Sparkles, tone: 'from-emerald-400/30 to-emerald-600/10 text-emerald-200 ring-emerald-400/40' },
+    ];
+    if (user.rank && user.rank <= 3) out.push({ label: 'Top Manager', icon: Trophy, tone: 'from-yellow-400/30 to-amber-600/10 text-yellow-200 ring-yellow-400/40' });
+    if (user.gameweek_points >= 60) out.push({ label: 'GW Hot Streak', icon: Flame, tone: 'from-rose-400/30 to-rose-600/10 text-rose-200 ring-rose-400/40' });
+    if (user.total_points >= 100) out.push({ label: 'Century Club', icon: Star, tone: 'from-sky-400/30 to-sky-600/10 text-sky-200 ring-sky-400/40' });
+    if (out.length < 2) out.push({ label: 'Clean Sheet King', icon: Shield, tone: 'from-slate-300/20 to-slate-500/10 text-slate-200 ring-white/20' });
+    return out;
+  }, [user?.user_id, user?.rank, user?.gameweek_points, user?.total_points]);
+
   if (!user) return null;
+
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
