@@ -146,7 +146,7 @@ const Index = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-3 px-6 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
+                  className={`flex items-center space-x-3 px-6 py-1.5 rounded-xl transition-all duration-300 font-semibold text-sm ${
                     activeTab === tab.id
                       ? 'bg-primary text-primary-foreground shadow-lg transform scale-105'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
