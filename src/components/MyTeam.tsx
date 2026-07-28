@@ -251,6 +251,34 @@ const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: My
           });
         }}
       />
+
+      <PlayerActionSheet
+        open={actionOpen}
+        onOpenChange={setActionOpen}
+        player={actionPlayer}
+        onMoreInfo={() => {
+          setActionOpen(false);
+          setDetailOpen(true);
+        }}
+        onSubstitute={() => {
+          setActionOpen(false);
+          if (!actionPlayer) return;
+          setPickerPosition(normalizePos(actionPlayer.position));
+          setPickerPitchPlayer(actionPlayer);
+          setPickerOpen(true);
+        }}
+      />
+
+      <PlayerDetailSheet
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        player={actionPlayer}
+        onBack={() => {
+          setDetailOpen(false);
+          setActionOpen(true);
+        }}
+      />
+
     </div>
   );
 };
