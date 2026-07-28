@@ -51,6 +51,10 @@ const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: My
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerPosition, setPickerPosition] = useState<string | null>(null);
   const [pickerPitchPlayer, setPickerPitchPlayer] = useState<Player | null>(null);
+  const [actionPlayer, setActionPlayer] = useState<Player | null>(null);
+  const [actionOpen, setActionOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
+
 
   const normalizePos = (p?: string | null): string => {
     const s = (p || '').toLowerCase();
