@@ -207,11 +207,17 @@ const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: My
           playerToSwap={playerToSwap}
           mode="team"
           onSlotClick={(position, player) => {
+            if (player) {
+              setActionPlayer(player);
+              setActionOpen(true);
+              return;
+            }
             setPickerPosition(position);
-            setPickerPitchPlayer(player);
+            setPickerPitchPlayer(null);
             setPickerOpen(true);
           }}
         />
+
         <SubstitutesBench 
           substitutes={subs} 
           onPlayerClick={handlePlayerClick}
