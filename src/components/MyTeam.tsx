@@ -5,6 +5,9 @@ import { Player } from "@/data/teams";
 import SubstitutesBench from "./SubstitutesBench";
 import PlayerStatHUD from "./home/PlayerStatHUD";
 import PlayerPickerSheet from "./PlayerPickerSheet";
+import PlayerActionSheet from "./player/PlayerActionSheet";
+import PlayerDetailSheet from "./player/PlayerDetailSheet";
+
 import { Button } from "./ui/button";
 import { toast } from "./ui/sonner";
 import { Save } from "lucide-react";
@@ -51,6 +54,10 @@ const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: My
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerPosition, setPickerPosition] = useState<string | null>(null);
   const [pickerPitchPlayer, setPickerPitchPlayer] = useState<Player | null>(null);
+  const [actionPlayer, setActionPlayer] = useState<Player | null>(null);
+  const [actionOpen, setActionOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
+
 
   const normalizePos = (p?: string | null): string => {
     const s = (p || '').toLowerCase();
@@ -203,11 +210,17 @@ const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: My
           playerToSwap={playerToSwap}
           mode="team"
           onSlotClick={(position, player) => {
+            if (player) {
+              setActionPlayer(player);
+              setActionOpen(true);
+              return;
+            }
             setPickerPosition(position);
-            setPickerPitchPlayer(player);
+            setPickerPitchPlayer(null);
             setPickerOpen(true);
           }}
         />
+
         <SubstitutesBench 
           substitutes={subs} 
           onPlayerClick={handlePlayerClick}
@@ -241,6 +254,34 @@ const MyTeam = ({ selectedPlayers, budget = 0, onPlayerAdd, onPlayerRemove }: My
           });
         }}
       />
+
+      <PlayerActionSheet
+        open={actionOpen}
+        onOpenChange={setActionOpen}
+        player={actionPlayer}
+        onMoreInfo={() => {
+          setActionOpen(false);
+          setDetailOpen(true);
+        }}
+        onSubstitute={() => {
+          setActionOpen(false);
+          if (!actionPlayer) return;
+          setPickerPosition(normalizePos(actionPlayer.position));
+          setPickerPitchPlayer(actionPlayer);
+          setPickerOpen(true);
+        }}
+      />
+
+      <PlayerDetailSheet
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        player={actionPlayer}
+        onBack={() => {
+          setDetailOpen(false);
+          setActionOpen(true);
+        }}
+      />
+
     </div>
   );
 };
