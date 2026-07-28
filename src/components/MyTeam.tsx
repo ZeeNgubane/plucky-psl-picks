@@ -5,6 +5,9 @@ import { Player } from "@/data/teams";
 import SubstitutesBench from "./SubstitutesBench";
 import PlayerStatHUD from "./home/PlayerStatHUD";
 import PlayerPickerSheet from "./PlayerPickerSheet";
+import PlayerActionSheet from "./player/PlayerActionSheet";
+import PlayerDetailSheet from "./player/PlayerDetailSheet";
+
 import { Button } from "./ui/button";
 import { toast } from "./ui/sonner";
 import { Save } from "lucide-react";
