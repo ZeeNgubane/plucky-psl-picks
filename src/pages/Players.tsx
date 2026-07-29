@@ -147,7 +147,7 @@ const Players = () => {
                   placeholder="Search players or teams..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 border-gray-300 focus:border-red-500"
+                  className="pl-10 border-border focus:border-primary"
                 />
               </div>
               <Select value={positionFilter} onValueChange={setPositionFilter}>
@@ -179,7 +179,7 @@ const Players = () => {
                 </SelectContent>
               </Select>
               <div className="flex items-center text-sm text-muted-foreground bg-muted px-3 py-2 rounded-md border">
-                Results: <span className="font-semibold text-red-600 ml-1">{filteredPlayers.length}</span>
+                Results: <span className="font-semibold text-primary ml-1">{filteredPlayers.length}</span>
               </div>
             </div>
           </CardContent>
