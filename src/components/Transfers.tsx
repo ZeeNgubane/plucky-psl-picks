@@ -177,7 +177,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                 <TableHead className="font-semibold text-[11px] text-right">Value</TableHead>
                 <TableHead className="font-semibold text-[11px] text-right">Pts</TableHead>
                 <TableHead className="font-semibold text-[11px] text-center">Form</TableHead>
-                <TableHead className="font-semibold text-[11px] w-[60px]"></TableHead>
+                <TableHead className="font-semibold text-[11px] w-[60px] pr-3"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -224,7 +224,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="py-1">
+                    <TableCell className="py-1 pr-3 text-right">
                       {selected ? (
                         <Button variant="destructive" size="sm" onClick={() => onPlayerRemove(String(player.id))} className="h-6 text-[10px] px-1.5">
                           <Minus className="h-3 w-3" />
