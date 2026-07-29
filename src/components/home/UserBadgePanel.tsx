@@ -8,15 +8,15 @@ interface UserBadgePanelProps {
 }
 
 const tierStyles: Record<string, { label: string; color: string; bg: string }> = {
-  bronze: { label: 'Bronze', color: 'text-amber-700', bg: 'bg-amber-100 border-amber-300' },
-  silver: { label: 'Silver', color: 'text-slate-600', bg: 'bg-slate-100 border-slate-300' },
-  gold: { label: 'Gold', color: 'text-yellow-700', bg: 'bg-yellow-100 border-yellow-400' },
+  bronze: { label: 'Bronze', color: 'text-amber-400', bg: 'bg-amber-400/10 border-amber-400/40' },
+  silver: { label: 'Silver', color: 'text-slate-300', bg: 'bg-slate-300/10 border-slate-300/40' },
+  gold: { label: 'Gold', color: 'text-primary', bg: 'bg-primary/10 border-primary/40' },
 };
 
 const UserBadgePanel = ({ teamName = 'My Fantasy XI', tier = 'gold', compact = false }: UserBadgePanelProps) => {
   const t = tierStyles[tier];
   return (
-    <Card className="border-0 border-l-4 border-l-psl-gold rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
+    <Card className="ds-card border-l-4 border-l-primary">
       <CardContent
         className={
           compact
