@@ -53,7 +53,7 @@ const League = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12 bg-slate-900 rounded-2xl">
+      <div className="flex items-center justify-center py-12 bg-surface rounded-2xl">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -71,7 +71,7 @@ const League = () => {
   };
 
   return (
-    <div className="bg-slate-900 -mx-4 -my-4 px-4 py-6 rounded-2xl space-y-5 text-white">
+    <div className="space-y-5 text-foreground">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
