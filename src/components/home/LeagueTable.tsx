@@ -58,7 +58,7 @@ const LeagueTable = () => {
   }, []);
 
   const getPositionBadge = (position: number) => {
-    if (position === 1) return 'bg-gradient-to-r from-yellow-400 to-amber-500 text-white';
+    if (position === 1) return 'bg-gradient-to-r from-primary to-amber-500 text-primary-foreground';
     if (position <= 3) return 'bg-gradient-to-r from-green-400 to-green-500 text-white';
     if (position <= 8) return 'bg-gradient-to-r from-blue-400 to-blue-500 text-white';
     if (position <= 14) return 'bg-gradient-to-r from-gray-400 to-gray-500 text-white';
@@ -70,7 +70,7 @@ const LeagueTable = () => {
       case 'W': return 'bg-green-500 text-white';
       case 'D': return 'bg-yellow-500 text-white';
       case 'L': return 'bg-red-500 text-white';
-      default: return 'bg-gray-400 text-white';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -124,10 +124,10 @@ const LeagueTable = () => {
               {standings.map((team) => (
                 <div 
                   key={team.id}
-                  className={`group flex items-center justify-between px-2 py-1.5 rounded-lg transition-all duration-200 hover:bg-blue-50 text-[12px] ${
-                    team.position <= 1 ? 'bg-yellow-50/50' : 
-                    team.position <= 3 ? 'bg-green-50/30' : 
-                    team.position >= 15 ? 'bg-red-50/30' : ''
+                  className={`group flex items-center justify-between px-2 py-1.5 rounded-lg transition-all duration-200 hover:bg-white/5 text-[12px] ${
+                    team.position <= 1 ? 'bg-primary/10' : 
+                    team.position <= 3 ? 'bg-emerald-500/10' : 
+                    team.position >= 15 ? 'bg-rose-500/10' : ''
                   }`}
                 >
                   <div className="flex items-center space-x-2 flex-1 min-w-0">

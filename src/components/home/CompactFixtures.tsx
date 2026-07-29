@@ -32,9 +32,9 @@ const CompactFixtures = () => {
   }, []);
 
   const statusBadge = (status: string) => {
-    if (status === 'live') return 'bg-red-500 text-white animate-pulse';
-    if (status === 'completed') return 'bg-gray-500 text-white';
-    return 'bg-blue-500 text-white';
+    if (status === 'live') return 'bg-rose-500 text-white animate-pulse';
+    if (status === 'completed') return 'bg-muted text-muted-foreground';
+    return 'bg-primary text-primary-foreground';
   };
   const statusText = (s: string) => (s === 'live' ? 'LIVE' : s === 'completed' ? 'FT' : 'vs');
 
@@ -46,7 +46,7 @@ const CompactFixtures = () => {
             <Calendar className="h-4 w-4 mr-2 text-primary" />
             Fixtures & Results
           </CardTitle>
-          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 text-[10px]">
+          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 text-[10px]">
             Season 25/26
           </Badge>
         </div>
@@ -64,10 +64,10 @@ const CompactFixtures = () => {
               key={f.id}
               className={`flex items-center justify-between px-2 py-1.5 rounded-md text-xs ${
                 f.status === 'live'
-                  ? 'bg-red-50 border-l-2 border-red-500'
+                  ? 'bg-rose-500/10 border-l-2 border-rose-500'
                   : f.status === 'completed'
                   ? 'bg-gray-50'
-                  : 'bg-blue-50/60'
+                  : 'bg-primary/[0.07]'
               }`}
             >
               <div className="flex-1 text-right pr-2 truncate font-medium text-foreground">{f.home_team}</div>
