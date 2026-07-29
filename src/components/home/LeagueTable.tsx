@@ -76,20 +76,20 @@ const LeagueTable = () => {
 
   if (loading) {
     return (
-      <Card className="border-0 rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
+      <Card className="ds-card">
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="border-0 rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
+    <Card className="ds-card">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-bold text-gray-800 flex items-center">
-            <Trophy className="h-5 w-5 mr-2 text-amber-600" />
+          <CardTitle className="text-xl font-bold text-foreground flex items-center">
+            <Trophy className="h-5 w-5 mr-2 text-primary" />
             League Table
           </CardTitle>
           <Badge className="bg-gradient-to-r from-amber-400 to-yellow-500 text-white">
@@ -100,13 +100,13 @@ const LeagueTable = () => {
       <CardContent>
         {standings.length === 0 ? (
           <div className="text-center py-8">
-            <Trophy className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500">No league data available yet</p>
-            <p className="text-gray-400 text-sm mt-1">Data updates daily at midnight</p>
+            <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+            <p className="text-muted-foreground">No league data available yet</p>
+            <p className="text-muted-foreground text-sm mt-1">Data updates daily at midnight</p>
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between px-2 py-2 text-[11px] font-semibold text-gray-500 border-b border-gray-200 mb-2">
+            <div className="flex items-center justify-between px-2 py-2 text-[11px] font-semibold text-muted-foreground border-b border-border mb-2">
               <div className="flex items-center space-x-2 flex-1 min-w-0">
                 <span className="w-6 text-center">#</span>
                 <span>Team</span>
@@ -134,23 +134,23 @@ const LeagueTable = () => {
                     <div className={`w-5 h-5 rounded-full flex items-center justify-center ${getPositionBadge(team.position)} text-[10px] font-bold shrink-0`}>
                       {team.position}
                     </div>
-                    <p className="font-medium text-gray-800 text-[12px] truncate min-w-0">
+                    <p className="font-medium text-foreground text-[12px] truncate min-w-0">
                       {team.team_name}
                     </p>
                   </div>
                   
-                  <div className="flex items-center space-x-2 text-center text-[12px] text-gray-600 shrink-0">
+                  <div className="flex items-center space-x-2 text-center text-[12px] text-muted-foreground shrink-0">
                     <span className="w-5">{team.played}</span>
                     <span className="w-5">{team.wins}</span>
                     <span className="w-5">{team.draws}</span>
                     <span className="w-5">{team.losses}</span>
-                    <span className="w-7 font-bold text-gray-800">{team.points}</span>
+                    <span className="w-7 font-bold text-foreground">{team.points}</span>
                   </div>
                 </div>
               ))}
             </div>
             
-            <div className="mt-4 flex flex-wrap gap-3 text-[10px] text-gray-500 px-2">
+            <div className="mt-4 flex flex-wrap gap-3 text-[10px] text-muted-foreground px-2">
               <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-yellow-400"></div> Champion</div>
               <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-400"></div> CAF CL</div>
               <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-400"></div> Relegation</div>

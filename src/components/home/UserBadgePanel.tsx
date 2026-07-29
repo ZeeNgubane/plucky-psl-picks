@@ -34,7 +34,7 @@ const UserBadgePanel = ({ teamName = 'My Fantasy XI', tier = 'gold', compact = f
           <Shield className={compact ? 'h-7 w-7 lg:h-10 lg:w-10 text-psl-gold' : 'h-10 w-10 text-psl-gold'} strokeWidth={1.5} />
         </div>
         <div className={compact ? 'flex-1 min-w-0 flex flex-col items-start lg:items-center gap-1 lg:gap-3 order-2 lg:order-1 lg:contents' : 'contents'}>
-          <p className={compact ? 'font-bold text-sm text-gray-800 truncate w-full text-left lg:text-center lg:order-1' : 'font-bold text-sm text-gray-800 truncate w-full'}>
+          <p className={compact ? 'font-bold text-sm text-foreground truncate w-full text-left lg:text-center lg:order-1' : 'font-bold text-sm text-foreground truncate w-full'}>
             {teamName}
           </p>
           <span
