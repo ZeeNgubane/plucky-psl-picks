@@ -92,7 +92,7 @@ const LeagueTable = () => {
             <Trophy className="h-5 w-5 mr-2 text-primary" />
             League Table
           </CardTitle>
-          <Badge className="bg-gradient-to-r from-amber-400 to-yellow-500 text-white">
+          <Badge className="bg-primary/15 text-primary border border-primary/30">
             Season 25/26
           </Badge>
         </div>
