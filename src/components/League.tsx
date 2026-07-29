@@ -72,18 +72,8 @@ const League = () => {
 
   return (
     <div className="space-y-5 text-foreground">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-white">League HQ</h2>
-          <p className="text-sm text-muted-foreground">Live standings · Betway Premiership</p>
-        </div>
-        <div className="h-10 w-10 rounded-full bg-primary/10 ring-1 ring-primary/40 flex items-center justify-center">
-          <Trophy className="h-5 w-5 text-primary" />
-        </div>
-      </div>
-
       {/* Stat cards */}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {/* League Stats */}
         <div className="relative rounded-2xl bg-surface backdrop-blur ring-1 ring-primary/30 shadow-[0_0_24px_-8px_hsl(45 100% 50% / 0.35)] p-5">
