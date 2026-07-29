@@ -67,54 +67,37 @@ const Players = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-red-600" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-red-600 font-medium">Failed to load players. Please try again later.</p>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-destructive font-medium">Failed to load players. Please try again later.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="bg-red-600 text-white">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <img
-                src="https://www.psl.co.za/media/10983/psl-logo-gold.png"
-                alt="PSL Logo"
-                className="h-16 w-auto"
-                onError={(e) => { (e.target as HTMLImageElement).src = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL0JZOmbEBlLE_lP0SKjIaxOfpF4DvC3bZoQ&s'; }}
-              />
-              <div>
-                <h1 className="text-3xl font-bold">Betway Premiership</h1>
-                <p className="text-red-100">Players Database</p>
-              </div>
-            </div>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 pt-4">
+        <PageBanner
+          title="Players"
+          subtitle="Betway Premiership · Players Database"
+          icon={Users}
+          action={
             <div className="text-right">
-              <div className="text-sm text-red-100">2024/25 Season</div>
-              <div className="font-bold text-lg">{filteredPlayers.length} Players</div>
+              <div className="text-xs text-muted-foreground">2024/25 Season</div>
+              <div className="font-bold text-lg text-primary">{filteredPlayers.length} Players</div>
             </div>
-          </div>
-        </div>
+          }
+        />
       </div>
 
-      <div className="bg-gray-50 border-b">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <span>Home</span><span>/</span>
-            <span className="text-red-600 font-medium">Betway Premiership</span><span>/</span>
-            <span className="text-red-600 font-medium">Players</span>
-          </div>
-        </div>
-      </div>
+
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
