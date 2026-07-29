@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, Filter, Loader2 } from 'lucide-react';
+import { Search, Filter, Loader2, Users } from 'lucide-react';
+import PageBanner from '@/components/layout/PageBanner';
 import { Player } from '@/data/teams';
 import { useTeamLogos } from '@/hooks/use-team-logos';
 
@@ -30,11 +31,11 @@ const Players = () => {
 
   const getPositionColor = (position: string) => {
     const pos = position?.toLowerCase();
-    if (pos === 'gk' || pos === 'goalkeeper') return 'bg-red-100 text-red-800 border-red-200';
-    if (pos === 'def' || pos === 'defender') return 'bg-blue-100 text-blue-800 border-blue-200';
-    if (pos === 'mid' || pos === 'midfielder') return 'bg-green-100 text-green-800 border-green-200';
-    if (pos === 'fwd' || pos === 'forward') return 'bg-orange-100 text-orange-800 border-orange-200';
-    return 'bg-gray-100 text-gray-800 border-gray-200';
+    if (pos === 'gk' || pos === 'goalkeeper') return 'bg-rose-400/15 text-rose-300 border-rose-400/30';
+    if (pos === 'def' || pos === 'defender') return 'bg-sky-400/15 text-sky-300 border-sky-400/30';
+    if (pos === 'mid' || pos === 'midfielder') return 'bg-emerald-400/15 text-emerald-300 border-emerald-400/30';
+    if (pos === 'fwd' || pos === 'forward') return 'bg-amber-400/15 text-amber-300 border-amber-400/30';
+    return 'bg-muted text-muted-foreground border-border';
   };
 
   const getPositionLabel = (position: string) => {
@@ -101,39 +102,39 @@ const Players = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-l-4 border-l-red-600">
+          <Card className="ds-card border-l-4 border-l-primary">
             <CardContent className="p-4">
-              <div className="text-2xl font-bold text-gray-900">{teams.length}</div>
-              <div className="text-sm text-gray-600">Teams</div>
+              <div className="text-2xl font-bold text-foreground">{teams.length}</div>
+              <div className="text-sm text-muted-foreground">Teams</div>
             </CardContent>
           </Card>
-          <Card className="border-l-4 border-l-blue-600">
+          <Card className="ds-card border-l-4 border-l-primary">
             <CardContent className="p-4">
-              <div className="text-2xl font-bold text-gray-900">{players.length}</div>
-              <div className="text-sm text-gray-600">Total Players</div>
+              <div className="text-2xl font-bold text-foreground">{players.length}</div>
+              <div className="text-sm text-muted-foreground">Total Players</div>
             </CardContent>
           </Card>
-          <Card className="border-l-4 border-l-green-600">
+          <Card className="ds-card border-l-4 border-l-primary">
             <CardContent className="p-4">
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl font-bold text-foreground">
                 {players.filter(p => p.position?.toLowerCase() === 'forward' || p.position?.toLowerCase() === 'fwd').length}
               </div>
-              <div className="text-sm text-gray-600">Forwards</div>
+              <div className="text-sm text-muted-foreground">Forwards</div>
             </CardContent>
           </Card>
           <Card className="border-l-4 border-l-orange-600">
             <CardContent className="p-4">
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl font-bold text-foreground">
                 {players.filter(p => p.position?.toLowerCase() === 'goalkeeper' || p.position?.toLowerCase() === 'gk').length}
               </div>
-              <div className="text-sm text-gray-600">Goalkeepers</div>
+              <div className="text-sm text-muted-foreground">Goalkeepers</div>
             </CardContent>
           </Card>
         </div>
 
         <Card className="mb-6 shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="flex items-center space-x-2 text-gray-900">
+            <CardTitle className="flex items-center space-x-2 text-foreground">
               <Filter className="h-5 w-5" />
               <span>Filter Players</span>
             </CardTitle>
@@ -141,7 +142,7 @@ const Players = () => {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search players or teams..."
                   value={searchTerm}
@@ -151,7 +152,7 @@ const Players = () => {
               </div>
               <Select value={positionFilter} onValueChange={setPositionFilter}>
                 <SelectTrigger><SelectValue placeholder="All Positions" /></SelectTrigger>
-                <SelectContent className="bg-white">
+                <SelectContent className="">
                   <SelectItem value="all">All Positions</SelectItem>
                   <SelectItem value="goalkeeper">Goalkeeper</SelectItem>
                   <SelectItem value="defender">Defender</SelectItem>
@@ -161,7 +162,7 @@ const Players = () => {
               </Select>
               <Select value={teamFilter} onValueChange={setTeamFilter}>
                 <SelectTrigger><SelectValue placeholder="All Teams" /></SelectTrigger>
-                <SelectContent className="bg-white max-h-60">
+                <SelectContent className="max-h-60">
                   <SelectItem value="all">All Teams</SelectItem>
                   {teams.map(team => (
                     <SelectItem key={team} value={team}>{team}</SelectItem>
@@ -170,14 +171,14 @@ const Players = () => {
               </Select>
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger><SelectValue placeholder="Sort by" /></SelectTrigger>
-                <SelectContent className="bg-white">
+                <SelectContent className="">
                   <SelectItem value="total_points">Points (High to Low)</SelectItem>
                   <SelectItem value="price">Price (High to Low)</SelectItem>
                   <SelectItem value="name">Name (A-Z)</SelectItem>
                   <SelectItem value="team">Team (A-Z)</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="flex items-center text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-md border">
+              <div className="flex items-center text-sm text-muted-foreground bg-muted px-3 py-2 rounded-md border">
                 Results: <span className="font-semibold text-red-600 ml-1">{filteredPlayers.length}</span>
               </div>
             </div>
@@ -189,27 +190,27 @@ const Players = () => {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-gray-50 hover:bg-gray-50">
-                    <TableHead className="font-semibold text-gray-900">Player</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Position</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Team</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Price</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Total Points</TableHead>
-                    <TableHead className="font-semibold text-gray-900">GW Points</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Form</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Selected By</TableHead>
+                  <TableRow className="bg-muted/40 hover:bg-muted/40">
+                    <TableHead className="font-semibold text-foreground">Player</TableHead>
+                    <TableHead className="font-semibold text-foreground">Position</TableHead>
+                    <TableHead className="font-semibold text-foreground">Team</TableHead>
+                    <TableHead className="font-semibold text-foreground">Price</TableHead>
+                    <TableHead className="font-semibold text-foreground">Total Points</TableHead>
+                    <TableHead className="font-semibold text-foreground">GW Points</TableHead>
+                    <TableHead className="font-semibold text-foreground">Form</TableHead>
+                    <TableHead className="font-semibold text-foreground">Selected By</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredPlayers.map((player, index) => (
-                    <TableRow key={player.id} className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                      <TableCell className="font-medium text-gray-900">{player.name}</TableCell>
+                    <TableRow key={player.id} className={`hover:bg-white/5 ${index % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`}>
+                      <TableCell className="font-medium text-foreground">{player.name}</TableCell>
                       <TableCell>
                         <Badge className={`${getPositionColor(player.position)} border font-medium`}>
                           {getPositionLabel(player.position)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-gray-900">
+                      <TableCell className="text-foreground">
                         <div className="flex items-center gap-2">
                           {logoMap[player.team] && (
                             <img src={logoMap[player.team]} alt={player.team} className="h-5 w-5 object-contain" />
@@ -231,7 +232,7 @@ const Players = () => {
                           {player.form || '0'}
                         </span>
                       </TableCell>
-                      <TableCell className="text-gray-600">
+                      <TableCell className="text-muted-foreground">
                         {player.selection_percentage ? `${player.selection_percentage}%` : '—'}
                       </TableCell>
                     </TableRow>
@@ -242,7 +243,7 @@ const Players = () => {
           </CardContent>
         </Card>
 
-        <div className="mt-8 text-center text-sm text-gray-500">
+        <div className="mt-8 text-center text-sm text-muted-foreground">
           <p>Official Betway Premiership Player Database | Season 2024/25</p>
         </div>
       </div>
