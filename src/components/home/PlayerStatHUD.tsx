@@ -28,7 +28,6 @@ const PlayerStatHUD = ({
   return (
     <div
       className="ds-card p-4 pb-6 font-mono text-foreground"
-      style={{ backgroundColor: 'hsl(var(--surface))', border: '1px solid hsl(var(--border))' }}
     >
       <p className="text-[10px] uppercase tracking-[0.2em] text-primary text-center">GW Points</p>
       <p className="text-4xl font-bold text-white text-center my-2 tabular-nums">{gwPoints}</p>
