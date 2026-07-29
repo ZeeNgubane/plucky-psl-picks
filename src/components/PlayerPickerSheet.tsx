@@ -184,7 +184,7 @@ const PlayerPickerSheet = ({
                       key={player.id}
                       className="flex items-center gap-1 px-1 min-h-[48px] py-2"
                     >
-                      <Badge className={`${POSITION_COLORS[pos] || 'bg-gray-100 text-gray-800'} text-[10px] px-1 py-0 leading-tight shrink-0`}>
+                      <Badge className={`${POSITION_COLORS[pos] || 'bg-muted text-muted-foreground'} text-[10px] px-1 py-0 leading-tight shrink-0`}>
                         {pos}
                       </Badge>
                       <div className="min-w-0 flex-1">
@@ -236,7 +236,7 @@ const PlayerPickerSheet = ({
                       selected ? 'bg-primary/10' : ''
                     }`}
                   >
-                    <Badge className={`${POSITION_COLORS[pos] || 'bg-gray-100 text-gray-800'} text-[10px] px-1 py-0 leading-tight shrink-0`}>
+                    <Badge className={`${POSITION_COLORS[pos] || 'bg-muted text-muted-foreground'} text-[10px] px-1 py-0 leading-tight shrink-0`}>
                       {pos}
                     </Badge>
                     <div className="min-w-0 flex-1">

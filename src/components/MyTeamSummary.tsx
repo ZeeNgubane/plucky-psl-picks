@@ -42,7 +42,7 @@ const MyTeamSummary = ({ selectedPlayers }: MyTeamSummaryProps) => {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-primary">R{(totalValue * 18).toFixed(1)}M</div>
-          <p className="text-sm text-gray-600">Budget: R{BUDGET}M</p>
+          <p className="text-sm text-muted-foreground">Budget: R{BUDGET}M</p>
         </CardContent>
       </Card>
       <Card className="ds-card">
@@ -51,7 +51,7 @@ const MyTeamSummary = ({ selectedPlayers }: MyTeamSummaryProps) => {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-green-600">{totalPoints}</div>
-          <p className="text-sm text-gray-600">This season</p>
+          <p className="text-sm text-muted-foreground">This season</p>
         </CardContent>
       </Card>
       <Card className="ds-card">
@@ -59,8 +59,8 @@ const MyTeamSummary = ({ selectedPlayers }: MyTeamSummaryProps) => {
           <CardTitle className="text-lg">Rank</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-amber-600">{rank ? `#${rank}` : '—'}</div>
-          <p className="text-sm text-gray-600">Overall</p>
+          <div className="text-2xl font-bold text-primary">{rank ? `#${rank}` : '—'}</div>
+          <p className="text-sm text-muted-foreground">Overall</p>
         </CardContent>
       </Card>
       <Card className="ds-card">
@@ -69,7 +69,7 @@ const MyTeamSummary = ({ selectedPlayers }: MyTeamSummaryProps) => {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{selectedPlayers.length}/15</div>
-          <p className="text-sm text-gray-600">Squad size</p>
+          <p className="text-sm text-muted-foreground">Squad size</p>
         </CardContent>
       </Card>
     </div>
