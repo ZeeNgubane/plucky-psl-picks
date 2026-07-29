@@ -36,40 +36,40 @@ const MyTeamSummary = ({ selectedPlayers }: MyTeamSummaryProps) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <Card className="border-bronze-200">
+      <Card className="ds-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Team Value</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-bronze-600">R{(totalValue * 18).toFixed(1)}M</div>
-          <p className="text-sm text-gray-600">Budget: R{BUDGET}M</p>
+          <div className="text-2xl font-bold text-primary">R{(totalValue * 18).toFixed(1)}M</div>
+          <p className="text-sm text-muted-foreground">Budget: R{BUDGET}M</p>
         </CardContent>
       </Card>
-      <Card className="border-bronze-200">
+      <Card className="ds-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Total Points</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-green-600">{totalPoints}</div>
-          <p className="text-sm text-gray-600">This season</p>
+          <p className="text-sm text-muted-foreground">This season</p>
         </CardContent>
       </Card>
-      <Card className="border-bronze-200">
+      <Card className="ds-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Rank</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-amber-600">{rank ? `#${rank}` : '—'}</div>
-          <p className="text-sm text-gray-600">Overall</p>
+          <div className="text-2xl font-bold text-primary">{rank ? `#${rank}` : '—'}</div>
+          <p className="text-sm text-muted-foreground">Overall</p>
         </CardContent>
       </Card>
-      <Card className="border-bronze-200">
+      <Card className="ds-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Players</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{selectedPlayers.length}/15</div>
-          <p className="text-sm text-gray-600">Squad size</p>
+          <p className="text-sm text-muted-foreground">Squad size</p>
         </CardContent>
       </Card>
     </div>

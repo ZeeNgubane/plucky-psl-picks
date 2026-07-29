@@ -4,92 +4,93 @@
 
 @layer base {
   :root {
-    /* PSL-Inspired Theme - Light Mode */
-    --background: 200 20% 96%;
-    --foreground: 200 30% 10%;
+    /* ============================================================
+       PICK A SIDE — GLOBAL DESIGN SYSTEM
+       Navy / near-black surfaces + gold accent. One theme, all pages.
+       ============================================================ */
 
-    --card: 0 0% 100%;
-    --card-foreground: 200 30% 10%;
+    /* Base surfaces */
+    --background: 218 44% 6%;
+    --foreground: 210 20% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 200 30% 10%;
+    --surface: 217 38% 10%;
+    --surface-2: 216 34% 14%;
 
-    --primary: 195 100% 40%;
-    --primary-foreground: 0 0% 100%;
+    --card: 217 38% 10%;
+    --card-foreground: 210 20% 98%;
 
-    --secondary: 210 25% 20%;
-    --secondary-foreground: 0 0% 96%;
+    --popover: 217 40% 9%;
+    --popover-foreground: 210 20% 98%;
 
-    --muted: 200 10% 90%;
-    --muted-foreground: 200 10% 40%;
+    /* Gold is the primary accent everywhere */
+    --primary: 45 100% 50%;
+    --primary-foreground: 218 44% 8%;
+
+    --secondary: 216 34% 16%;
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 216 30% 16%;
+    --muted-foreground: 214 15% 65%;
 
     --accent: 45 100% 50%;
-    --accent-foreground: 200 30% 10%;
+    --accent-foreground: 218 44% 8%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 96.1%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 200 15% 85%;
-    --input: 200 15% 85%;
-    --ring: 195 100% 40%;
+    --border: 215 30% 20%;
+    --input: 215 30% 20%;
+    --ring: 45 100% 50%;
 
+    /* Brand tokens */
     --psl-blue: 195 100% 40%;
-    --psl-dark: 210 25% 15%;
+    --psl-dark: 218 44% 8%;
     --psl-gold: 45 100% 50%;
 
-    --radius: 0.5rem;
+    /* Shared gradients / shadows */
+    --gradient-banner: linear-gradient(120deg, hsl(218 50% 8%) 0%, hsl(214 46% 14%) 55%, hsl(216 40% 10%) 100%);
+    --gradient-gold: linear-gradient(90deg, hsl(45 100% 65%), hsl(42 100% 48%));
+    --shadow-card: 0 12px 30px -18px hsl(218 60% 2% / 0.9);
+    --shadow-gold: 0 0 28px -10px hsl(45 100% 50% / 0.55);
 
-    --sidebar-background: 0 0% 96.1%;
-    --sidebar-foreground: 0 0% 29.4%;
-    --sidebar-primary: 21 100% 50%;
-    --sidebar-primary-foreground: 0 0% 5.9%;
-    --sidebar-accent: 0 0% 29.4%;
-    --sidebar-accent-foreground: 0 0% 96.1%;
-    --sidebar-border: 0 0% 29.4%;
-    --sidebar-ring: 21 100% 50%;
+    --radius: 0.75rem;
+
+    --sidebar-background: 218 44% 6%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 45 100% 50%;
+    --sidebar-primary-foreground: 218 44% 8%;
+    --sidebar-accent: 216 34% 16%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 215 30% 20%;
+    --sidebar-ring: 45 100% 50%;
   }
 
+  /* Single permanent theme — dark class mirrors root */
   .dark {
-    /* PSL-Inspired Theme - Dark Mode */
-    --background: 210 25% 8%;
-    --foreground: 200 20% 96%;
-
-    --card: 210 25% 12%;
-    --card-foreground: 200 20% 96%;
-
-    --popover: 210 25% 12%;
-    --popover-foreground: 200 20% 96%;
-
-    --primary: 195 100% 40%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 210 20% 22%;
-    --secondary-foreground: 200 20% 96%;
-
-    --muted: 210 20% 22%;
-    --muted-foreground: 200 10% 60%;
-
+    --background: 218 44% 6%;
+    --foreground: 210 20% 98%;
+    --surface: 217 38% 10%;
+    --surface-2: 216 34% 14%;
+    --card: 217 38% 10%;
+    --card-foreground: 210 20% 98%;
+    --popover: 217 40% 9%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 45 100% 50%;
+    --primary-foreground: 218 44% 8%;
+    --secondary: 216 34% 16%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 216 30% 16%;
+    --muted-foreground: 214 15% 65%;
     --accent: 45 100% 50%;
-    --accent-foreground: 200 30% 10%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 96.1%;
-
-    --border: 210 20% 22%;
-    --input: 210 20% 22%;
-    --ring: 195 100% 40%;
-
+    --accent-foreground: 218 44% 8%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 30% 20%;
+    --input: 215 30% 20%;
+    --ring: 45 100% 50%;
     --psl-blue: 195 100% 40%;
-    --psl-dark: 210 25% 15%;
+    --psl-dark: 218 44% 8%;
     --psl-gold: 45 100% 50%;
-    --sidebar-background: 0 0% 5.9%;
-    --sidebar-foreground: 0 0% 96.1%;
-    --sidebar-primary: 21 100% 50%;
-    --sidebar-primary-foreground: 0 0% 5.9%;
-    --sidebar-accent: 0 0% 29.4%;
-    --sidebar-accent-foreground: 0 0% 96.1%;
-    --sidebar-border: 0 0% 29.4%;
-    --sidebar-ring: 21 100% 50%;
   }
 }
 
@@ -99,13 +100,59 @@
   }
 
   body {
-    @apply text-foreground;
-    background-color: #111827;
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Page banner — identical on every page, only the title changes */
+  .ds-banner {
+    background-image: var(--gradient-banner);
+    @apply relative overflow-hidden rounded-2xl border border-border/70 px-5 py-5 sm:px-7 sm:py-6;
+  }
+
+  .ds-banner-title {
+    @apply text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground;
+  }
+
+  .ds-banner-sub {
+    @apply text-xs sm:text-sm text-muted-foreground;
+  }
+
+  /* Standard card */
+  .ds-card {
+    background-color: hsl(var(--surface));
+    box-shadow: var(--shadow-card);
+    @apply rounded-2xl border border-border/70;
+  }
+
+  /* Highlighted / gold-accented card */
+  .ds-card-gold {
+    background-color: hsl(var(--surface));
+    box-shadow: var(--shadow-gold);
+    @apply rounded-2xl border border-primary/40;
+  }
+
+  /* List row inside a card */
+  .ds-row {
+    @apply flex items-center justify-between rounded-xl px-3 py-2 transition-colors hover:bg-white/5;
+  }
+
+  .ds-heading {
+    @apply text-base font-bold tracking-tight text-foreground;
+  }
+
+  .ds-eyebrow {
+    @apply text-[10px] font-semibold uppercase tracking-[0.18em] text-primary;
+  }
+
+  .ds-stat {
+    @apply text-2xl font-extrabold tabular-nums text-primary;
   }
 }
 
 @keyframes glowPulse {
-  0% { box-shadow: 0 0 0px rgba(74, 222, 128, 0); }
-  50% { box-shadow: 0 0 10px 4px rgba(74, 222, 128, 0.7); }
-  100% { box-shadow: 0 0 0px rgba(74, 222, 128, 0); }
+  0% { box-shadow: 0 0 0px rgba(250, 204, 21, 0); }
+  50% { box-shadow: 0 0 10px 4px rgba(250, 204, 21, 0.7); }
+  100% { box-shadow: 0 0 0px rgba(250, 204, 21, 0); }
 }

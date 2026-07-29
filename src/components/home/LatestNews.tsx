@@ -30,11 +30,11 @@ const articles = [
 
 const LatestNews = () => {
   return (
-    <Card className="border-0 rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
+    <Card className="ds-card">
       <CardHeader className="pb-4">
         <div className="flex items-center">
-          <Newspaper className="h-5 w-5 mr-2 text-amber-600" />
-          <span className="text-xl font-bold text-gray-800">Latest News</span>
+          <Newspaper className="h-5 w-5 mr-2 text-primary" />
+          <span className="text-xl font-bold text-foreground">Latest News</span>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -49,9 +49,9 @@ const LatestNews = () => {
                }}
              />
              <div className="min-w-0">
-               <h3 className="font-semibold text-sm text-gray-800 group-hover:text-amber-600 transition-colors line-clamp-2">{article.title}</h3>
-               <p className="text-xs text-gray-500 mt-1 line-clamp-2">{article.excerpt}</p>
-               <span className="text-[10px] text-gray-400 mt-1 block">{article.date}</span>
+               <h3 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-2">{article.title}</h3>
+               <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{article.excerpt}</p>
+               <span className="text-[10px] text-muted-foreground mt-1 block">{article.date}</span>
              </div>
           </div>
         ))}

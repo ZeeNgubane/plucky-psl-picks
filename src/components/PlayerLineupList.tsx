@@ -26,14 +26,14 @@ const PlayerLineupList = ({ formationGroups }: PlayerLineupListProps) => (
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {formationGroups[role.key as keyof typeof formationGroups].map(player => (
-            <div key={player.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div key={player.id} className="flex items-center justify-between p-3 bg-white/[0.03] border border-border rounded-xl">
               <div>
                 <p className="font-medium">{player.name}</p>
-                <p className="text-sm text-gray-600">{player.team}</p>
+                <p className="text-sm text-muted-foreground">{player.team}</p>
               </div>
               <div className="text-right">
                 <p className="font-semibold">R{((Number(player.price) || 0) * 18).toFixed(1)}M</p>
-                <p className="text-sm text-green-600">{player.total_points || '0'} pts</p>
+                <p className="text-sm text-primary">{player.total_points || '0'} pts</p>
               </div>
             </div>
           ))}

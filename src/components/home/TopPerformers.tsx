@@ -134,7 +134,7 @@ const TopPerformers = () => {
   const getRankBadge = (rank: number) => {
     switch (rank) {
       case 1: return 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-white';
-      case 2: return 'bg-gradient-to-r from-gray-300 to-gray-400 text-white';
+      case 2: return 'bg-gradient-to-r from-slate-400 to-slate-500 text-primary-foreground';
       case 3: return 'bg-gradient-to-r from-amber-500 to-amber-600 text-white';
       default: return 'bg-gradient-to-r from-blue-500 to-blue-600 text-white';
     }
@@ -142,19 +142,19 @@ const TopPerformers = () => {
 
   if (loading) {
     return (
-      <Card className="border-0 rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
+      <Card className="ds-card">
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="border-0 rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
+    <Card className="ds-card">
       <CardHeader className="pb-4">
-        <CardTitle className="text-xl font-bold text-gray-800 flex items-center">
-          <TrendingUp className="h-5 w-5 mr-2 text-amber-600" />
+        <CardTitle className="text-xl font-bold text-foreground flex items-center">
+          <TrendingUp className="h-5 w-5 mr-2 text-primary" />
           Top Goal Scorers
           <Badge className="ml-2 bg-amber-100 text-amber-800 text-xs">25/26 Season 🔥</Badge>
         </CardTitle>
@@ -162,13 +162,13 @@ const TopPerformers = () => {
       <CardContent>
         {topScorers.length === 0 ? (
           <div className="text-center py-8">
-            <TrendingUp className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500">No match stats recorded yet</p>
-            <p className="text-sm text-gray-400">Top scorers will appear once gameweek data is added</p>
+            <TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+            <p className="text-muted-foreground">No match stats recorded yet</p>
+            <p className="text-sm text-muted-foreground">Top scorers will appear once gameweek data is added</p>
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 border-b border-gray-200 mb-2">
+            <div className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-muted-foreground border-b border-border mb-2">
               <div className="flex items-center space-x-2 flex-1">
                 <span className="w-6 text-center">#</span>
                 <span>Player</span>
@@ -196,26 +196,26 @@ const TopPerformers = () => {
                         {rank}
                       </div>
                       <div className="min-w-0">
-                        <p className="font-medium text-gray-800 text-xs sm:text-sm truncate">
+                        <p className="font-medium text-foreground text-xs sm:text-sm truncate">
                           {player.name}
                         </p>
-                        <p className="text-[10px] text-gray-500 truncate">{player.team_name} · {player.position}</p>
+                        <p className="text-[10px] text-muted-foreground truncate">{player.team_name} · {player.position}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-3 text-center text-xs text-gray-600 flex-shrink-0">
+                    <div className="flex items-center space-x-3 text-center text-xs text-muted-foreground flex-shrink-0">
                       <span className="w-8">{player.apps}</span>
-                      <span className="w-8 font-bold text-gray-800 text-sm">{player.goals}</span>
+                      <span className="w-8 font-bold text-foreground text-sm">{player.goals}</span>
                       <button
                         onClick={() => handleLike(player.player_id)}
                         disabled={loadingLike === player.player_id}
                         className="w-10 flex items-center justify-center gap-0.5 transition-all duration-200 hover:scale-110 disabled:opacity-50"
                       >
                         <Heart
-                          className={`h-4 w-4 transition-colors ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400 group-hover:text-red-300'}`}
+                          className={`h-4 w-4 transition-colors ${isLiked ? 'fill-red-500 text-red-500' : 'text-muted-foreground group-hover:text-red-300'}`}
                         />
                         {count > 0 && (
-                          <span className={`text-[10px] ${isLiked ? 'text-red-500 font-semibold' : 'text-gray-400'}`}>
+                          <span className={`text-[10px] ${isLiked ? 'text-red-500 font-semibold' : 'text-muted-foreground'}`}>
                             {count}
                           </span>
                         )}

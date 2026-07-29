@@ -45,11 +45,11 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
 
   const getPositionColor = (position: string) => {
     const pos = position?.toLowerCase();
-    if (pos === 'gk' || pos === 'goalkeeper') return 'bg-yellow-100 text-yellow-800';
-    if (pos === 'def' || pos === 'defender') return 'bg-blue-100 text-blue-800';
-    if (pos === 'mid' || pos === 'midfielder') return 'bg-green-100 text-green-800';
-    if (pos === 'fwd' || pos === 'forward') return 'bg-red-100 text-red-800';
-    return 'bg-gray-100 text-gray-800';
+    if (pos === 'gk' || pos === 'goalkeeper') return 'bg-amber-400/15 text-amber-300 border border-amber-400/30';
+    if (pos === 'def' || pos === 'defender') return 'bg-sky-400/15 text-sky-300 border border-sky-400/30';
+    if (pos === 'mid' || pos === 'midfielder') return 'bg-emerald-400/15 text-emerald-300 border border-emerald-400/30';
+    if (pos === 'fwd' || pos === 'forward') return 'bg-rose-400/15 text-rose-300 border border-rose-400/30';
+    return 'bg-muted text-muted-foreground';
   };
 
   const getPositionLabel = (position: string) => {
@@ -119,7 +119,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
 
   return (
     <div className="space-y-4">
-      <Card className="border-bronze-200">
+      <Card className="ds-card">
         <CardContent className="p-4">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <div className="relative col-span-2 md:col-span-1">
@@ -160,13 +160,13 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
             </Select>
             <div className="text-sm flex items-center gap-2">
               <span className="text-muted-foreground">Budget:</span>
-              <span className="font-semibold text-bronze-600">R{(budget * 18).toFixed(1)}M</span>
+              <span className="font-semibold text-primary">R{(budget * 18).toFixed(1)}M</span>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="shadow-sm">
+      <Card className="ds-card overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
@@ -177,7 +177,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                 <TableHead className="font-semibold text-[11px] text-right">Value</TableHead>
                 <TableHead className="font-semibold text-[11px] text-right">Pts</TableHead>
                 <TableHead className="font-semibold text-[11px] text-center">Form</TableHead>
-                <TableHead className="font-semibold text-[11px] w-[60px]"></TableHead>
+                <TableHead className="font-semibold text-[11px] w-[60px] pr-3"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -187,7 +187,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                 const formVal = Number(player.form) || 0;
 
                 return (
-                  <TableRow key={player.id} className={`h-9 ${selected ? 'bg-bronze-50' : index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
+                  <TableRow key={player.id} className={`h-9 ${selected ? 'bg-primary/10' : index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
                     <TableCell className="py-1 pl-3">
                       <Badge className={`${getPositionColor(player.position)} text-[9px] px-1 py-0 leading-tight`}>
                         {getPositionLabel(player.position)}
@@ -216,21 +216,21 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                     <TableCell className="py-1">
                       <div className="flex justify-center items-center">
                         <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
-                          formVal >= 8 ? 'bg-green-100 text-green-800' :
-                          formVal >= 6 ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
+                          formVal >= 8 ? 'bg-emerald-400/15 text-emerald-300 border border-emerald-400/30' :
+                          formVal >= 6 ? 'bg-amber-400/15 text-amber-300 border border-amber-400/30' :
+                          'bg-rose-400/15 text-rose-300 border border-rose-400/30'
                         }`}>
                           {formVal}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="py-1">
+                    <TableCell className="py-1 pr-3 text-right">
                       {selected ? (
                         <Button variant="destructive" size="sm" onClick={() => onPlayerRemove(String(player.id))} className="h-6 text-[10px] px-1.5">
                           <Minus className="h-3 w-3" />
                         </Button>
                       ) : (
-                        <Button size="sm" onClick={() => onPlayerAdd(player)} disabled={!canAdd} className="h-6 text-[10px] px-1.5 bg-bronze-600 hover:bg-bronze-700 disabled:bg-gray-300">
+                        <Button size="sm" onClick={() => onPlayerAdd(player)} disabled={!canAdd} className="h-6 text-[10px] px-1.5 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40">
                           <Plus className="h-3 w-3" />
                         </Button>
                       )}
@@ -255,7 +255,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
             {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
               const page = totalPages <= 5 ? i + 1 : currentPage <= 3 ? i + 1 : currentPage >= totalPages - 2 ? totalPages - 4 + i : currentPage - 2 + i;
               return (
-                <Button key={page} variant={page === currentPage ? 'default' : 'outline'} size="sm" className={`h-7 w-7 text-xs p-0 ${page === currentPage ? 'bg-bronze-600 hover:bg-bronze-700' : ''}`} onClick={() => setCurrentPage(page)}>
+                <Button key={page} variant={page === currentPage ? 'default' : 'outline'} size="sm" className={`h-7 w-7 text-xs p-0 ${page === currentPage ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''}`} onClick={() => setCurrentPage(page)}>
                   {page}
                 </Button>
               );
@@ -299,9 +299,9 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                   <div className="rounded-md bg-muted p-2.5">
                     <p className="text-[10px] text-muted-foreground uppercase">Form</p>
                     <span className={`text-xs px-2 py-1 rounded font-medium mt-1 inline-block ${
-                      formVal >= 8 ? 'bg-green-100 text-green-800' :
-                      formVal >= 6 ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
+                      formVal >= 8 ? 'bg-emerald-400/15 text-emerald-300 border border-emerald-400/30' :
+                      formVal >= 6 ? 'bg-amber-400/15 text-amber-300 border border-amber-400/30' :
+                      'bg-rose-400/15 text-rose-300 border border-rose-400/30'
                     }`}>
                       {formVal}
                     </span>
@@ -313,7 +313,7 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
                       <Minus className="h-4 w-4 mr-2" />Remove from Squad
                     </Button>
                   ) : (
-                    <Button className="w-full bg-bronze-600 hover:bg-bronze-700" disabled={!canAddPlayer(selectedPlayer)} onClick={() => { onPlayerAdd(selectedPlayer); setSelectedPlayer(null); }}>
+                    <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={!canAddPlayer(selectedPlayer)} onClick={() => { onPlayerAdd(selectedPlayer); setSelectedPlayer(null); }}>
                       <Plus className="h-4 w-4 mr-2" />Add to Squad
                     </Button>
                   )}

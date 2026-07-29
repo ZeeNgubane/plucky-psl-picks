@@ -54,20 +54,20 @@ const Fixtures = () => {
 
   if (loading) {
     return (
-      <Card className="border-0 rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
+      <Card className="ds-card">
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="border-0 rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
+    <Card className="ds-card">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-bold text-gray-800 flex items-center">
-            <Calendar className="h-5 w-5 mr-2 text-amber-600" />
+          <CardTitle className="text-xl font-bold text-foreground flex items-center">
+            <Calendar className="h-5 w-5 mr-2 text-primary" />
             Fixtures & Results
           </CardTitle>
           <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
@@ -78,9 +78,9 @@ const Fixtures = () => {
       <CardContent className="space-y-3">
         {fixtures.length === 0 ? (
           <div className="text-center py-8">
-            <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500">No fixtures available yet</p>
-            <p className="text-gray-400 text-sm mt-1">Data updates daily at midnight</p>
+            <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+            <p className="text-muted-foreground">No fixtures available yet</p>
+            <p className="text-muted-foreground text-sm mt-1">Data updates daily at midnight</p>
           </div>
         ) : (
           fixtures.map((fixture) => (
@@ -95,28 +95,28 @@ const Fixtures = () => {
               }`}
             >
               <div className="flex-1 text-right">
-                <p className="font-medium text-gray-800 text-xs sm:text-sm">{fixture.home_team}</p>
+                <p className="font-medium text-foreground text-xs sm:text-sm">{fixture.home_team}</p>
               </div>
 
               <div className="flex flex-col items-center mx-3 min-w-[60px]">
                 {fixture.home_score !== null && fixture.away_score !== null ? (
                   <div className="flex items-center gap-1">
-                    <span className="font-bold text-lg text-gray-800">{fixture.home_score}</span>
+                    <span className="font-bold text-lg text-foreground">{fixture.home_score}</span>
                     <Badge className={`${getStatusColor(fixture.status)} px-1.5 py-0 text-[10px] font-bold rounded-full`}>
                       {getStatusText(fixture.status)}
                     </Badge>
-                    <span className="font-bold text-lg text-gray-800">{fixture.away_score}</span>
+                    <span className="font-bold text-lg text-foreground">{fixture.away_score}</span>
                   </div>
                 ) : (
                   <Badge className={`${getStatusColor(fixture.status)} px-2 py-0.5 text-[10px] font-bold rounded-full`}>
                     {fixture.match_time || 'TBD'}
                   </Badge>
                 )}
-                <span className="text-[10px] text-gray-400 mt-0.5">{fixture.match_date?.slice(5)}</span>
+                <span className="text-[10px] text-muted-foreground mt-0.5">{fixture.match_date?.slice(5)}</span>
               </div>
 
               <div className="flex-1">
-                <p className="font-medium text-gray-800 text-xs sm:text-sm">{fixture.away_team}</p>
+                <p className="font-medium text-foreground text-xs sm:text-sm">{fixture.away_team}</p>
               </div>
             </div>
           ))
