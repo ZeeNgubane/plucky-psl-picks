@@ -12,6 +12,8 @@ import LeagueTable from '@/components/home/LeagueTable';
 import UserBadgePanel from '@/components/home/UserBadgePanel';
 import PlayerStatHUD from '@/components/home/PlayerStatHUD';
 import ArticlesNewsAds from '@/components/home/ArticlesNewsAds';
+import PageBanner from '@/components/layout/PageBanner';
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
