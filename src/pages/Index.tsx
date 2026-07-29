@@ -111,32 +111,40 @@ const Index = () => {
 
   const squadValue = 100 - budget;
 
+  const pageMeta: Record<string, { title: string; subtitle: string; icon: typeof House }> = {
+    home: { title: 'Fantasy HQ', subtitle: 'Your season at a glance · Betway Premiership', icon: House },
+    team: { title: 'My Team', subtitle: 'Set your XI, bench and captain', icon: Users },
+    transfers: { title: 'Transfers', subtitle: 'Build your squad within budget', icon: TrendingUp },
+    league: { title: 'League HQ', subtitle: 'Live standings · Betway Premiership', icon: Trophy },
+  };
+  const meta = pageMeta[activeTab] ?? pageMeta.home;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Compact top bar */}
-      <div className="bg-psl-dark border-b border-psl-blue/30">
+      <div className="bg-psl-dark border-b border-border">
         <div className="container mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <img src="https://www.psl.co.za/assets/images/logo-mobile.png" alt="PSL Logo" className="h-9 w-9 object-contain" />
             <div>
-              <h1 className="text-lg font-black text-psl-gold leading-none">PICK A SIDE</h1>
-              <p className="text-[10px] text-white/60 uppercase tracking-widest">Fantasy · Betway Premiership</p>
+              <h1 className="text-lg font-black text-primary leading-none">PICK A SIDE</h1>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Fantasy · Betway Premiership</p>
             </div>
           </div>
-          <div className="hidden sm:flex items-center space-x-2 text-white/80 text-xs bg-psl-blue/20 px-3 py-1.5 rounded-lg border border-psl-blue/30">
-            <Calendar className="h-3.5 w-3.5 text-psl-gold" />
+          <div className="hidden sm:flex items-center space-x-2 text-foreground/80 text-xs bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/30">
+            <Calendar className="h-3.5 w-3.5 text-primary" />
             <span className="font-bold">GW 14</span>
-            <span className="text-white/50">·</span>
+            <span className="text-muted-foreground">·</span>
             <span>Deadline 3d 2h</span>
           </div>
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="sticky top-0 z-50 hidden lg:flex bg-transparent backdrop-blur-[10px] border-b border-white/10 shadow-sm">
+      {/* Navigation — same placement and styling on every page */}
+      <div className="sticky top-0 z-50 hidden lg:flex bg-background/70 backdrop-blur-[10px] border-b border-border shadow-sm">
         <div className="container mx-auto px-6">
           <div className="flex justify-center py-1">
-            <div className="flex bg-secondary/20 rounded-2xl p-0.5 shadow-lg border border-border">
+            <div className="flex bg-surface rounded-2xl p-0.5 shadow-lg border border-border">
               {[
                 { id: 'home', label: 'Home', icon: House },
                 { id: 'team', label: 'My Team', icon: Users },
@@ -149,7 +157,7 @@ const Index = () => {
                   className={`flex items-center space-x-3 px-6 py-1.5 rounded-xl transition-all duration-300 font-semibold text-sm ${
                     activeTab === tab.id
                       ? 'bg-primary text-primary-foreground shadow-lg transform scale-105'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
                   }`}
                 >
                   <tab.icon className="h-4 w-4" />
@@ -161,9 +169,12 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-6 pb-6">
+      <div className="container mx-auto px-4 sm:px-6 pt-3 pb-24 lg:pb-6 space-y-4">
+        {/* Shared page banner */}
+        <PageBanner title={meta.title} subtitle={meta.subtitle} icon={meta.icon} />
+
         {activeTab === 'home' ? (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Top section: 3 columns on desktop, custom order on mobile */}
             <div className="grid gap-4 grid-cols-1 lg:grid-cols-[220px_1fr_1fr]">
               <div className="order-first flex flex-col-reverse lg:flex-col gap-4 min-w-0">
@@ -190,11 +201,12 @@ const Index = () => {
             <ArticlesNewsAds />
           </div>
         ) : (
-          <div className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-xl border border-border p-8">
+          <div className="ds-card p-4 sm:p-6">
             {renderTabContent()}
           </div>
         )}
       </div>
+
 
       {/* Mobile Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-xl border-t border-border p-2 lg:hidden z-50 shadow-2xl">
