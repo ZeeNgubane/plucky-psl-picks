@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Search, Plus, Minus, ChevronLeft, ChevronRight, Info, Loader2 } from 'lucide-react';
 import { Player } from '@/data/teams';
@@ -168,78 +168,73 @@ const Transfers = ({ selectedPlayers, onPlayerAdd, onPlayerRemove, budget }: Tra
 
       <Card className="ds-card overflow-hidden">
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="font-semibold text-[11px] pl-3 w-[50px]">Pos</TableHead>
-                <TableHead className="font-semibold text-[11px]">Player</TableHead>
-                <TableHead className="font-semibold text-[11px]">Team</TableHead>
-                <TableHead className="font-semibold text-[11px] text-right">Value</TableHead>
-                <TableHead className="font-semibold text-[11px] text-right">Pts</TableHead>
-                <TableHead className="font-semibold text-[11px] text-center">Form</TableHead>
-                <TableHead className="font-semibold text-[11px] w-[60px] pr-3"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedPlayers.map((player, index) => {
-                const selected = isPlayerSelected(player.id);
-                const canAdd = canAddPlayer(player);
-                const formVal = Number(player.form) || 0;
+          <ul className="divide-y divide-border/60 overflow-x-hidden">
+            {paginatedPlayers.map((player) => {
+              const selected = isPlayerSelected(player.id);
+              const canAdd = canAddPlayer(player);
 
-                return (
-                  <TableRow key={player.id} className={`h-9 ${selected ? 'bg-primary/10' : index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
-                    <TableCell className="py-1 pl-3">
-                      <Badge className={`${getPositionColor(player.position)} text-[9px] px-1 py-0 leading-tight`}>
-                        {getPositionLabel(player.position)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="py-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-medium truncate max-w-[120px]">{player.name}</span>
-                        <button onClick={() => setSelectedPlayer(player)} className="text-muted-foreground hover:text-foreground shrink-0">
-                          <Info className="h-3 w-3" />
-                        </button>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-1">
-                      <div className="flex items-center gap-1.5">
-                        {logoMap[player.team] && (
-                          <img src={logoMap[player.team]} alt={player.team} className="h-4 w-4 object-contain shrink-0" />
-                        )}
-                        <span className="text-xs text-muted-foreground truncate max-w-[80px]">{player.team}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-1 text-xs font-medium text-right">
+              return (
+                <li
+                  key={player.id}
+                  className={`flex w-full items-center gap-2 px-3 py-2 ${selected ? 'bg-primary/10' : ''}`}
+                >
+                  {logoMap[player.team] ? (
+                    <img
+                      src={logoMap[player.team]}
+                      alt={player.team}
+                      className="h-7 w-7 shrink-0 object-contain"
+                    />
+                  ) : (
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-[9px] font-bold text-muted-foreground">
+                      {(player.team || '?').slice(0, 2).toUpperCase()}
+                    </div>
+                  )}
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1">
+                      <span className="truncate text-[13px] font-bold text-foreground">{player.name}</span>
+                      <button
+                        onClick={() => setSelectedPlayer(player)}
+                        aria-label={`Info about ${player.name}`}
+                        className="shrink-0 text-muted-foreground hover:text-primary"
+                      >
+                        <Info className="h-3 w-3" />
+                      </button>
+                    </div>
+                    <p className="truncate text-[10px] text-muted-foreground">
+                      {player.team} · {getPositionLabel(player.position)}
+                    </p>
+                  </div>
+
+                  <div className="shrink-0 text-right leading-tight">
+                    <p className="text-[12px] font-semibold text-foreground tabular-nums">
                       {player.price ? `R${(Number(player.price) * 18).toFixed(1)}M` : '—'}
-                    </TableCell>
-                    <TableCell className="py-1 text-xs font-bold text-right">{player.total_points || '0'}</TableCell>
-                    <TableCell className="py-1">
-                      <div className="flex justify-center items-center">
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
-                          formVal >= 8 ? 'bg-emerald-400/15 text-emerald-300 border border-emerald-400/30' :
-                          formVal >= 6 ? 'bg-amber-400/15 text-amber-300 border border-amber-400/30' :
-                          'bg-rose-400/15 text-rose-300 border border-rose-400/30'
-                        }`}>
-                          {formVal}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-1 pr-3 text-right">
-                      {selected ? (
-                        <Button variant="destructive" size="sm" onClick={() => onPlayerRemove(String(player.id))} className="h-6 text-[10px] px-1.5">
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                      ) : (
-                        <Button size="sm" onClick={() => onPlayerAdd(player)} disabled={!canAdd} className="h-6 text-[10px] px-1.5 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40">
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                    </p>
+                    <p className="text-[10px] text-primary tabular-nums">{player.total_points || 0} pts</p>
+                  </div>
+
+                  {selected ? (
+                    <button
+                      onClick={() => onPlayerRemove(String(player.id))}
+                      aria-label={`Remove ${player.name}`}
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-destructive/50 bg-destructive/20 text-destructive-foreground"
+                    >
+                      <Minus className="h-3.5 w-3.5" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => onPlayerAdd(player)}
+                      disabled={!canAdd}
+                      aria-label={`Add ${player.name}`}
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary/60 bg-primary text-primary-foreground disabled:opacity-30"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
         </CardContent>
       </Card>
 
