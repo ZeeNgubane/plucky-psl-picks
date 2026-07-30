@@ -92,9 +92,11 @@ const Index = () => {
         return <MyTeam selectedPlayers={selectedPlayers} budget={budget} onPlayerAdd={handlePlayerAdd} onPlayerRemove={handlePlayerRemove} />;
       case 'transfers':
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Transfers selectedPlayers={selectedPlayers} onPlayerAdd={handlePlayerAdd} onPlayerRemove={handlePlayerRemove} budget={budget} />
-            <div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:items-start">
+            <div className="lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:pr-1 min-w-0">
+              <Transfers selectedPlayers={selectedPlayers} onPlayerAdd={handlePlayerAdd} onPlayerRemove={handlePlayerRemove} budget={budget} />
+            </div>
+            <div className="lg:sticky lg:top-16 self-start min-w-0">
               <TransfersPitch
                 selectedPlayers={selectedPlayers}
                 budget={budget}
@@ -104,6 +106,7 @@ const Index = () => {
             </div>
           </div>
         );
+
       case 'league':
         return <League />;
       default:
