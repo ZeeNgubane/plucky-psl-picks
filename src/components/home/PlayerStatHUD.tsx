@@ -20,7 +20,7 @@ const PlayerStatHUD = ({
   trend = 12,
 }: PlayerStatHUDProps) => {
   const FormArrow = ({ d }: { d: 'up' | 'down' | 'neutral' }) => {
-    if (d === 'up') return <ArrowUp className="h-3 w-3 text-primary" />;
+    if (d === 'up') return <ArrowUp className="h-3 w-3 text-emerald-400" />;
     if (d === 'down') return <ArrowDown className="h-3 w-3 text-red-400" />;
     return <Minus className="h-3 w-3 text-muted-foreground" />;
   };
